@@ -139,6 +139,26 @@ python src/degerlendir.py runs/genis2/weights/best.pt --veri veri/visdrone_test.
 ```
 Eğitim RTX 3050 6 GB'ta yapıldı (batch 12, ~3 GB VRAM; toplam ~7 saat).
 
+### Roboflow bulut dağıtımı
+Model Roboflow'a `disastervision-yolov8s` adıyla yüklendi ve `disastervision-tespit` Workflow'u
+üzerinden sunuluyor (tespit → kutu + etiket çizimi → insan sayısı). Anahtar `.env` içindeki
+`ROBOFLOW_API_KEY` satırından okunur.
+
+```bash
+# Yükleme: Roboflow YOLOv8 paketlemesi ultralytics==8.0.196 istediği için ayrı ortam
+py -3.11 -m venv .venv_yukle
+.venv_yukle\Scripts\pip install torch --index-url https://download.pytorch.org/whl/cpu
+.venv_yukle\Scripts\pip install ultralytics==8.0.196 "roboflow>=1.3.13" python-dotenv
+.venv_yukle\Scripts\python src/roboflow_yukle.py
+
+python src/roboflow_test.py   # Workflow'u ornekler/ üzerinde çalıştırır, yerel modelle karşılaştırır
+```
+
+Workflow girdileri: `image`, `confidence` (varsayılan 0.25), `iou` (varsayılan 0.7). Roboflow'un
+varsayılan NMS eşiği 0.3'tür; kalabalıkta yan yana duran insanları birleştirdiği için (örnek drone
+görüntüsünde 79 → 58) eşik, yerel değerlendirmeyle aynı olacak şekilde 0.7'ye çekildi. Bu ayarla
+örneklerde bulut/yerel sonuçlar: drone 76/79 insan, uydu görüntüsünde hasar sınıfları birebir aynı.
+
 ---
 
 ## 📁 Proje Yapısı
@@ -153,7 +173,9 @@ Eğitim RTX 3050 6 GB'ta yapıldı (batch 12, ~3 GB VRAM; toplam ~7 saat).
 │   ├── birlestir.py        # 5 sınıflı birleşik veri seti
 │   ├── egit.py             # eğitim
 │   ├── degerlendir.py      # karşılaştırmalı değerlendirme
-│   └── tahmin.py           # tahmin + SAHI + çizim
+│   ├── tahmin.py           # tahmin + SAHI + çizim
+│   ├── roboflow_yukle.py   # ağırlıkları Roboflow'a yükleme
+│   └── roboflow_test.py    # Roboflow Workflow testi
 ├── ornekler/               # örnek görüntüler
 ├── docs/                   # karşılaştırma görselleri
 └── Yapay-Zeka-...ipynb     # orijinal Colab defteri (tarihçe)

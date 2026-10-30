@@ -10,3 +10,4 @@ egitim_zinciri.ps1
 zincir_bitti.txt
 egitim_zinciri*.ps1
 zincir*_bitti.txt
+.venv_yukle/
