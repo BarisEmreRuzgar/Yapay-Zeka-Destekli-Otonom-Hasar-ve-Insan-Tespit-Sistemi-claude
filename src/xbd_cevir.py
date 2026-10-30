@@ -7,6 +7,7 @@ görüntüsünde binalar küçük). Yalnızca hasarsız binası olan döşemeler
 atılarak sınıf dengesizliği azaltılır.
 
 Kullanım: python src/xbd_cevir.py [--hasarsiz-oran 0.25] [--sinir N]
+          python src/xbd_cevir.py --test   (bağımsız test seti)
 """
 import argparse
 import io
@@ -25,6 +26,8 @@ CIKTI = KOK / "veri" / "xbd_yolo"
 # maske değeri → birleşik sınıf kimliği (veri/birlesik.yaml ile aynı)
 SINIF = {1: 4, 2: 3, 3: 2, 4: 1}
 DOSEME = 512
+# Roboflow hasar seti xBD hurricane-maria döşemelerinden türetilmiş; o testle sızıntı olmasın diye alınmaz.
+DISLA = ("hurricane-maria",)
 MIN_ALAN = 24  # piksel; daha küçük bileşenler gürültü
 
 
@@ -69,9 +72,15 @@ def main():
                     help="yalnız hasarsız bina içeren döşemelerden tutulacak oran")
     ap.add_argument("--valid-oran", type=float, default=0.1)
     ap.add_argument("--sinir", type=int, default=0, help="test için en fazla bu kadar görüntü")
+    ap.add_argument("--test", action="store_true",
+                    help="veri/ham/xbd_test → veri/xbd_test (eğitimde hiç kullanılmayan bağımsız test; döşeme atılmaz)")
     a = ap.parse_args()
+    global HAM, CIKTI
+    if a.test:
+        HAM, CIKTI = KOK / "veri" / "ham" / "xbd_test", KOK / "veri" / "xbd_test"
+        a.hasarsiz_oran = 1.0
     rng = random.Random(0)
-    for b in ("train", "valid"):
+    for b in (("test",) if a.test else ("train", "valid")):
         (CIKTI / b / "images").mkdir(parents=True, exist_ok=True)
         (CIKTI / b / "labels").mkdir(parents=True, exist_ok=True)
 
@@ -85,9 +94,14 @@ def main():
                 if maske.ndim == 3:
                     maske = maske[..., 0]
                 ad = Path(satir["image_name"]).stem
+                if ad.startswith(DISLA):
+                    continue
                 # Afet olayı bazında değil görüntü bazında bölmek sızıntı riski taşır; sabit tohumla
                 # görüntü adına göre ayırıyoruz (aynı görüntünün döşemeleri aynı bölümde kalır).
-                bolum = "valid" if random.Random(ad).random() < a.valid_oran else "train"
+                if a.test:
+                    bolum = "test"
+                else:
+                    bolum = "valid" if random.Random(ad).random() < a.valid_oran else "train"
                 toplam += doseme_yaz(goruntu, maske, ad, bolum, a.hasarsiz_oran, rng)
                 adet += 1
                 if adet % 200 == 0:
@@ -95,6 +109,10 @@ def main():
                 if a.sinir and adet >= a.sinir:
                     print("sınır:", dict(zip(["person", "destroyed", "major", "minor", "no"], toplam)))
                     return
+    if a.test:
+        (KOK / "veri" / "xbd_test.yaml").write_text(
+            f"path: {CIKTI.as_posix()}\ntrain: test/images\nval: test/images\ntest: test/images\n"
+            "names: {0: person, 1: destroyed, 2: major-damage, 3: minor-damage, 4: no-damage}\n")
     print("bitti:", adet, "görüntü;", dict(zip(["person", "destroyed", "major", "minor", "no"], toplam)))
 
 

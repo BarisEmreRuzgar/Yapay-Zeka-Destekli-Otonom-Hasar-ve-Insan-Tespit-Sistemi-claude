@@ -8,3 +8,5 @@ __pycache__/
 egitim_zinciri.ps1
 *.log
 zincir_bitti.txt
+egitim_zinciri*.ps1
+zincir*_bitti.txt
