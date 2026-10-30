@@ -1,0 +1,10 @@
+.venv/
+veri/
+runs/
+*.pt
+!modeller/*.pt
+__pycache__/
+.env
+egitim_zinciri.ps1
+*.log
+zincir_bitti.txt
