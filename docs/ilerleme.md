@@ -37,6 +37,9 @@ Skor birleşimi (det^a · olasılık^b) denendi: a=2 yalnız +0.006, şimdilik d
   * Sınıflandırıcı v3 (`runs/cift3`): YOLOv8m-cls 256, ~83k örnek (yıkık 11.4k → 17.3k), panel-içi çevirme, 15 epoch.
   * Konum v2 (`runs/bina2`): bina_konum.pt'den devam, 13.5k döşeme, 640 px, 30 epoch.
 
+Sınıflandırıcı v3 eğitimi: val top1 epoch 2'den sonra ~0.76'da sabit, eğitim kaybı 0.05'e iniyor (ezber).
+Sonraki sürüm için not: `dropout`, daha az epoch.
+
 ## İnsan tespiti (projenin ana amacı)
 VisDrone test döşemeleri 960 px ama eğitim ve değerlendirme `imgsz=640` ile yapılmış: döşeme ~1.5 kat
 küçültülüyor, zaten birkaç piksellik insanlar daha da küçülüyor. Eğitimsiz ilk deneme: aynı modeli
