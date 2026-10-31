@@ -30,7 +30,10 @@ Skor birleşimi (det^a · olasılık^b) denendi: a=2 yalnız +0.006, şimdilik d
 * TTA eklendi: `--tta N` (sınıflandırıcıda N panel-içi çevirmenin ortalaması), `--konum-tta` (ultralytics ölçek+çevirme).
 * Konumu 1024 px'te çalıştırma (eğitim 640): val 1.348 döşemede iki aşama 0.564 → 0.563, konum AP 0.782 → 0.774.
   Küçük binalarda bulunma %58 → %61, diğer boylarda fark yok → saatler sürecek 1024 eğitimine değmez; vazgeçildi.
-* Paralel eğitimler (GPU 6 GB'a ikisi sığıyor):
+* ~~Paralel eğitimler~~ — **hata:** ikisi birlikte VRAM'i doldurdu (5.8/6 GB), Windows paylaşımlı belleğe taştı ve
+  RAM 1 GB'a indi; adım süreleri 0.2 s → 1.3 s (sınıflandırıcı) ve 7 s (konum). 1 saat içinde neredeyse ilerleme yok.
+  Konum eğitimi durduruldu (`--devam` ile sürecek), her şey tek sıralı kuyrukta (`egitim_zinciri10`):
+  sınıflandırıcı v3 → VisDrone 640/960/1280 → konum v2 devam → val değerlendirmesi. Plan:
   * Sınıflandırıcı v3 (`runs/cift3`): YOLOv8m-cls 256, ~83k örnek (yıkık 11.4k → 17.3k), panel-içi çevirme, 15 epoch.
   * Konum v2 (`runs/bina2`): bina_konum.pt'den devam, 13.5k döşeme, 640 px, 30 epoch.
 
