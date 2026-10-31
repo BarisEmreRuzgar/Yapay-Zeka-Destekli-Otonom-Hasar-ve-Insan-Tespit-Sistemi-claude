@@ -121,3 +121,18 @@ Val'deki kazanç (0.489 → 0.588) testte de korundu (0.404 → 0.510). Modeller
 (bina_konum.pt = v2, hasar_cift.pt = v2, hasar_cift_v4.pt), `iki_asama` ve uygulama varsayılanı bu topluluk.
 
 Not: 09:00–09:50 arası iki iş başlatma komutundaki yol hatası yüzünden hiç başlamamış; fark edilip yeniden başlatıldı.
+
+## İnsan tespiti: arama-kurtarma (SAR) drone verisi
+Roboflow Universe'ten indirildi (`src/sar_indir.py`, anahtar `.env`):
+* **drone-leak/search-and-rescue-8ywn7** (CC BY 4.0): 12 videodan 2.429 adet 3840×2160 kare, nehir kenarı / tarla / 50–150 ft
+  yükseklik / 45° eğik çekim, insanlar ~70 px. Roboflow'un bölmesi rastgele kare bazında (ardışık neredeyse aynı kareler
+  train ile valid'e dağılmış → sızıntı); bu yüzden **video bazında** ayrıldı: 45DEG_150FT, BIV_RIVER_100FT, NEGATIVE-_100FT
+  yalnız doğrulamada. 960 px döşemeler (`src/sar_veri.py`): eğitim 3.493 döşeme / 3.340 insan, doğrulama 1.584 / 1.362.
+* ilinsk-univerzita-v-iline/search-and-rescue: 5 alçak irtifa karlı video, 640'a gerdirilmiş + 3× artırılmış, büyük insanlar.
+  VisDrone/afet senaryosundan uzak → şimdilik kullanılmadı.
+* trash-32e51/search-rescue (yatan/oturan/sürünen insan): yerden 1280×720 çekim, insanlar ~180×500 px, havadan değil → kullanılmadı.
+
+Plan (`egitim_zinciri14`): ana modelin SAR doğrulamada sıfır-atış başarısı (1280) → VisDrone 8k + SAR eğitim ile
+1280 px insan uzmanı (12 epoch) → VisDrone val (kıyas 0.607) ve SAR val üzerinde karşılaştırma.
+
+Ana model SAR doğrulamada (sıfır-atış, 1280): insan AP50 **0.260**, AP50-95 0.113 — VisDrone val (0.607) ile kıyasla belirgin alan farkı.
