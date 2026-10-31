@@ -22,7 +22,7 @@ import pyarrow.parquet as pq
 from PIL import Image
 from ultralytics import YOLO
 
-from cift_veri import DISLA, cift_gorsel
+from cift_veri import DISLA, cift_gorsel, paneller_cevir
 from xbd_cevir import kutular
 
 KOK = Path(__file__).resolve().parent.parent
@@ -66,8 +66,9 @@ def ap50(tahminler, gercekler):
 
 
 class Siniflandirici:
-    def __init__(self, yol):
+    def __init__(self, yol, tta=0):
         self.m = YOLO(yol)
+        self.islemler = [0, 1, 2, 3, 4, 5, 6, 7][:max(1, tta)]  # paneller_cevir işlemleri; ortalaması alınır
         self.ad = self.m.names
         self.imgsz = self.m.ckpt["train_args"]["imgsz"]  # panel = imgsz / 2
 
@@ -75,21 +76,25 @@ class Siniflandirici:
         """kutular: Nx4 xyxy (tam görüntü koordinatı) → Nx4 olasılık (HASAR sırasıyla)."""
         if not len(kutular):
             return np.zeros((0, 4))
-        gorseller = [cift_gorsel(once, sonra, x1, y1, x2 - x1, y2 - y1, panel=self.imgsz // 2)[..., ::-1]
-                     for x1, y1, x2, y2 in kutular]
-        cikis = []
-        for i in range(0, len(gorseller), 64):
-            for r in self.m.predict(gorseller[i:i + 64], imgsz=self.imgsz, verbose=False):
-                p = r.probs.data.cpu().numpy()
-                cikis.append([p[[k for k, v in self.ad.items() if v == h][0]] for h in HASAR])
-        return np.array(cikis)
+        temel = [cift_gorsel(once, sonra, x1, y1, x2 - x1, y2 - y1, panel=self.imgsz // 2)[..., ::-1]
+                 for x1, y1, x2, y2 in kutular]
+        sira = [[k for k, v in self.ad.items() if v == h][0] for h in HASAR]
+        toplam = np.zeros((len(temel), len(HASAR)))
+        for islem in self.islemler:
+            gorseller = [paneller_cevir(g, islem) for g in temel]
+            cikis = []
+            for i in range(0, len(gorseller), 64):
+                cikis += [r.probs.data.cpu().numpy()[sira]
+                          for r in self.m.predict(gorseller[i:i + 64], imgsz=self.imgsz, verbose=False)]
+            toplam += np.array(cikis)
+        return toplam / len(self.islemler)
 
 
-def bina_kutulari(dedektor, goruntu, conf, imgsz=640):
+def bina_kutulari(dedektor, goruntu, conf, imgsz=640, tta=False):
     # tek sınıflı konum modeli (bina) ya da 5 sınıflı ana model (insan sınıfı hariç) olabilir
     siniflar = None if len(dedektor.names) == 1 else [1, 2, 3, 4]
     r = dedektor.predict(goruntu[..., ::-1], conf=conf, iou=0.7, imgsz=imgsz, verbose=False, classes=siniflar,
-                         agnostic_nms=True)[0]
+                         agnostic_nms=True, augment=tta)[0]
     return r.boxes.xyxy.cpu().numpy(), r.boxes.conf.cpu().numpy(), r.boxes.cls.cpu().numpy().astype(int)
 
 
@@ -173,7 +178,7 @@ def degerlendir(a):
     kurgular = a.kurgu.split(",")
     dedektor = YOLO(str(KOK / "modeller" / "disastervision.pt"))
     konumlayici = dedektor if a.konumlayici == "ana" else YOLO(a.konumlayici)
-    sinif = Siniflandirici(a.siniflandirici)
+    sinif = Siniflandirici(a.siniflandirici, a.tta)
     ham = {}
     for ad, once, sonra, maske in ciftler(a.bolum, a.sinir):
         for oy in range(0, maske.shape[0], DOSEME):
@@ -192,7 +197,7 @@ def degerlendir(a):
                     d["tek_kutu"], d["tek_skor"] = r.boxes.xyxy.cpu().numpy(), r.boxes.conf.cpu().numpy()
                     d["tek_sinif"] = r.boxes.cls.cpu().numpy().astype(int)
                 if {"iki", "iki+tek"} & set(kurgular):  # öncesinde konum (sınıf-bağımsız), çiftle hasar
-                    d["kon_kutu"], d["kon_skor"], _ = bina_kutulari(konumlayici, o_d, 0.001, a.konum_imgsz)
+                    d["kon_kutu"], d["kon_skor"], _ = bina_kutulari(konumlayici, o_d, 0.001, a.konum_imgsz, a.konum_tta)
                     d["kon_olas"] = sinif(once, sonra, d["kon_kutu"] + kaydir)
                 if "iki+gt" in kurgular:  # sınıflandırıcının tavanı
                     d["gt_olas"] = sinif(once, sonra, d["gt"] + kaydir)
@@ -207,10 +212,10 @@ def degerlendir(a):
 def tek_cift(a):
     ana = YOLO(str(KOK / "modeller" / "disastervision.pt"))
     konumlayici = ana if a.konumlayici == "ana" else YOLO(a.konumlayici)
-    sinif = Siniflandirici(a.siniflandirici)
+    sinif = Siniflandirici(a.siniflandirici, a.tta)
     once = np.array(Image.open(a.once).convert("RGB")); sonra = np.array(Image.open(a.sonra).convert("RGB"))
     d = {}
-    d["kon_kutu"], d["kon_skor"], _ = bina_kutulari(konumlayici, once, 0.01, a.konum_imgsz)
+    d["kon_kutu"], d["kon_skor"], _ = bina_kutulari(konumlayici, once, 0.01, a.konum_imgsz, a.konum_tta)
     d["kon_olas"] = sinif(once, sonra, d["kon_kutu"])
     r = ana.predict(sonra[..., ::-1], conf=0.01, iou=0.7, imgsz=640, verbose=False, classes=[1, 2, 3, 4])[0]
     d["tek_kutu"], d["tek_skor"] = r.boxes.xyxy.cpu().numpy(), r.boxes.conf.cpu().numpy()
@@ -245,6 +250,8 @@ if __name__ == "__main__":
     ap.add_argument("--bolum", choices=["test", "val"], default="test")
     ap.add_argument("--kurgu", default="tek,iki,iki+tek,iki+gt", help="virgülle: tek, iki, iki+tek, iki+gt")
     ap.add_argument("--konum-imgsz", type=int, default=640)
+    ap.add_argument("--konum-tta", action="store_true", help="konum modelinde ultralytics TTA (ölçek + çevirme)")
+    ap.add_argument("--tta", type=int, default=0, help="sınıflandırıcıda kaç panel-içi çevirmenin ortalaması (0/1 = yok, en çok 8)")
     ap.add_argument("--sinir", type=int, default=0, help="en fazla bu kadar görüntü (hızlı deneme)")
     ap.add_argument("--kaydet", help="ham tahminleri pickle olarak kaydet (puanlama denemeleri için)")
     a = ap.parse_args()

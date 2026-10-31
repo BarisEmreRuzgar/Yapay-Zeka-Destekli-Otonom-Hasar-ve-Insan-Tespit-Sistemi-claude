@@ -25,5 +25,18 @@ Skor birleşimi (det^a · olasılık^b) denendi: a=2 yalnız +0.006, şimdilik d
 * Sınıflandırıcı v1 eğitimde gerçek bina şeklini maske olarak görüyor, çıkarımda dikdörtgen alıyordu (uyumsuzluk) → v2'de düzeltildi.
 
 ## Sıradaki
-* Tüm tier3 (21/21) ile veri: konum 9.006 → 13.502 döşeme; sınıflandırıcı v3 verisi.
-* Konumu 1024 px'te çalıştırma denemesi (küçük binalar).
+* Tüm tier3 (21/21) indirildi. Konum verisi 9.006 → 13.502 döşeme.
+* Sınıflandırıcı v3 verisi: tüm veri, sınıf başına ≤30k, **panel içi rastgele çevirme/döndürme** (8 kare simetrisi; panel düzeni korunur) → yön değişmezliği.
+* TTA eklendi: `--tta N` (sınıflandırıcıda N panel-içi çevirmenin ortalaması), `--konum-tta` (ultralytics ölçek+çevirme).
+* Konumu 1024 px'te çalıştırma (eğitim 640): val 1.348 döşemede iki aşama 0.564 → 0.563, konum AP 0.782 → 0.774.
+  Küçük binalarda bulunma %58 → %61, diğer boylarda fark yok → saatler sürecek 1024 eğitimine değmez; vazgeçildi.
+* Paralel eğitimler (GPU 6 GB'a ikisi sığıyor):
+  * Sınıflandırıcı v3 (`runs/cift3`): YOLOv8m-cls 256, ~83k örnek (yıkık 11.4k → 17.3k), panel-içi çevirme, 15 epoch.
+  * Konum v2 (`runs/bina2`): bina_konum.pt'den devam, 13.5k döşeme, 640 px, 30 epoch.
+
+## İnsan tespiti (projenin ana amacı)
+VisDrone test döşemeleri 960 px ama eğitim ve değerlendirme `imgsz=640` ile yapılmış: döşeme ~1.5 kat
+küçültülüyor, zaten birkaç piksellik insanlar daha da küçülüyor. Eğitimsiz ilk deneme: aynı modeli
+640 / 960 / 1280'de değerlendirmek (`egitim_zinciri9`, sınıflandırıcı eğitimi bitince; RAM yetersiz olduğu için sırada).
+
+Not: 09:00–09:50 arası iki iş başlatma komutundaki yol hatası yüzünden hiç başlamamış; fark edilip yeniden başlatıldı.

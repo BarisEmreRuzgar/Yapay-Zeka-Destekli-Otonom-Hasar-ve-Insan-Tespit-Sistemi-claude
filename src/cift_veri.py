@@ -42,6 +42,19 @@ def oynat(x, y, w, h, rng, oran=0.15):
     return x + w * rng.uniform(-oran, oran) - dw / 2, y + h * rng.uniform(-oran, oran) - dh / 2, w + dw, h + dh
 
 
+def paneller_cevir(g, islem):
+    """2x2 panelli görselde her paneli kendi içinde çevirir/döndürür; panel düzeni (öncesi sol üstte vb.) korunur.
+    islem: 0 kimlik, 1 yatay, 2 dikey, 3 180°, 4 90°, 5 270°, 6 devrik, 7 ters devrik (kare simetri grubu)."""
+    if islem == 0:
+        return g
+    p = g.shape[0] // 2
+    dondur = [lambda a: a, lambda a: a[:, ::-1], lambda a: a[::-1], lambda a: a[::-1, ::-1],
+              lambda a: np.rot90(a), lambda a: np.rot90(a, 3), lambda a: a.transpose(1, 0, 2),
+              lambda a: np.rot90(a, 2).transpose(1, 0, 2)][islem]
+    paneller = [dondur(g[i:i + p, j:j + p]) for i in (0, p) for j in (0, p)]
+    return np.ascontiguousarray(np.vstack([np.hstack(paneller[:2]), np.hstack(paneller[2:])]))
+
+
 def cift_gorsel(once, sonra, x, y, w, h, bina=None, panel=PANEL):
     """Kutuyu bağlamla genişletip 2x2 panelli (2*panel px) görsel döndürür (np.uint8, RGB).
     bina verilmezse maske paneli kutunun kendisidir (çıkarımda maske yok)."""
@@ -75,6 +88,7 @@ def main():
     ap.add_argument("--panel", type=int, default=PANEL)
     ap.add_argument("--hasarsiz-alma", type=float, default=0.12)
     ap.add_argument("--cikti", default="cift")
+    ap.add_argument("--cevir", action="store_true", help="eğitim örneklerini panel içinde rastgele çevir/döndür")
     a = ap.parse_args()
 
     ham = KOK / "veri" / "ham" / ("xbd_test" if a.test else "xbd")
@@ -106,7 +120,10 @@ def main():
                     if a.maske == "kutu":
                         x, y, w, h = oynat(x, y, w, h, rng) if not a.test else (x, y, w, h)
                         bina = None
-                    Image.fromarray(cift_gorsel(once, sonra, x, y, w, h, bina, a.panel)).save(
+                    g = cift_gorsel(once, sonra, x, y, w, h, bina, a.panel)
+                    if a.cevir and bolum == "train":
+                        g = paneller_cevir(g, rng.randrange(8))
+                    Image.fromarray(g).save(
                         hedef / f"{ad}_{k}.jpg", quality=92)
                     sayac[bolum][sinif] += 1
         print(dosya.name, {b: s for b, s in sayac.items() if any(s.values())}, flush=True)
