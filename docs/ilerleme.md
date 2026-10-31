@@ -136,3 +136,11 @@ Plan (`egitim_zinciri14`): ana modelin SAR doğrulamada sıfır-atış başarıs
 1280 px insan uzmanı (12 epoch) → VisDrone val (kıyas 0.607) ve SAR val üzerinde karşılaştırma.
 
 Ana model SAR doğrulamada (sıfır-atış, 1280): insan AP50 **0.260**, AP50-95 0.113 — VisDrone val (0.607) ile kıyasla belirgin alan farkı.
+
+* **SARD** (sandr/drone-aerial, CC BY 4.0): moloz/kaya/tarlada kısmen gizli insanlar, tek uzun videonun 1.981 karesi
+  (gss1–2104), Roboflow 640×640'a germiş → 16:9'a geri açıldı (`src/sard_veri.py`). Ayrım kare numarasıyla:
+  gss ≥ 1800 doğrulama (301 görüntü / 1.118 insan), 1750–1799 tampon atıldı; eğitimden rastgele 2.000 görüntü.
+* **HERIDAL** (dağlık arazi SAR, Hırvatistan) iniyor (4,2 GB) → hiç eğitimde kullanılmayacak, **harici test** olacak.
+
+Eğitim yeniden başlatıldı (`egitim_zinciri15`): VisDrone 8k + drone-leak 3,5k + SARD 2k, 1280 px, 10 epoch.
+Değerlendirme: VisDrone val (kıyas 0.607), drone-leak SAR val (kıyas 0.260), SARD val (kıyas: ana model, ölçülüyor).
