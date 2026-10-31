@@ -232,6 +232,9 @@ def degerlendir(a):
 
 
 _modeller = {}
+# val'de seçilen topluluk: v2 + v4 (T=2) — bkz. docs/ilerleme.md
+VARSAYILAN_SINIF = ",".join(str(KOK / "modeller" / m) for m in ("hasar_cift.pt", "hasar_cift_v4.pt"))
+VARSAYILAN_SICAKLIK = "1,2"
 
 
 def _model(anahtar, kur):
@@ -244,7 +247,8 @@ def cift_tespit(once, sonra, conf=0.25, siniflandirici=None, sicaklik="", konuml
                 konum_tta=False, tta=0):
     """Öncesi/sonrası RGB görüntü çifti (aynı hizada) → [(hasar_sınıfı, skor, x1, y1, x2, y2), ...].
     Konum öncesi görüntüde, hasar çift sınıflandırıcıyla; sonrası görüntüdeki ana model kutuları birleştirilir."""
-    siniflandirici = siniflandirici or str(KOK / "modeller" / "hasar_cift.pt")
+    if not siniflandirici:
+        siniflandirici, sicaklik = VARSAYILAN_SINIF, VARSAYILAN_SICAKLIK
     konumlayici = konumlayici or str(KOK / "modeller" / "bina_konum.pt")
     ana = _model(("yolo", "ana"), lambda: YOLO(str(KOK / "modeller" / "disastervision.pt")))
     kon = ana if konumlayici == "ana" else _model(("yolo", konumlayici), lambda: YOLO(konumlayici))
@@ -283,9 +287,9 @@ def tek_cift(a):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--siniflandirici", default=str(KOK / "modeller" / "hasar_cift.pt"),
+    ap.add_argument("--siniflandirici", default=VARSAYILAN_SINIF,
                     help="virgülle birden çok model verilirse olasılıkları ortalanır")
-    ap.add_argument("--sicaklik", default="", help="her sınıflandırıcı için sıcaklık, virgülle (varsayılan 1)")
+    ap.add_argument("--sicaklik", default=None, help="her sınıflandırıcı için sıcaklık, virgülle (varsayılan 1; varsayılan toplulukta 1,2)")
     ap.add_argument("--konumlayici", default=str(KOK / "modeller" / "bina_konum.pt"),
                     help="öncesi görüntüde bina bulan model; \"ana\" verilirse disastervision.pt")
     ap.add_argument("--once"); ap.add_argument("--sonra")
@@ -298,4 +302,6 @@ if __name__ == "__main__":
     ap.add_argument("--sinir", type=int, default=0, help="en fazla bu kadar görüntü (hızlı deneme)")
     ap.add_argument("--kaydet", help="ham tahminleri pickle olarak kaydet (puanlama denemeleri için)")
     a = ap.parse_args()
+    if a.sicaklik is None:
+        a.sicaklik = VARSAYILAN_SICAKLIK if a.siniflandirici == VARSAYILAN_SINIF else ""
     tek_cift(a) if a.once else degerlendir(a)

@@ -97,7 +97,17 @@ Kıyas: ana model VisDrone val @1280 insan AP50 = **0.607** (val, test-dev'den b
 
 ### Hasar: son yapılandırma
 Konum v2 (`runs/bina2`) + sınıflandırıcı topluluğu v2 + v4(T=2) + tek-model birleşimi (`iki+tek`).
-Konum v2 tek başına (cift2 ile, ortak 1.348 val döşeme): 0.564 → 0.571. Son val ve **tek seferlik test** ölçümü çalışıyor
-(`egitim_zinciri13`); ardından insan uzmanı eğitimi.
+Konum v2 tek başına (cift2 ile, ortak 1.348 val döşeme): 0.564 → 0.571.
+
+Tam val (1.446 döşeme):
+
+| Sistem | yıkık | ağır | hafif | hasarsız | mAP50 |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| tek görüntü | 0.329 | 0.396 | 0.300 | 0.569 | 0.398 |
+| konum v2 + cift2, iki+tek | — | — | — | — | 0.578 |
+| **konum v2 + (v2 + v4 T=2), iki+tek** | 0.691 | 0.525 | 0.403 | 0.731 | **0.588** |
+| aynı, gerçek kutularla (tavan) | 0.884 | 0.710 | 0.506 | 0.984 | 0.771 |
+
+Tek seferlik test ölçümü çalışıyor (`egitim_zinciri13`); ardından insan uzmanı eğitimi.
 
 Not: 09:00–09:50 arası iki iş başlatma komutundaki yol hatası yüzünden hiç başlamamış; fark edilip yeniden başlatıldı.
