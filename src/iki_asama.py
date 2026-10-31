@@ -231,35 +231,54 @@ def degerlendir(a):
     (KOK / "runs" / f"deg_iki_asama_{a.bolum}.json").write_text(json.dumps(sonuc, indent=1, ensure_ascii=False))
 
 
-def tek_cift(a):
-    ana = YOLO(str(KOK / "modeller" / "disastervision.pt"))
-    konumlayici = ana if a.konumlayici == "ana" else YOLO(a.konumlayici)
-    sinif = Topluluk(a.siniflandirici, a.sicaklik, a.tta)
-    once = np.array(Image.open(a.once).convert("RGB")); sonra = np.array(Image.open(a.sonra).convert("RGB"))
+_modeller = {}
+
+
+def _model(anahtar, kur):
+    if anahtar not in _modeller:
+        _modeller[anahtar] = kur()
+    return _modeller[anahtar]
+
+
+def cift_tespit(once, sonra, conf=0.25, siniflandirici=None, sicaklik="", konumlayici=None, konum_imgsz=640,
+                konum_tta=False, tta=0):
+    """Öncesi/sonrası RGB görüntü çifti (aynı hizada) → [(hasar_sınıfı, skor, x1, y1, x2, y2), ...].
+    Konum öncesi görüntüde, hasar çift sınıflandırıcıyla; sonrası görüntüdeki ana model kutuları birleştirilir."""
+    siniflandirici = siniflandirici or str(KOK / "modeller" / "hasar_cift.pt")
+    konumlayici = konumlayici or str(KOK / "modeller" / "bina_konum.pt")
+    ana = _model(("yolo", "ana"), lambda: YOLO(str(KOK / "modeller" / "disastervision.pt")))
+    kon = ana if konumlayici == "ana" else _model(("yolo", konumlayici), lambda: YOLO(konumlayici))
+    sinif = _model(("sinif", siniflandirici, sicaklik, tta), lambda: Topluluk(siniflandirici, sicaklik, tta))
     d = {}
-    d["kon_kutu"], d["kon_skor"], _ = bina_kutulari(konumlayici, once, 0.01, a.konum_imgsz, a.konum_tta)
+    d["kon_kutu"], d["kon_skor"], _ = bina_kutulari(kon, once, 0.01, konum_imgsz, konum_tta)
     d["kon_olas"] = sinif(once, sonra, d["kon_kutu"])
     r = ana.predict(sonra[..., ::-1], conf=0.01, iou=0.7, imgsz=640, verbose=False, classes=[1, 2, 3, 4])[0]
     d["tek_kutu"], d["tek_skor"] = r.boxes.xyxy.cpu().numpy(), r.boxes.conf.cpu().numpy()
     d["tek_sinif"] = r.boxes.cls.cpu().numpy().astype(int)
-    # sınıf bazında birleşik tahminler → çizim için sınıf-bağımsız NMS ve eşik
+    # sınıf bazında birleşik tahminler → gösterim için sınıf-bağımsız NMS ve eşik
     K, S, C = [], [], []
     for j in range(len(HASAR)):
         k, s = birlesik(d, j)
         K.append(k.reshape(-1, 4)); S.append(s); C += [j] * len(s)
     K, S, C = np.concatenate(K), np.concatenate(S), np.array(C, int)
     t = nms(K, S) if len(K) else np.zeros(0, int)
-    t = t[S[t] >= a.conf]
+    t = t[S[t] >= conf]
+    return [(HASAR[c], float(s), *map(int, k)) for k, s, c in zip(K[t], S[t], C[t])]
+
+
+def tek_cift(a):
+    once = np.array(Image.open(a.once).convert("RGB")); sonra = np.array(Image.open(a.sonra).convert("RGB"))
+    tespitler = cift_tespit(once, sonra, a.conf, a.siniflandirici, a.sicaklik, a.konumlayici, a.konum_imgsz,
+                            a.konum_tta, a.tta)
     renk = {"destroyed": (230, 30, 30), "major-damage": (240, 120, 20), "minor-damage": (240, 200, 30),
             "no-damage": (40, 200, 60)}
     cizim = sonra.copy()
-    for (x1, y1, x2, y2), s, c in zip(K[t].astype(int), S[t], C[t]):
-        h = HASAR[c]
+    for h, s, x1, y1, x2, y2 in tespitler:
         cv2.rectangle(cizim, (x1, y1), (x2, y2), renk[h], 2)
         cv2.putText(cizim, f"{h} {s:.2f}", (x1, max(10, y1 - 3)), cv2.FONT_HERSHEY_SIMPLEX, 0.35, renk[h], 1)
     yol = Path(a.sonra).with_name(Path(a.sonra).stem + "_iki_asama.jpg")
     Image.fromarray(cizim).save(yol)
-    print(yol, {h: int((C[t] == j).sum()) for j, h in enumerate(HASAR)})
+    print(yol, {h: sum(t[0] == h for t in tespitler) for h in HASAR})
 
 
 if __name__ == "__main__":

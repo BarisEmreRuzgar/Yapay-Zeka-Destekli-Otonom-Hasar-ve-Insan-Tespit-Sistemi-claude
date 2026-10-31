@@ -51,7 +51,21 @@ Sınıflandırıcı v3 eğitimi: val top1 epoch 2'den sonra ~0.76'da sabit, eği
 Teşhis: v3 aşırı emin — gerçek kutularda olasılıkların %71'i > 0.99 (v2'de %27). AP kutuları olasılığa göre
 sıraladığı için bu bilgi kaybı doğruluk aynıyken (top1 ~0.76) mAP'i düşürüyor. Sıcaklık ölçekleme (p^(1/T),
 logit/T ile eşdeğer) kısmen düzeltiyor. `iki_asama.py --siniflandirici a.pt,b.pt --sicaklik 1,4` eklendi.
-Sıradaki: v4 = v3 verisi, 5 epoch, dropout 0.3 (kısa eğitim ezberi önlemeli).
+v4 = v3 verisi, 5 epoch, dropout 0.3: eğitim kaybı 0.22'de kaldı (v3: 0.05), ama tek başına v2'yi geçemedi.
+
+| Sınıflandırıcı (val, ortak 1.348 döşeme, konum v1) | yıkık | ağır | hafif | hasarsız | mAP50 |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| v2 | 0.652 | 0.502 | 0.379 | 0.724 | 0.564 |
+| v4, T=2 | 0.662 | 0.501 | 0.332 | 0.714 | 0.552 |
+| **v2 + v4(T=2)** | 0.673 | 0.524 | 0.389 | 0.727 | **0.578** |
+| v2 + v3(T=4) + v4(T=2) | 0.681 | 0.528 | 0.387 | 0.727 | 0.581 |
+
+Seçim: **v2 + v4(T=2)** (üçüncü model yalnız +0.003; çıkarım maliyetine değmez).
+Sınıflandırıcı tavanı (gerçek kutular) 0.77, tahmin kutularıyla 0.58 → kalan boşluk **konumda**.
+
+## Arayüz
+Gradio uygulamasına **"Afet öncesi + sonrası (uydu)"** sekmesi eklendi (`app.py`): iki hizalı görüntü yüklenir,
+iki aşamalı sistem + tek-model birleşimi çalışır. Mantık `iki_asama.cift_tespit()` içinde (modeller önbellekte).
 
 ## İnsan tespiti (projenin ana amacı)
 VisDrone test döşemeleri 960 px ama eğitim ve değerlendirme `imgsz=640` ile yapılmış: döşeme ~1.5 kat
