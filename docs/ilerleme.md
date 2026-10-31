@@ -108,6 +108,16 @@ Tam val (1.446 döşeme):
 | **konum v2 + (v2 + v4 T=2), iki+tek** | 0.691 | 0.525 | 0.403 | 0.731 | **0.588** |
 | aynı, gerçek kutularla (tavan) | 0.884 | 0.710 | 0.506 | 0.984 | 0.771 |
 
-Tek seferlik test ölçümü çalışıyor (`egitim_zinciri13`); ardından insan uzmanı eğitimi.
+**Tek seferlik bağımsız test (337 döşeme):**
+
+| Sistem | yıkık | ağır | hafif | hasarsız | mAP50 |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| tek görüntü | 0.121 | 0.328 | 0.195 | 0.507 | 0.288 |
+| iki aşama v1 | 0.446 | 0.388 | 0.168 | 0.616 | 0.404 |
+| **son sistem (iki+tek)** | **0.546** | **0.490** | **0.303** | **0.700** | **0.510** |
+| gerçek kutularla tavan | 0.880 | 0.743 | 0.450 | 0.957 | 0.758 |
+
+Val'deki kazanç (0.489 → 0.588) testte de korundu (0.404 → 0.510). Modeller `modeller/`'e kopyalandı
+(bina_konum.pt = v2, hasar_cift.pt = v2, hasar_cift_v4.pt), `iki_asama` ve uygulama varsayılanı bu topluluk.
 
 Not: 09:00–09:50 arası iki iş başlatma komutundaki yol hatası yüzünden hiç başlamamış; fark edilip yeniden başlatıldı.

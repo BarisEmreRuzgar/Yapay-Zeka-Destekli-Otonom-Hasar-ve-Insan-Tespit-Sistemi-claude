@@ -57,29 +57,31 @@ Yıkık sınıfı tek görüntülü modelin en zayıf noktasıydı (AP50 0.12). 
 eşleşenlerin %71'i doğru sınıflanıyordu. Bina yıkılınca sonrası görüntüde "bina" kalmıyor.
 
 Uydu görüntüsünde aynı bölgenin afet öncesi hâli genelde vardır. Bu durumda:
-1. **Konum:** bina, afet *öncesi* görüntüde tek sınıflı bir dedektörle bulunur (`modeller/bina_konum.pt`, xBD öncesi görüntüleri; doğrulama mAP50 0.79).
-2. **Hasar:** her bina için öncesi | sonrası | fark | maske panellerinden oluşan bir görsel YOLOv8s-cls'e verilir (`modeller/hasar_cift.pt`). Paneller konuma bağlı olduğu için eğitimde yatay çevirme ve rastgele kırpma kapalı.
+1. **Konum:** bina, afet *öncesi* görüntüde tek sınıflı bir dedektörle bulunur (`modeller/bina_konum.pt`, xBD'nin tüm öncesi görüntülerinden 13,5k döşeme; doğrulama mAP50 0.79).
+2. **Hasar:** her bina için öncesi | sonrası | fark | maske panellerinden oluşan bir görsel iki YOLOv8m-cls sınıflandırıcısına verilir, olasılıklar ortalanır (`modeller/hasar_cift.pt` + `hasar_cift_v4.pt`, ikincisi sıcaklık T=2 ile yumuşatılır). Paneller konuma bağlı olduğu için eğitimde yatay çevirme ve rastgele kırpma kapalı.
+3. **Birleştirme:** tek görüntülü modelin sonrası görüntüdeki hasar kutuları 0.6 ağırlıkla eklenir, sınıf bazında NMS.
 
+Bütün seçimler xBD eğitim dosyalarından ayrılmış bir doğrulama setinde yapıldı (ayrıntılı günlük: [`docs/ilerleme.md`](docs/ilerleme.md)); test setine yalnız sonda bir kez bakıldı.
 xBD testinde (aynı 337 döşeme, aynı AP50 hesabı, `src/iki_asama.py`):
 
 | | yıkık | ağır | hafif | hasarsız | **mAP50** |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | Tek görüntü (son model) | 0.121 | 0.328 | 0.195 | 0.507 | 0.288 |
-| İki aşama, konum = son model | 0.299 | 0.289 | 0.157 | 0.527 | 0.318 |
-| **İki aşama, konum = bina dedektörü** | **0.446** | **0.388** | 0.168 | **0.616** | **0.404** |
-| Gerçek kutular + sınıflandırıcı (tavan) | 0.844 | 0.657 | 0.368 | 0.938 | 0.702 |
+| İki aşama v1 (bina dedektörü + YOLOv8s-cls) | 0.446 | 0.388 | 0.168 | 0.616 | 0.404 |
+| **İki aşama, son** (konum v2 + 2 sınıflandırıcı + birleştirme) | **0.546** | **0.490** | **0.303** | **0.700** | **0.510** |
+| Gerçek kutular + son sınıflandırıcılar (tavan) | 0.880 | 0.743 | 0.450 | 0.957 | 0.758 |
 
-Yıkık sınıfı **3.7 kat**, genel hasar mAP50'si **0.29 → 0.40**. Hafif hasar biraz geriledi (0.20 → 0.17);
-çatıdan zor görülen bu sınıf iki yaklaşımda da en zayıfı. Tavanla aradaki fark, kalan darboğazın hâlâ konum olduğunu gösteriyor.
+Yıkık sınıfı **4.5 kat** (0.12 → 0.55), genel hasar mAP50'si **0.29 → 0.51**. Hafif hasar çatıdan zor görüldüğü için
+hâlâ en zayıf sınıf. Tavanla aradaki fark, kalan darboğazın konum (bina bulma) olduğunu gösteriyor.
 
-<p align="center"><img src="docs/iki_asama_ornek.jpg" width="900"/><br/><em>xBD test, Palu tsunamisi (eğitimde kullanılmadı). Solda öncesi, sağda sonrası: zemin sıvılaşmasıyla binaların tamamen kaybolduğu bölge yıkık (kırmızı), sağlam mahalle hasarsız (yeşil) işaretleniyor.</em></p>
+<p align="center"><img src="docs/iki_asama_ornek.jpg" width="600"/><br/><em>xBD test, Palu tsunamisi (eğitimde kullanılmadı), son sistemin sonrası görüntüsü üzerindeki çıktısı: zemin sıvılaşmasıyla binaların tamamen kaybolduğu bölge yıkık (kırmızı), sağlam mahalle hasarsız (yeşil) işaretleniyor.</em></p>
 
 ```bash
 python src/cift_veri.py && python src/cift_veri.py --test   # öncesi/sonrası panel veri seti
 python src/cift_egit.py                                     # hasar sınıflandırıcı → runs/cift
 python src/bina_veri.py                                     # öncesi görüntüde bina veri seti
 python src/egit.py --ad bina --veri veri/bina/data.yaml --model modeller/disastervision.pt --epoch 30
-python src/iki_asama.py                                     # değerlendirme (modeller/bina_konum.pt + hasar_cift.pt)
+python src/iki_asama.py                                     # değerlendirme (modeller/bina_konum.pt + sınıflandırıcı topluluğu)
 python src/iki_asama.py --once ornekler/palu_once.jpg --sonra ornekler/palu_sonra.jpg   # tek çift, çizimli çıktı
 ```
 
