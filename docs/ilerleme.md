@@ -63,6 +63,11 @@ v4 = v3 verisi, 5 epoch, dropout 0.3: eğitim kaybı 0.22'de kaldı (v3: 0.05), 
 Seçim: **v2 + v4(T=2)** (üçüncü model yalnız +0.003; çıkarım maliyetine değmez).
 Sınıflandırıcı tavanı (gerçek kutular) 0.77, tahmin kutularıyla 0.58 → kalan boşluk **konumda**.
 
+### Konum v2 ara durum
+Yeni (büyük) bina val setinde v1 = **0.782** mAP50. v2 (v1'den yüksek LR ile devam, +%50 veri) epoch 1–9: 0.753–0.772,
+yani şimdilik v1'in altında (yeniden ısınma). Kosinüs LR + son 10 epoch mozaiksiz ile yükselmesi bekleniyor; v1'i
+geçemezse v1 kalır (karar iki aşama val sonucuna göre).
+
 ## Arayüz
 Gradio uygulamasına **"Afet öncesi + sonrası (uydu)"** sekmesi eklendi (`app.py`): iki hizalı görüntü yüklenir,
 iki aşamalı sistem + tek-model birleşimi çalışır. Mantık `iki_asama.cift_tespit()` içinde (modeller önbellekte).
