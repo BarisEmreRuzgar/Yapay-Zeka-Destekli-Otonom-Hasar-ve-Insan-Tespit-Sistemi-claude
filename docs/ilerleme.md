@@ -93,5 +93,11 @@ Not: Roboflow'daki model sabit 640 girdiyle çalışıyor; bu kazanç orada yok.
 Sırada (`egitim_zinciri12`, kuyruk 11 bitince): **insan uzmanı** — yalnız insan sınıfı, 1280 px'te eğitim
 (VisDrone 18k döşemeden rastgele 8.000; disastervision.pt'den başlangıç, 20 epoch). Hasar 640'taki ana modelde kalır.
 Karar VisDrone **val** üzerinde: ana model @1280 ile karşılaştırılacak.
+Kıyas: ana model VisDrone val @1280 insan AP50 = **0.607** (val, test-dev'den belirgin şekilde kolay; test @1280 = 0.407).
+
+### Hasar: son yapılandırma
+Konum v2 (`runs/bina2`) + sınıflandırıcı topluluğu v2 + v4(T=2) + tek-model birleşimi (`iki+tek`).
+Konum v2 tek başına (cift2 ile, ortak 1.348 val döşeme): 0.564 → 0.571. Son val ve **tek seferlik test** ölçümü çalışıyor
+(`egitim_zinciri13`); ardından insan uzmanı eğitimi.
 
 Not: 09:00–09:50 arası iki iş başlatma komutundaki yol hatası yüzünden hiç başlamamış; fark edilip yeniden başlatıldı.
