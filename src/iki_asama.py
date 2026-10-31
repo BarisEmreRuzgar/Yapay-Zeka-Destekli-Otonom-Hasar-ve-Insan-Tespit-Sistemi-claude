@@ -6,7 +6,7 @@ aynı AP50 hesabıyla karşılaştırır:
   iki      : dedektör öncesi görüntüde konum + çift sınıflandırıcı hasar
   iki+gt   : gerçek kutular + çift sınıflandırıcı (sınıflandırıcının tavanı)
 
-Kullanım: python src/iki_asama.py --siniflandirici runs/cift/weights/best.pt [--konumlayici runs/bina/weights/best.pt]
+Kullanım: python src/iki_asama.py [--siniflandirici modeller/hasar_cift.pt] [--konumlayici modeller/bina_konum.pt | ana]
           python src/iki_asama.py --siniflandirici ... --once once.jpg --sonra sonra.jpg   (tek çift, çizimli)
 """
 import argparse
@@ -90,7 +90,7 @@ def bina_kutulari(dedektor, goruntu, conf):
 
 def degerlendir(a):
     dedektor = YOLO(str(KOK / "modeller" / "disastervision.pt"))
-    konumlayici = YOLO(a.konumlayici) if a.konumlayici else dedektor
+    konumlayici = dedektor if a.konumlayici == "ana" else YOLO(a.konumlayici)
     sinif = Siniflandirici(a.siniflandirici)
     etiketler = KOK / "veri" / "xbd_test" / "test" / "labels"
     gercek = {h: {} for h in HASAR}
@@ -153,7 +153,7 @@ def degerlendir(a):
 
 
 def tek_cift(a):
-    dedektor = YOLO(a.konumlayici or str(KOK / "modeller" / "disastervision.pt"))
+    dedektor = YOLO(str(KOK / "modeller" / "disastervision.pt") if a.konumlayici == "ana" else a.konumlayici)
     sinif = Siniflandirici(a.siniflandirici)
     once = np.array(Image.open(a.once).convert("RGB")); sonra = np.array(Image.open(a.sonra).convert("RGB"))
     kutu, skor, _ = bina_kutulari(dedektor, once, a.conf)
@@ -172,8 +172,9 @@ def tek_cift(a):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--siniflandirici", default=str(KOK / "runs" / "cift" / "weights" / "best.pt"))
-    ap.add_argument("--konumlayici", help="öncesi görüntüde bina bulan model (yoksa ana model)")
+    ap.add_argument("--siniflandirici", default=str(KOK / "modeller" / "hasar_cift.pt"))
+    ap.add_argument("--konumlayici", default=str(KOK / "modeller" / "bina_konum.pt"),
+                    help="öncesi görüntüde bina bulan model; \"ana\" verilirse disastervision.pt")
     ap.add_argument("--once"); ap.add_argument("--sonra")
     ap.add_argument("--conf", type=float, default=0.25)
     a = ap.parse_args()

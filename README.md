@@ -50,8 +50,41 @@ Afet bölgelerinde havadan (İHA/drone ve uydu) çekilen görüntüler üzerinde
 1. **Kopya veri seti:** `damaged-buildings-vrcqx` (v8), `damaged-building-detection-zenbx` (v2) setinin birebir alt kümesi (aynı döşemeler, aynı bölümler). Defter ikisini birden ekliyor, aynı görüntüleri iki kez eğitiyordu. Benzersiz hasar verisi aslında yalnızca 531 döşemeydi.
 2. **Açıkta API anahtarı:** Roboflow anahtarı herkese açık defterde düz metin olarak duruyordu. Artık `ROBOFLOW_API_KEY` ortam değişkeninden okunuyor.
 
+### Afet öncesi görüntü varsa: iki aşamalı hasar tespiti
+
+Yıkık sınıfı tek görüntülü modelin en zayıf noktasıydı (AP50 0.12). Teşhis, sorunun sınıflandırma değil
+**konum** olduğunu gösterdi: yıkık binaların yalnız %15'i herhangi bir kutuyla eşleşiyordu, ama
+eşleşenlerin %71'i doğru sınıflanıyordu. Bina yıkılınca sonrası görüntüde "bina" kalmıyor.
+
+Uydu görüntüsünde aynı bölgenin afet öncesi hâli genelde vardır. Bu durumda:
+1. **Konum:** bina, afet *öncesi* görüntüde tek sınıflı bir dedektörle bulunur (`modeller/bina_konum.pt`, xBD öncesi görüntüleri; doğrulama mAP50 0.79).
+2. **Hasar:** her bina için öncesi | sonrası | fark | maske panellerinden oluşan bir görsel YOLOv8s-cls'e verilir (`modeller/hasar_cift.pt`). Paneller konuma bağlı olduğu için eğitimde yatay çevirme ve rastgele kırpma kapalı.
+
+xBD testinde (aynı 337 döşeme, aynı AP50 hesabı, `src/iki_asama.py`):
+
+| | yıkık | ağır | hafif | hasarsız | **mAP50** |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| Tek görüntü (son model) | 0.121 | 0.328 | 0.195 | 0.507 | 0.288 |
+| İki aşama, konum = son model | 0.299 | 0.289 | 0.157 | 0.527 | 0.318 |
+| **İki aşama, konum = bina dedektörü** | **0.446** | **0.388** | 0.168 | **0.616** | **0.404** |
+| Gerçek kutular + sınıflandırıcı (tavan) | 0.844 | 0.657 | 0.368 | 0.938 | 0.702 |
+
+Yıkık sınıfı **3.7 kat**, genel hasar mAP50'si **0.29 → 0.40**. Hafif hasar biraz geriledi (0.20 → 0.17);
+çatıdan zor görülen bu sınıf iki yaklaşımda da en zayıfı. Tavanla aradaki fark, kalan darboğazın hâlâ konum olduğunu gösteriyor.
+
+<p align="center"><img src="docs/iki_asama_ornek.jpg" width="900"/><br/><em>xBD test, Palu tsunamisi (eğitimde kullanılmadı). Solda öncesi, sağda sonrası: zemin sıvılaşmasıyla binaların tamamen kaybolduğu bölge yıkık (kırmızı), sağlam mahalle hasarsız (yeşil) işaretleniyor.</em></p>
+
+```bash
+python src/cift_veri.py && python src/cift_veri.py --test   # öncesi/sonrası panel veri seti
+python src/cift_egit.py                                     # hasar sınıflandırıcı → runs/cift
+python src/bina_veri.py                                     # öncesi görüntüde bina veri seti
+python src/egit.py --ad bina --veri veri/bina/data.yaml --model modeller/disastervision.pt --epoch 30
+python src/iki_asama.py                                     # değerlendirme (modeller/bina_konum.pt + hasar_cift.pt)
+python src/iki_asama.py --once ornekler/palu_once.jpg --sonra ornekler/palu_sonra.jpg   # tek çift, çizimli çıktı
+```
+
 ### Sınırlamalar
-* Hasar tespiti yalnızca **afet sonrası** tek görüntüyle yapılıyor. Sel ve hafif hasar çatıdan çoğu zaman görünmüyor; yıkık sınıfı (binanın tamamen yok olduğu durumlar) hâlâ en zor sınıf. xView2 yarışmasında en iyi sonuçlar afet öncesi/sonrası görüntü çiftiyle alınıyor; bu bir sonraki adım olabilir.
+* Tek görüntülü hasar tespitinde sel ve hafif hasar çatıdan çoğu zaman görünmüyor; yıkık sınıfı zayıf. Afet öncesi görüntü varsa iki aşamalı yöntem (yukarıda) kullanılmalı; drone ile sahada çekilen görüntüde öncesi genelde olmadığı için insan tespiti ve drone senaryosu tek görüntülü modelle çalışır.
 * Roboflow insan test seti, eğitimle aynı videonun karelerinden oluştuğu için iyimser sonuç veriyor (0.92). Gerçekçi ölçüt VisDrone testi.
 * Sonuçlar karar desteği içindir; saha ekiplerince doğrulanmalıdır.
 
@@ -165,7 +198,10 @@ görüntüsünde 79 → 58) eşik, yerel değerlendirmeyle aynı olacak şekilde
 
 ```text
 ├── app.py                  # Gradio arayüzü
-├── modeller/disastervision.pt
+├── modeller/
+│   ├── disastervision.pt   # ana model: insan + hasar (tek görüntü)
+│   ├── bina_konum.pt       # afet öncesi görüntüde bina konumu
+│   └── hasar_cift.pt       # öncesi/sonrası çiftiyle hasar sınıflandırıcı
 ├── src/
 │   ├── veri_indir.py       # Roboflow + VisDrone indirme
 │   ├── xbd_cevir.py        # xBD parquet → YOLO döşemeleri
@@ -174,6 +210,10 @@ görüntüsünde 79 → 58) eşik, yerel değerlendirmeyle aynı olacak şekilde
 │   ├── egit.py             # eğitim
 │   ├── degerlendir.py      # karşılaştırmalı değerlendirme
 │   ├── tahmin.py           # tahmin + SAHI + çizim
+│   ├── cift_veri.py        # öncesi/sonrası panel veri seti
+│   ├── cift_egit.py        # hasar sınıflandırıcı eğitimi
+│   ├── bina_veri.py        # öncesi görüntüde bina veri seti
+│   ├── iki_asama.py        # iki aşamalı hasar tespiti + değerlendirme
 │   ├── roboflow_yukle.py   # ağırlıkları Roboflow'a yükleme
 │   └── roboflow_test.py    # Roboflow Workflow testi
 ├── ornekler/               # örnek görüntüler
