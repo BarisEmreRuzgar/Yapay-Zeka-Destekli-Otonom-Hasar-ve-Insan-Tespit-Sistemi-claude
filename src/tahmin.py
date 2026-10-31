@@ -24,20 +24,27 @@ TR = {"person": "insan", "destroyed": "yıkık", "major-damage": "ağır hasar",
       "minor-damage": "hafif hasar", "no-damage": "hasarsız"}
 
 
+def cikarim_boyutu(uzun_kenar: int) -> int:
+    """Modelin en iyi çalıştığı ölçek: görüntünün ~1.33 katı (eğitimdeki ölçeğe yakın), 640–1280 arası.
+    Ölçüm: VisDrone 960 px döşemelerde insan AP50 640→0.343, 960→0.380, 1280→0.407;
+    xBD 512 px döşemelerde hasar mAP50 640→0.410, 960→0.389, 1280→0.336. Sabit 640 ikisinden birini bozar."""
+    return int(min(1280, max(640, round(uzun_kenar * 4 / 3 / 32) * 32)))
+
+
 def tespit(goruntu_bgr: np.ndarray, model_yolu=VARSAYILAN_MODEL, conf=0.25, dilimle=False, dilim=640):
     """[(sınıf_adı, güven, x1, y1, x2, y2), ...] döndürür."""
     if dilimle:
         from sahi import AutoDetectionModel
         from sahi.predict import get_sliced_prediction
 
-        model = _sahi_model(str(model_yolu), conf)
+        model = _sahi_model(str(model_yolu), conf, cikarim_boyutu(dilim))
         rgb = cv2.cvtColor(goruntu_bgr, cv2.COLOR_BGR2RGB)
         sonuc = get_sliced_prediction(rgb, model, slice_height=dilim, slice_width=dilim,
                                       overlap_height_ratio=0.2, overlap_width_ratio=0.2, verbose=0)
         return [(p.category.name, p.score.value, *map(int, p.bbox.to_xyxy())) for p in sonuc.object_prediction_list]
 
     model = _yolo_model(str(model_yolu))
-    r = model.predict(goruntu_bgr, conf=conf, imgsz=640, verbose=False)[0]
+    r = model.predict(goruntu_bgr, conf=conf, imgsz=cikarim_boyutu(max(goruntu_bgr.shape[:2])), verbose=False)[0]
     return [(r.names[int(c)], float(s), *map(int, b)) for b, s, c in
             zip(r.boxes.xyxy.tolist(), r.boxes.conf.tolist(), r.boxes.cls.tolist())]
 
@@ -52,12 +59,12 @@ def _yolo_model(yol):
     return _onbellek[("yolo", yol)]
 
 
-def _sahi_model(yol, conf):
+def _sahi_model(yol, conf, boyut):
     from sahi import AutoDetectionModel
-    anahtar = ("sahi", yol, conf)
+    anahtar = ("sahi", yol, conf, boyut)
     if anahtar not in _onbellek:
         _onbellek[anahtar] = AutoDetectionModel.from_pretrained(
-            model_type="ultralytics", model_path=yol, confidence_threshold=conf)
+            model_type="ultralytics", model_path=yol, confidence_threshold=conf, image_size=boyut)
     return _onbellek[anahtar]
 
 

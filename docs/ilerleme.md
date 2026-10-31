@@ -62,8 +62,16 @@ küçültülüyor, zaten birkaç piksellik insanlar daha da küçülüyor. Eğit
 | :---: | :---: | :---: |
 | 640 (şimdiki) | 0.343 | 0.130 |
 | **960** | **0.380** | 0.145 |
-| 1280 | (çalışıyor) | |
+| **1280** | **0.407** | **0.155** |
 
-Eğitimsiz +0.037. Model 640'ta eğitildiği hâlde döşemenin kendi çözünürlüğünde çalıştırmak daha iyi.
+Ama aynı şey uydu hasarına zarar veriyor (xBD val 544 döşeme, 512 px, hasar mAP50): 640 → **0.410**, 960 → 0.389, 1280 → 0.336.
+Ortak kural: model görüntünün **~1.33 katında** en iyi (eğitimdeki ölçek: VisDrone 960→640, xBD 512→640).
+`tahmin.py` artık sabit 640 yerine `cikarim_boyutu(uzun_kenar) = clip(1.33·uzun_kenar, 640, 1280)` kullanıyor
+(SAHI dilimleri için de). Örnek drone görüntüsünde bulunan insan 79 → 103 (gerçek ~91).
+Not: Roboflow'daki model sabit 640 girdiyle çalışıyor; bu kazanç orada yok.
+
+Sırada (`egitim_zinciri12`, kuyruk 11 bitince): **insan uzmanı** — yalnız insan sınıfı, 1280 px'te eğitim
+(VisDrone 18k döşemeden rastgele 8.000; disastervision.pt'den başlangıç, 20 epoch). Hasar 640'taki ana modelde kalır.
+Karar VisDrone **val** üzerinde: ana model @1280 ile karşılaştırılacak.
 
 Not: 09:00–09:50 arası iki iş başlatma komutundaki yol hatası yüzünden hiç başlamamış; fark edilip yeniden başlatıldı.
