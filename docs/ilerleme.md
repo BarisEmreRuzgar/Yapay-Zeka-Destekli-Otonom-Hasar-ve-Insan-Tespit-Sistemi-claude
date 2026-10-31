@@ -67,6 +67,7 @@ Sınıflandırıcı tavanı (gerçek kutular) 0.77, tahmin kutularıyla 0.58 →
 Yeni (büyük) bina val setinde v1 = **0.782** mAP50. v2 (v1'den yüksek LR ile devam, +%50 veri) epoch 1–9: 0.753–0.772,
 yani şimdilik v1'in altında (yeniden ısınma). Kosinüs LR + son 10 epoch mozaiksiz ile yükselmesi bekleniyor; v1'i
 geçemezse v1 kalır (karar iki aşama val sonucuna göre).
+Sonuç: epoch 15'te 0.781, 20'de 0.790, **30'da 0.793** (v1: 0.782). İki aşama val değerlendirmesi çalışıyor.
 
 ## Arayüz
 Gradio uygulamasına **"Afet öncesi + sonrası (uydu)"** sekmesi eklendi (`app.py`): iki hizalı görüntü yüklenir,
