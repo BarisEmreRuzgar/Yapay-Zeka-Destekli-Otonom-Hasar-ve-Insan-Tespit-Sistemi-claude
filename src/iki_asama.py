@@ -65,6 +65,28 @@ def ap50(tahminler, gercekler):
     return float(np.mean([kesinlik[i] if i < len(kesinlik) else 0 for i in idx]))
 
 
+class Topluluk:
+    """Virgülle verilen sınıflandırıcıların sıcaklık ölçekli olasılık ortalaması.
+    Aşırı eğitilmiş model olasılıkları 0/1'e yığar ve AP'nin dayandığı sıralama bilgisini kaybeder;
+    p^(1/T) normalizasyonu logit/T ile aynıdır (val: v3 0.507 → 0.553 T=4'te; v2+v3 0.577)."""
+
+    def __init__(self, yollar, sicakliklar="", tta=0):
+        yollar = yollar.split(",")
+        T = [float(t) for t in sicakliklar.split(",")] if sicakliklar else [1.0] * len(yollar)
+        assert len(T) == len(yollar), "her sınıflandırıcıya bir sıcaklık"
+        self.uyeler = [(Siniflandirici(y, tta), t) for y, t in zip(yollar, T)]
+
+    def __call__(self, once, sonra, kutular):
+        toplam = 0
+        for uye, t in self.uyeler:
+            p = uye(once, sonra, kutular)
+            if len(p) and t != 1:
+                p = np.clip(p, 1e-12, 1) ** (1 / t)
+                p = p / p.sum(1, keepdims=True)
+            toplam = toplam + p
+        return toplam / len(self.uyeler)
+
+
 class Siniflandirici:
     def __init__(self, yol, tta=0):
         self.m = YOLO(yol)
@@ -178,7 +200,7 @@ def degerlendir(a):
     kurgular = a.kurgu.split(",")
     dedektor = YOLO(str(KOK / "modeller" / "disastervision.pt"))
     konumlayici = dedektor if a.konumlayici == "ana" else YOLO(a.konumlayici)
-    sinif = Siniflandirici(a.siniflandirici, a.tta)
+    sinif = Topluluk(a.siniflandirici, a.sicaklik, a.tta)
     ham = {}
     for ad, once, sonra, maske in ciftler(a.bolum, a.sinir):
         for oy in range(0, maske.shape[0], DOSEME):
@@ -212,7 +234,7 @@ def degerlendir(a):
 def tek_cift(a):
     ana = YOLO(str(KOK / "modeller" / "disastervision.pt"))
     konumlayici = ana if a.konumlayici == "ana" else YOLO(a.konumlayici)
-    sinif = Siniflandirici(a.siniflandirici, a.tta)
+    sinif = Topluluk(a.siniflandirici, a.sicaklik, a.tta)
     once = np.array(Image.open(a.once).convert("RGB")); sonra = np.array(Image.open(a.sonra).convert("RGB"))
     d = {}
     d["kon_kutu"], d["kon_skor"], _ = bina_kutulari(konumlayici, once, 0.01, a.konum_imgsz, a.konum_tta)
@@ -242,7 +264,9 @@ def tek_cift(a):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--siniflandirici", default=str(KOK / "modeller" / "hasar_cift.pt"))
+    ap.add_argument("--siniflandirici", default=str(KOK / "modeller" / "hasar_cift.pt"),
+                    help="virgülle birden çok model verilirse olasılıkları ortalanır")
+    ap.add_argument("--sicaklik", default="", help="her sınıflandırıcı için sıcaklık, virgülle (varsayılan 1)")
     ap.add_argument("--konumlayici", default=str(KOK / "modeller" / "bina_konum.pt"),
                     help="öncesi görüntüde bina bulan model; \"ana\" verilirse disastervision.pt")
     ap.add_argument("--once"); ap.add_argument("--sonra")

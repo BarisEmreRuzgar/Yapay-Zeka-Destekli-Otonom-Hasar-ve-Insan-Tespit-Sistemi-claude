@@ -38,11 +38,32 @@ Skor birleşimi (det^a · olasılık^b) denendi: a=2 yalnız +0.006, şimdilik d
   * Konum v2 (`runs/bina2`): bina_konum.pt'den devam, 13.5k döşeme, 640 px, 30 epoch.
 
 Sınıflandırıcı v3 eğitimi: val top1 epoch 2'den sonra ~0.76'da sabit, eğitim kaybı 0.05'e iniyor (ezber).
-Sonraki sürüm için not: `dropout`, daha az epoch.
+
+### Sınıflandırıcı v3 sonucu: daha fazla veri ≠ daha iyi (val, ortak 1.348 döşeme, iki aşama, konum v1)
+| Sınıflandırıcı | yıkık | ağır | hafif | hasarsız | mAP50 |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| v2 (10 epoch, en iyisi 4.) | 0.652 | 0.502 | 0.379 | 0.724 | 0.564 |
+| v2, T=2 | 0.655 | 0.505 | 0.371 | 0.728 | 0.565 |
+| v3 (15 epoch, tüm veri, panel çevirme) | 0.637 | 0.428 | 0.281 | 0.684 | 0.507 |
+| v3, T=4 | 0.670 | 0.490 | 0.339 | 0.712 | 0.553 |
+| **v2 + v3(T=4) olasılık ortalaması** | **0.677** | **0.521** | **0.384** | **0.727** | **0.577** |
+
+Teşhis: v3 aşırı emin — gerçek kutularda olasılıkların %71'i > 0.99 (v2'de %27). AP kutuları olasılığa göre
+sıraladığı için bu bilgi kaybı doğruluk aynıyken (top1 ~0.76) mAP'i düşürüyor. Sıcaklık ölçekleme (p^(1/T),
+logit/T ile eşdeğer) kısmen düzeltiyor. `iki_asama.py --siniflandirici a.pt,b.pt --sicaklik 1,4` eklendi.
+Sıradaki: v4 = v3 verisi, 5 epoch, dropout 0.3 (kısa eğitim ezberi önlemeli).
 
 ## İnsan tespiti (projenin ana amacı)
 VisDrone test döşemeleri 960 px ama eğitim ve değerlendirme `imgsz=640` ile yapılmış: döşeme ~1.5 kat
 küçültülüyor, zaten birkaç piksellik insanlar daha da küçülüyor. Eğitimsiz ilk deneme: aynı modeli
-640 / 960 / 1280'de değerlendirmek (`egitim_zinciri9`, sınıflandırıcı eğitimi bitince; RAM yetersiz olduğu için sırada).
+640 / 960 / 1280'de değerlendirmek.
+
+| `imgsz` (VisDrone test-dev, 3.057 döşeme) | insan AP50 | AP50-95 |
+| :---: | :---: | :---: |
+| 640 (şimdiki) | 0.343 | 0.130 |
+| **960** | **0.380** | 0.145 |
+| 1280 | (çalışıyor) | |
+
+Eğitimsiz +0.037. Model 640'ta eğitildiği hâlde döşemenin kendi çözünürlüğünde çalıştırmak daha iyi.
 
 Not: 09:00–09:50 arası iki iş başlatma komutundaki yol hatası yüzünden hiç başlamamış; fark edilip yeniden başlatıldı.
