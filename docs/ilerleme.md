@@ -143,4 +143,4 @@ Ana model SAR doğrulamada (sıfır-atış, 1280): insan AP50 **0.260**, AP50-95
 * **HERIDAL** (dağlık arazi SAR, Hırvatistan) iniyor (4,2 GB) → hiç eğitimde kullanılmayacak, **harici test** olacak.
 
 Eğitim yeniden başlatıldı (`egitim_zinciri15`): VisDrone 8k + drone-leak 3,5k + SARD 2k, 1280 px, 10 epoch.
-Değerlendirme: VisDrone val (kıyas 0.607), drone-leak SAR val (kıyas 0.260), SARD val (kıyas: ana model, ölçülüyor).
+Değerlendirme: VisDrone val (kıyas 0.607), drone-leak SAR val (kıyas 0.260), SARD val (kıyas: ana model sıfır-atış AP50 **0.315**, AP50-95 0.141).
