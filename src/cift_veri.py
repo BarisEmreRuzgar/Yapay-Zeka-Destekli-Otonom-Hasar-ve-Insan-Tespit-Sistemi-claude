@@ -6,7 +6,7 @@ görüntüden aynı bölge bağlamıyla kırpılır ve tek bir 224 px görsele d
     alt sol: |sonrası - öncesi| farkı (güçlendirilmiş)   alt sağ: bina maskesi
 Böylece standart YOLOv8-cls mimarisi iki zamanı birlikte görür.
 
-Kullanım: python src/cift_veri.py [--sinif-basina 12000] [--test]
+Kullanım: python src/cift_veri.py [--sinif-basina 12000] [--test] [--maske kutu|gercek] [--panel 128 --cikti cift2]
 """
 import argparse
 import io
@@ -36,20 +36,27 @@ def bina_kutulari(maske):
                 yield ad, x, y, w, h, (etiket == i)
 
 
-def cift_gorsel(once, sonra, x, y, w, h, bina=None):
-    """Kutuyu bağlamla genişletip 2x2 panelli 224 px görsel döndürür (np.uint8, RGB)."""
+def oynat(x, y, w, h, rng, oran=0.15):
+    """Kutuyu konum modelinin kusurlarını taklit edecek şekilde rastgele kaydırıp boyutlandırır."""
+    dw, dh = w * rng.uniform(-oran, oran), h * rng.uniform(-oran, oran)
+    return x + w * rng.uniform(-oran, oran) - dw / 2, y + h * rng.uniform(-oran, oran) - dh / 2, w + dw, h + dh
+
+
+def cift_gorsel(once, sonra, x, y, w, h, bina=None, panel=PANEL):
+    """Kutuyu bağlamla genişletip 2x2 panelli (2*panel px) görsel döndürür (np.uint8, RGB).
+    bina verilmezse maske paneli kutunun kendisidir (çıkarımda maske yok)."""
     H, W = once.shape[:2]
     kenar = max(w, h) * 1.6 + 16
     cx, cy = x + w / 2, y + h / 2
     x1, y1 = int(max(0, cx - kenar / 2)), int(max(0, cy - kenar / 2))
     x2, y2 = int(min(W, cx + kenar / 2)), int(min(H, cy + kenar / 2))
-    a = cv2.resize(once[y1:y2, x1:x2], (PANEL, PANEL), interpolation=cv2.INTER_AREA)
-    b = cv2.resize(sonra[y1:y2, x1:x2], (PANEL, PANEL), interpolation=cv2.INTER_AREA)
+    a = cv2.resize(once[y1:y2, x1:x2], (panel, panel), interpolation=cv2.INTER_AREA)
+    b = cv2.resize(sonra[y1:y2, x1:x2], (panel, panel), interpolation=cv2.INTER_AREA)
     fark = np.clip(np.abs(b.astype(np.int16) - a.astype(np.int16)) * 2, 0, 255).astype(np.uint8)
-    if bina is None:  # çıkarımda maske yok: kutunun kendisi
+    if bina is None:
         bina = np.zeros((H, W), bool)
-        bina[int(y):int(y + h), int(x):int(x + w)] = True
-    m = cv2.resize(bina[y1:y2, x1:x2].astype(np.uint8) * 255, (PANEL, PANEL), interpolation=cv2.INTER_NEAREST)
+        bina[max(0, int(y)):int(y + h), max(0, int(x)):int(x + w)] = True
+    m = cv2.resize(bina[y1:y2, x1:x2].astype(np.uint8) * 255, (panel, panel), interpolation=cv2.INTER_NEAREST)
     return np.vstack([np.hstack([a, b]), np.hstack([fark, np.dstack([m] * 3)])])
 
 
@@ -63,14 +70,19 @@ def main():
     ap.add_argument("--sinif-basina", type=int, default=12000, help="eğitimde sınıf başına üst sınır")
     ap.add_argument("--valid-oran", type=float, default=0.1)
     ap.add_argument("--test", action="store_true", help="bağımsız xBD testinden (sınırsız)")
+    ap.add_argument("--maske", choices=["kutu", "gercek"], default="kutu",
+                    help="kutu: oynatılmış dikdörtgen (çıkarımla aynı); gercek: bina şekli (ilk sürüm)")
+    ap.add_argument("--panel", type=int, default=PANEL)
+    ap.add_argument("--hasarsiz-alma", type=float, default=0.12)
+    ap.add_argument("--cikti", default="cift")
     a = ap.parse_args()
 
     ham = KOK / "veri" / "ham" / ("xbd_test" if a.test else "xbd")
-    cikti = KOK / "veri" / ("cift_test" if a.test else "cift")
+    cikti = KOK / "veri" / (a.cikti + "_test" if a.test else a.cikti)
     sayac = {b: {s: 0 for s in SINIFLAR.values()} for b in ("train", "val", "test")}
     rng = random.Random(0)
     # Hasarsız binalar çok baskın; sınır dolmadan tükenmesin diye her binayı olasılıkla alıyoruz.
-    alma = {"no-damage": 0.12, "minor-damage": 1.0, "major-damage": 1.0, "destroyed": 1.0}
+    alma = {"no-damage": a.hasarsiz_alma, "minor-damage": 1.0, "major-damage": 1.0, "destroyed": 1.0}
 
     for dosya in sorted(ham.glob("*.parquet")):
         for grup in pq.ParquetFile(dosya).iter_batches(
@@ -91,7 +103,10 @@ def main():
                             continue
                     hedef = cikti / bolum / sinif
                     hedef.mkdir(parents=True, exist_ok=True)
-                    Image.fromarray(cift_gorsel(once, sonra, x, y, w, h, bina)).save(
+                    if a.maske == "kutu":
+                        x, y, w, h = oynat(x, y, w, h, rng) if not a.test else (x, y, w, h)
+                        bina = None
+                    Image.fromarray(cift_gorsel(once, sonra, x, y, w, h, bina, a.panel)).save(
                         hedef / f"{ad}_{k}.jpg", quality=92)
                     sayac[bolum][sinif] += 1
         print(dosya.name, {b: s for b, s in sayac.items() if any(s.values())}, flush=True)

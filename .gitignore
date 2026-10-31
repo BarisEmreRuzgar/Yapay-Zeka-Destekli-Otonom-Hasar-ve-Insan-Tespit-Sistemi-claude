@@ -11,3 +11,16 @@ zincir_bitti.txt
 egitim_zinciri*.ps1
 zincir*_bitti.txt
 .venv_yukle/
+indir_tier3.ps1
+indir_tier3_bitti.txt
+veri_cift2.ps1
+cift2_veri_bitti.txt
+ornekler/*_iki_asama.jpg
+veri_bina2.ps1
+bina2_veri_bitti.txt
+veri_cift3.ps1
+cift3_veri_bitti.txt
+deneme_imgsz.ps1
+deneme_imgsz_bitti.txt
+otomatik_kayit.ps1
+kayit_dur.txt
