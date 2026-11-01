@@ -158,3 +158,8 @@ Eğitim içi VisDrone val epoch 1→10: 0.575 → 0.663 (yükselme son epoch'a k
 `tahmin.py`: insanlar uzmandan (her zaman 1280; SAHI'de 960 dilim), hasar ana modelden. Kalabalık örnek: 103 → 86 (gerçek ~91).
 Uydu örneğinde uzman 1 yanlış insan buldu (ana model 0) — uydu çözünürlüğünde insan görünmez; ileride uydu girdisinde insan kapatılabilir.
 HERIDAL ilk indirmede bağlantı koptu (2,6/4,3 GB), yeniden indiriliyor → harici test.
+
+### Sıradaki: uzman v2 + HERIDAL harici testi
+* `egitim_zinciri17`: uzman v1'den aynı veriyle 12 epoch daha (`runs/insan_sar2`); karar val setlerinde (v1: 0.666 / 0.860 / 0.840).
+* HERIDAL (new-workspace-qsuag/heridal-t428z, CC BY 4.0): 13 bölgeden 1.546 adet 4000×3000 dağ/orman karesi →
+  `src/heridal_veri.py` ile 5.808 döşeme / 4.555 insan. **Hiç eğitimde yok**; ana model, uzman v1 ve v2 karşılaştırılacak (`egitim_zinciri18`).
