@@ -7,7 +7,7 @@
   "confidence": 0.6728038191795349,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "7f6df4db-9d3a-49fb-a95d-205341965504",
+  "detection_id": "da506283-9080-4f58-9283-38579ba8edb2",
   "parent_id": "image"
  },
  {
@@ -18,7 +18,7 @@
   "confidence": 0.645641565322876,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "772befa8-47e1-48d1-ac2a-5083307c5084",
+  "detection_id": "76f6e8b4-8eb4-417f-8594-9d32a7d0eaf0",
   "parent_id": "image"
  },
  {
@@ -29,7 +29,7 @@
   "confidence": 0.627666175365448,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "62e14e7b-22b2-4dbd-9558-c597f8e90553",
+  "detection_id": "a171d0c4-f4d3-4fc3-9bba-b7bafd128fea",
   "parent_id": "image"
  },
  {
@@ -40,7 +40,7 @@
   "confidence": 0.5807580947875977,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "2ea15ac8-1ca8-4435-a8a3-8ee52fe2ea2c",
+  "detection_id": "b56d0fa9-dba2-4e4a-88f0-f426ae978491",
   "parent_id": "image"
  },
  {
@@ -51,7 +51,7 @@
   "confidence": 0.5743421912193298,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "54595715-52cb-4fae-b491-2d47730252ae",
+  "detection_id": "62f31875-0185-4b13-913d-eab952593216",
   "parent_id": "image"
  },
  {
@@ -62,7 +62,7 @@
   "confidence": 0.5500915050506592,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "9ab3e837-8cef-465b-83e5-eb7b946060a7",
+  "detection_id": "ca97c2db-adfb-439b-83be-4c0fab1bfa96",
   "parent_id": "image"
  },
  {
@@ -73,7 +73,7 @@
   "confidence": 0.5376599431037903,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "27511280-8c69-4ee4-90b5-898898792666",
+  "detection_id": "803e12f5-dc64-4662-b911-e889be1a001f",
   "parent_id": "image"
  },
  {
@@ -84,7 +84,7 @@
   "confidence": 0.5371904969215393,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "020abb9e-f8e8-470b-b117-804556332934",
+  "detection_id": "74e62a93-4077-4773-9930-977b7d8ce73b",
   "parent_id": "image"
  },
  {
@@ -95,7 +95,7 @@
   "confidence": 0.49992823600769043,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "3d0ccb46-b9dd-4789-a6f3-6458969b91f4",
+  "detection_id": "e6dcdec9-8426-4ae4-84f6-881dcf402334",
   "parent_id": "image"
  },
  {
@@ -106,7 +106,7 @@
   "confidence": 0.4933297038078308,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "4f78fce1-838f-49fc-becc-9b6f37d10db9",
+  "detection_id": "2795b25b-703f-42df-b532-33ecd2f47766",
   "parent_id": "image"
  },
  {
@@ -117,7 +117,7 @@
   "confidence": 0.49180305004119873,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "484c36e8-cf2d-42c2-a0d7-748f00378f36",
+  "detection_id": "876106ef-c209-4ac0-beee-4d39e77468fe",
   "parent_id": "image"
  },
  {
@@ -128,7 +128,7 @@
   "confidence": 0.47570568323135376,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "07645af3-b0cb-46f4-9a87-5a38300b6d8a",
+  "detection_id": "ddbac584-c30a-4aa9-b0d1-c59a1b5927f7",
   "parent_id": "image"
  },
  {
@@ -139,7 +139,7 @@
   "confidence": 0.45781636238098145,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "e9f5fecb-0803-4d06-a02e-27c7a5734344",
+  "detection_id": "60c36095-9f8e-423a-9562-8d45e5ce84be",
   "parent_id": "image"
  },
  {
@@ -150,7 +150,7 @@
   "confidence": 0.45140987634658813,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "423a5643-6092-4114-ab98-ae4b1a4d8adc",
+  "detection_id": "77ff26e7-14a5-4558-9d15-7a66d8570cc0",
   "parent_id": "image"
  },
  {
@@ -161,7 +161,7 @@
   "confidence": 0.43164873123168945,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "15c77153-d2af-494f-9698-8b03d6914e7a",
+  "detection_id": "4f0c630f-2664-4528-b6ad-406b0a24694d",
   "parent_id": "image"
  },
  {
@@ -172,7 +172,7 @@
   "confidence": 0.42920422554016113,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "e47fb7d6-8be0-4c9e-8904-c445c540a354",
+  "detection_id": "3119abb2-46f3-42b1-9b6f-88d6a1f30158",
   "parent_id": "image"
  },
  {
@@ -183,7 +183,7 @@
   "confidence": 0.42576271295547485,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "810435d3-619a-47aa-b3c2-2e60ac4af9e1",
+  "detection_id": "dbe42bd2-7c5b-46b0-916a-3dfe5d3351b7",
   "parent_id": "image"
  },
  {
@@ -194,7 +194,7 @@
   "confidence": 0.4037105441093445,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "7bfeb481-cc6b-48f9-8c03-13ed7a2519f1",
+  "detection_id": "d7de5039-86ce-4aec-b357-306252c26374",
   "parent_id": "image"
  },
  {
@@ -205,7 +205,7 @@
   "confidence": 0.4015045762062073,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "5bca073d-666b-46fe-a9fd-c9001843a829",
+  "detection_id": "2e273d67-24db-4d93-8ab4-071b81845a88",
   "parent_id": "image"
  },
  {
@@ -216,7 +216,7 @@
   "confidence": 0.3915669918060303,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "b0d6742f-5b56-4e0f-bff0-647d51e2bcc1",
+  "detection_id": "b0656618-1f2e-4c85-a1df-ffc2ca13d243",
   "parent_id": "image"
  },
  {
@@ -227,7 +227,7 @@
   "confidence": 0.37591129541397095,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "38132324-ade4-44be-a31c-11b37f26d51b",
+  "detection_id": "160db589-f927-4329-a9d7-5301af3ff06c",
   "parent_id": "image"
  },
  {
@@ -238,7 +238,7 @@
   "confidence": 0.375133752822876,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "7f90308a-fb6e-41b7-8dce-938cb6e4cc87",
+  "detection_id": "03c23b6e-3c9f-4a4c-a5ad-139bb751f4ec",
   "parent_id": "image"
  },
  {
@@ -249,7 +249,7 @@
   "confidence": 0.36910051107406616,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "82261ff5-0b32-4334-8e31-46a60f07afa8",
+  "detection_id": "68b1230c-c909-409a-bc7c-2b82b772f6c9",
   "parent_id": "image"
  },
  {
@@ -260,7 +260,7 @@
   "confidence": 0.36848360300064087,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "4cd88b97-6566-40fa-a279-a10d8c432d7f",
+  "detection_id": "b1277ba3-6699-4ced-84e7-e3909403bdd2",
   "parent_id": "image"
  },
  {
@@ -271,7 +271,7 @@
   "confidence": 0.3590969443321228,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "69feef83-e892-43f9-94d5-f50b6efa3312",
+  "detection_id": "f00ee89d-7202-43e7-90b0-f20a1149214c",
   "parent_id": "image"
  },
  {
@@ -282,7 +282,7 @@
   "confidence": 0.35145020484924316,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "2000c81f-9bb5-408d-8002-73c9f4c63f4e",
+  "detection_id": "6706d9d2-1f54-4bd8-9984-154dfeaac820",
   "parent_id": "image"
  },
  {
@@ -293,7 +293,7 @@
   "confidence": 0.3365158438682556,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "41945bac-de73-413b-a1bb-6052ec89e538",
+  "detection_id": "ce97797e-439c-4e7c-a984-0111be229068",
   "parent_id": "image"
  },
  {
@@ -304,7 +304,7 @@
   "confidence": 0.3317487835884094,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "a7f5cd44-b77c-436e-bc52-b5db96f747ad",
+  "detection_id": "dc5a752b-d218-4772-a405-e8da64f074b6",
   "parent_id": "image"
  },
  {
@@ -315,7 +315,7 @@
   "confidence": 0.32953941822052,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "c6a13550-ae83-4f09-a99f-e6f11ef330dc",
+  "detection_id": "510a15a2-1adc-4cd3-8ba2-9da8ca7444b3",
   "parent_id": "image"
  },
  {
@@ -326,7 +326,7 @@
   "confidence": 0.3241673707962036,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "1578b875-ebf4-4b34-8134-493975075a1f",
+  "detection_id": "22dfc708-46d5-47cf-af09-6e0e57784ca0",
   "parent_id": "image"
  },
  {
@@ -337,7 +337,7 @@
   "confidence": 0.3184928297996521,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "82b300d8-80c4-4770-bb34-df9fdc1fb519",
+  "detection_id": "7e4080eb-9c71-4568-bdd7-0b36cb9760e8",
   "parent_id": "image"
  },
  {
@@ -348,7 +348,7 @@
   "confidence": 0.3137258291244507,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "6048e6f2-8153-44cf-b31a-2e6a68b8a5ce",
+  "detection_id": "45e52d1f-900f-4c50-a11d-9c79429a0e61",
   "parent_id": "image"
  },
  {
@@ -359,7 +359,7 @@
   "confidence": 0.3097071647644043,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "06508df1-4ba9-466a-8529-69bbc278d37b",
+  "detection_id": "b67f1512-5ea6-45f5-840e-a9ae0c7ac6ff",
   "parent_id": "image"
  },
  {
@@ -370,7 +370,7 @@
   "confidence": 0.3093242645263672,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "44eee442-1fda-4ddc-abe4-9bf414b4efc3",
+  "detection_id": "f8ec2acd-5228-4175-882e-0414aa25dae8",
   "parent_id": "image"
  },
  {
@@ -381,7 +381,7 @@
   "confidence": 0.3046764135360718,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "509a6704-cd8a-4fa2-a65a-a0523778b021",
+  "detection_id": "6f3e560d-b695-47f1-8789-e19aa14d1225",
   "parent_id": "image"
  },
  {
@@ -392,7 +392,7 @@
   "confidence": 0.2959372401237488,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "b110bf0b-af75-4182-81b0-70c7ba61d0bd",
+  "detection_id": "5101e017-0a72-41ed-b633-25a5f256b2e0",
   "parent_id": "image"
  },
  {
@@ -403,7 +403,7 @@
   "confidence": 0.2949512004852295,
   "class_id": 2,
   "class": "major-damage",
-  "detection_id": "645d4be7-1d02-43c9-b826-e8f2428f3bd5",
+  "detection_id": "101e0edf-726f-49f8-9e82-a68ca426957a",
   "parent_id": "image"
  },
  {
@@ -414,7 +414,7 @@
   "confidence": 0.288623571395874,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "e57f44e5-26ca-4f3e-8192-0fc7d137b35f",
+  "detection_id": "9a15933e-54a9-4104-9d2f-8c4f8c977736",
   "parent_id": "image"
  },
  {
@@ -425,7 +425,7 @@
   "confidence": 0.27896445989608765,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "743d0e7c-ae28-41b7-978e-d47eb4e5c2f1",
+  "detection_id": "4cf6ae19-118a-4b85-87f5-2be576dfbb94",
   "parent_id": "image"
  },
  {
@@ -436,7 +436,7 @@
   "confidence": 0.267983078956604,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "cfafe7f0-afca-4323-a1a6-b2bb4f26a31f",
+  "detection_id": "4832b227-f1e8-42aa-b33d-34808397bf83",
   "parent_id": "image"
  },
  {
@@ -447,7 +447,7 @@
   "confidence": 0.26393961906433105,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "4ddfa93e-b1c5-45bd-a1c9-1fd564e3793a",
+  "detection_id": "5bc449de-5e2d-4d9c-a8c2-94a120511850",
   "parent_id": "image"
  },
  {
@@ -458,7 +458,7 @@
   "confidence": 0.2638373374938965,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "c40db2da-15d3-44d8-94d1-cc258962fc77",
+  "detection_id": "bf0e5133-9466-4a7c-aca3-9080a8ca015f",
   "parent_id": "image"
  },
  {
@@ -469,7 +469,7 @@
   "confidence": 0.2523263096809387,
   "class_id": 4,
   "class": "no-damage",
-  "detection_id": "b926c849-9698-4252-ac25-5e010c606e5d",
+  "detection_id": "41746741-4926-41fd-be8a-feddd1a61a82",
   "parent_id": "image"
  },
  {
@@ -480,7 +480,18 @@
   "confidence": 0.252185583114624,
   "class_id": 3,
   "class": "minor-damage",
-  "detection_id": "f6a14365-56d7-4343-9041-8a81280b2ffc",
+  "detection_id": "2a22f4c4-d75c-4630-b9fa-33f95a0dc812",
+  "parent_id": "image"
+ },
+ {
+  "width": 6.0,
+  "height": 9.0,
+  "x": 467.0,
+  "y": 23.5,
+  "confidence": 0.4985586404800415,
+  "class_id": 0,
+  "class": "person",
+  "detection_id": "5ae08267-88be-41b2-91ea-6b1afae17f68",
   "parent_id": "image"
  }
 ]
