@@ -46,6 +46,24 @@ Afet bölgelerinde havadan (İHA/drone ve uydu) çekilen görüntüler üzerinde
 
 **Yorum:** Orijinal model yalnızca eğitildiği veriye benzeyen görüntülerde çalışıyordu (Roboflow testi 0.50). Gerçek drone görüntüsünde insanları neredeyse hiç bulamıyor (0.02), başka afetlerde de hasarı göremiyordu (0.05). Yeni model orijinal testte aynı seviyede kalırken bağımsız testlerde **5–15 kat** daha iyi.
 
+### İnsan uzmanı: arama-kurtarma verisiyle
+Ana model hasar ve insanı birlikte 640 px'te öğreniyor; birkaç piksellik insanlar için hem ölçek hem veri yetersiz.
+Ayrı bir **yalnız-insan** modeli (`modeller/insan_uzman.pt`) 1280 px'te eğitildi: VisDrone (8.000 döşeme) +
+Roboflow Universe'ten iki arama-kurtarma seti (4K drone videoları ve SARD: moloz/kaya arasında kısmen gizli insanlar).
+Universe setleri kareleri rastgele bölüyor (ardışık, neredeyse aynı kareler train ile test'e düşüyor); burada
+doğrulama **video / kare aralığı bazında** ayrıldı, hiçbir doğrulama karesi ya da komşusu eğitimde yok.
+`tahmin.py` ve uygulama insanları artık bu modelden, hasarı ana modelden alıyor.
+
+| İnsan AP50 | Ana model (1280) | **İnsan uzmanı** |
+| :--- | :---: | :---: |
+| VisDrone val | 0.607 | **0.666** |
+| Arama-kurtarma drone videoları (görülmemiş 3 video) | 0.260 | **0.860** |
+| SARD (ayrılmış son %15 kare) | 0.315 | **0.840** |
+| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | **0.458** |
+
+Aynı test-dev'de orijinal model 0.022, ilk yeni model (640 px) 0.343 idi. Örnek kalabalık drone görüntüsünde
+(VisDrone test-dev, gerçek ~91 kişi) bulunan insan: ana model 640 px 79, 1280 px 103 (yanlış alarmlarla), uzman **86**.
+
 ### Orijinal veri hattında bulunan hatalar
 1. **Kopya veri seti:** `damaged-buildings-vrcqx` (v8), `damaged-building-detection-zenbx` (v2) setinin birebir alt kümesi (aynı döşemeler, aynı bölümler). Defter ikisini birden ekliyor, aynı görüntüleri iki kez eğitiyordu. Benzersiz hasar verisi aslında yalnızca 531 döşemeydi.
 2. **Açıkta API anahtarı:** Roboflow anahtarı herkese açık defterde düz metin olarak duruyordu. Artık `ROBOFLOW_API_KEY` ortam değişkeninden okunuyor.
@@ -110,6 +128,8 @@ python src/iki_asama.py --once ornekler/palu_once.jpg --sonra ornekler/palu_sonr
 | [Roboflow: disaster](https://universe.roboflow.com/akash-gnbdg/disaster-dnaqz) | insan (eğik açılı drone) | 911 görüntü | Roboflow Universe |
 | [Roboflow: damaged-building-detection](https://universe.roboflow.com/damaged-building-detection/damaged-building-detection-zenbx) | hasar (Hurricane Maria) | 1.119 görüntü | Roboflow Universe |
 | [VisDrone2019-DET](https://github.com/VisDrone/VisDrone-Dataset) | insan (`pedestrian` + `people`) | 4.000 döşeme (960 px) | yalnızca akademik |
+| [Search and Rescue (drone-leak)](https://universe.roboflow.com/drone-leak/search-and-rescue-8ywn7) | insan uzmanı: 4K arama-kurtarma drone videoları | 3.493 döşeme (960 px) | CC BY 4.0 |
+| [SARD (sandr/drone-aerial)](https://universe.roboflow.com/sandr/drone-aerial) | insan uzmanı: moloz/kaya arasında kısmen gizli insanlar | 2.000 görüntü | CC BY 4.0 |
 | [xBD / xView2](https://xview2.org) ([HF aynası](https://huggingface.co/datasets/EVER-Z/torchange_xView2)) | hasar (19 afet) | 5.387 döşeme (512 px) | CC BY-NC-SA 4.0 |
 
 * xBD maskelerinden her hasar seviyesinin bağlı bileşenleri bina kutusuna çevrilir. Yalnız hasarsız bina içeren döşemelerin %85'i atılarak sınıf dengesi iyileştirilir.
@@ -202,8 +222,10 @@ görüntüsünde 79 → 58) eşik, yerel değerlendirmeyle aynı olacak şekilde
 ├── app.py                  # Gradio arayüzü
 ├── modeller/
 │   ├── disastervision.pt   # ana model: insan + hasar (tek görüntü)
+│   ├── insan_uzman.pt      # yalnız insan, 1280 px, VisDrone + arama-kurtarma verisi
 │   ├── bina_konum.pt       # afet öncesi görüntüde bina konumu
-│   └── hasar_cift.pt       # öncesi/sonrası çiftiyle hasar sınıflandırıcı
+│   ├── hasar_cift.pt       # öncesi/sonrası çiftiyle hasar sınıflandırıcı
+│   └── hasar_cift_v4.pt    # topluluğun ikinci üyesi
 ├── src/
 │   ├── veri_indir.py       # Roboflow + VisDrone indirme
 │   ├── xbd_cevir.py        # xBD parquet → YOLO döşemeleri
@@ -216,6 +238,9 @@ görüntüsünde 79 → 58) eşik, yerel değerlendirmeyle aynı olacak şekilde
 │   ├── cift_egit.py        # hasar sınıflandırıcı eğitimi
 │   ├── bina_veri.py        # öncesi görüntüde bina veri seti
 │   ├── iki_asama.py        # iki aşamalı hasar tespiti + değerlendirme
+│   ├── sar_indir.py        # Universe'ten arama-kurtarma veri setleri
+│   ├── sar_veri.py         # drone-leak 4K kareleri → döşemeler (video bazlı bölme)
+│   ├── sard_veri.py        # SARD → 16:9'a geri açma (kare aralığıyla bölme)
 │   ├── roboflow_yukle.py   # ağırlıkları Roboflow'a yükleme
 │   └── roboflow_test.py    # Roboflow Workflow testi
 ├── ornekler/               # örnek görüntüler

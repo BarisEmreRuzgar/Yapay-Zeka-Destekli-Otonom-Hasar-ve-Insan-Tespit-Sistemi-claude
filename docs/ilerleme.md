@@ -144,3 +144,17 @@ Ana model SAR doğrulamada (sıfır-atış, 1280): insan AP50 **0.260**, AP50-95
 
 Eğitim yeniden başlatıldı (`egitim_zinciri15`): VisDrone 8k + drone-leak 3,5k + SARD 2k, 1280 px, 10 epoch.
 Değerlendirme: VisDrone val (kıyas 0.607), drone-leak SAR val (kıyas 0.260), SARD val (kıyas: ana model sıfır-atış AP50 **0.315**, AP50-95 0.141).
+
+### İnsan uzmanı sonucu (`runs/insan_sar` → `modeller/insan_uzman.pt`)
+Eğitim içi VisDrone val epoch 1→10: 0.575 → 0.663 (yükselme son epoch'a kadar sürdü; daha uzun eğitim fayda verebilir).
+
+| İnsan AP50 (1280) | Ana model | İnsan uzmanı |
+| :--- | :---: | :---: |
+| VisDrone val | 0.607 | **0.666** |
+| drone-leak SAR val (3 görülmemiş video) | 0.260 | **0.860** |
+| SARD val (gss ≥ 1800) | 0.315 | **0.840** |
+| VisDrone test-dev (tek seferlik) | 0.407 | **0.458** |
+
+`tahmin.py`: insanlar uzmandan (her zaman 1280; SAHI'de 960 dilim), hasar ana modelden. Kalabalık örnek: 103 → 86 (gerçek ~91).
+Uydu örneğinde uzman 1 yanlış insan buldu (ana model 0) — uydu çözünürlüğünde insan görünmez; ileride uydu girdisinde insan kapatılabilir.
+HERIDAL ilk indirmede bağlantı koptu (2,6/4,3 GB), yeniden indiriliyor → harici test.

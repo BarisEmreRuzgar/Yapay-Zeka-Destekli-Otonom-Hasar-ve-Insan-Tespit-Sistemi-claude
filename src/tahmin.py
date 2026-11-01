@@ -16,6 +16,10 @@ import numpy as np
 
 KOK = Path(__file__).resolve().parent.parent
 VARSAYILAN_MODEL = KOK / "modeller" / "disastervision.pt"
+# Yalnız insan sınıfı, 1280 px'te VisDrone + arama-kurtarma (drone-leak, SARD) ile eğitildi.
+# Val insan AP50: VisDrone 0.607 → 0.666, SAR 0.260 → 0.860, SARD 0.315 → 0.840 (ana modele göre).
+INSAN_MODEL = KOK / "modeller" / "insan_uzman.pt"
+INSAN_BOYUT, INSAN_DILIM = 1280, 960
 
 # BGR; insan dikkat çeksin diye parlak camgöbeği, hasar yeşilden kırmızıya
 RENKLER = {"person": (255, 255, 0), "destroyed": (0, 0, 220), "major-damage": (0, 120, 255),
@@ -31,20 +35,29 @@ def cikarim_boyutu(uzun_kenar: int) -> int:
     return int(min(1280, max(640, round(uzun_kenar * 4 / 3 / 32) * 32)))
 
 
-def tespit(goruntu_bgr: np.ndarray, model_yolu=VARSAYILAN_MODEL, conf=0.25, dilimle=False, dilim=640):
-    """[(sınıf_adı, güven, x1, y1, x2, y2), ...] döndürür."""
+def tespit(goruntu_bgr: np.ndarray, model_yolu=VARSAYILAN_MODEL, conf=0.25, dilimle=False, dilim=640,
+           insan_modeli=INSAN_MODEL):
+    """[(sınıf_adı, güven, x1, y1, x2, y2), ...] döndürür. insan_modeli verilirse (ve dosya varsa) insanlar
+    ana modelden değil, ondan alınır; hasar her zaman ana modelden gelir."""
+    t = _calistir(goruntu_bgr, model_yolu, conf, dilimle, dilim, None)
+    if insan_modeli and Path(insan_modeli).exists():
+        t = [x for x in t if x[0] != "person"] + _calistir(goruntu_bgr, insan_modeli, conf, dilimle, INSAN_DILIM, INSAN_BOYUT)
+    return t
+
+
+def _calistir(goruntu_bgr, model_yolu, conf, dilimle, dilim, boyut):
     if dilimle:
-        from sahi import AutoDetectionModel
         from sahi.predict import get_sliced_prediction
 
-        model = _sahi_model(str(model_yolu), conf, cikarim_boyutu(dilim))
+        model = _sahi_model(str(model_yolu), conf, boyut or cikarim_boyutu(dilim))
         rgb = cv2.cvtColor(goruntu_bgr, cv2.COLOR_BGR2RGB)
         sonuc = get_sliced_prediction(rgb, model, slice_height=dilim, slice_width=dilim,
                                       overlap_height_ratio=0.2, overlap_width_ratio=0.2, verbose=0)
         return [(p.category.name, p.score.value, *map(int, p.bbox.to_xyxy())) for p in sonuc.object_prediction_list]
 
     model = _yolo_model(str(model_yolu))
-    r = model.predict(goruntu_bgr, conf=conf, imgsz=cikarim_boyutu(max(goruntu_bgr.shape[:2])), verbose=False)[0]
+    boyut = boyut or cikarim_boyutu(max(goruntu_bgr.shape[:2]))
+    r = model.predict(goruntu_bgr, conf=conf, imgsz=boyut, verbose=False)[0]
     return [(r.names[int(c)], float(s), *map(int, b)) for b, s, c in
             zip(r.boxes.xyxy.tolist(), r.boxes.conf.tolist(), r.boxes.cls.tolist())]
 
@@ -90,6 +103,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("kaynak")
     ap.add_argument("--model", default=str(VARSAYILAN_MODEL))
+    ap.add_argument("--insan-modeli", default=str(INSAN_MODEL), help='"" verilirse insanlar da ana modelden')
     ap.add_argument("--conf", type=float, default=0.25)
     ap.add_argument("--dilimle", action="store_true", help="SAHI döşemeli çıkarım (küçük nesneler için)")
     ap.add_argument("--cikti", default=None)
@@ -98,7 +112,7 @@ if __name__ == "__main__":
     img = cv2.imread(a.kaynak)
     if img is None:
         raise SystemExit(f"Görüntü okunamadı: {a.kaynak}")
-    t = tespit(img, a.model, a.conf, a.dilimle)
+    t = tespit(img, a.model, a.conf, a.dilimle, insan_modeli=a.insan_modeli)
     cikti = a.cikti or str(Path(a.kaynak).with_name(Path(a.kaynak).stem + "_tespit.jpg"))
     cv2.imwrite(cikti, ciz(img, t))
     print(ozet(t))
