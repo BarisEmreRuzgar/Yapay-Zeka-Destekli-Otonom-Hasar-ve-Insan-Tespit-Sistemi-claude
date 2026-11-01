@@ -22,10 +22,11 @@ anahtar = dotenv_values(KOK / ".env")["ROBOFLOW_API_KEY"].strip()
 gorseller = [Path(p) for p in sys.argv[1:]] or sorted((KOK / "ornekler").glob("*.jpg"))
 CIKTI.mkdir(exist_ok=True)
 
-yerel_model = None
-try:
-    from ultralytics import YOLO
-    yerel_model = YOLO(str(KOK / "modeller" / "disastervision.pt"))
+yerel = None
+try:  # yerel karşılaştırma: tahmin.py ile aynı düzen (hasar ana modelden, insan uzmandan)
+    sys.path.insert(0, str(KOK / "src"))
+    import cv2
+    from tahmin import tespit as yerel
 except Exception as hata:  # yükleme ortamında ultralytics sürümü farklı olabilir
     print("yerel model atlandı:", hata)
 
@@ -39,13 +40,12 @@ for yol in gorseller:
     sonuc = yanit.json()["outputs"][0]
 
     (CIKTI / f"{yol.stem}_roboflow.jpg").write_bytes(base64.b64decode(sonuc["gorsel"]["value"]))
-    tahminler = sonuc["tespitler"]["predictions"]
+    tahminler = sonuc["tespitler"]["predictions"] + sonuc.get("insanlar", {}).get("predictions", [])
     (CIKTI / f"{yol.stem}_roboflow.json").write_text(
         json.dumps(tahminler, ensure_ascii=False, indent=1), encoding="utf-8")
 
     bulut = Counter(t["class"] for t in tahminler)
     print(f"{yol.name}: roboflow insan={sonuc['insan_sayisi']} sınıflar={dict(bulut)}")
-    if yerel_model:
-        kutular = yerel_model.predict(str(yol), conf=GUVEN, iou=0.7, imgsz=640, verbose=False)[0].boxes
-        yerel = Counter(yerel_model.names[int(c)] for c in kutular.cls)
-        print(f"{' ' * len(yol.name)}  yerel    sınıflar={dict(yerel)}")
+    if yerel:
+        say = Counter(t[0] for t in yerel(cv2.imread(str(yol)), conf=GUVEN))
+        print(f"{' ' * len(yol.name)}  yerel    sınıflar={dict(say)}")

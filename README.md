@@ -195,8 +195,9 @@ python src/degerlendir.py runs/genis2/weights/best.pt --veri veri/visdrone_test.
 Eğitim RTX 3050 6 GB'ta yapıldı (batch 12, ~3 GB VRAM; toplam ~7 saat).
 
 ### Roboflow bulut dağıtımı
-Model Roboflow'a `disastervision-yolov8s` adıyla yüklendi ve `disastervision-tespit` Workflow'u
-üzerinden sunuluyor (tespit → kutu + etiket çizimi → insan sayısı). Anahtar `.env` içindeki
+İki model Roboflow'a yüklendi: hasar için ana model (`disastervision-yolov8s`) ve insan uzmanı
+(`disastervision-insan-yolov8s`). `disastervision-tespit` Workflow'u ikisini birlikte çalıştırır: hasar
+ana modelden, insanlar uzmandan; çıktılar `tespitler` (hasar), `insanlar`, `insan_sayisi` ve çizilmiş `gorsel`. Anahtar `.env` içindeki
 `ROBOFLOW_API_KEY` satırından okunur.
 
 ```bash
@@ -204,7 +205,8 @@ Model Roboflow'a `disastervision-yolov8s` adıyla yüklendi ve `disastervision-t
 py -3.11 -m venv .venv_yukle
 .venv_yukle\Scripts\pip install torch --index-url https://download.pytorch.org/whl/cpu
 .venv_yukle\Scripts\pip install ultralytics==8.0.196 "roboflow>=1.3.13" python-dotenv
-.venv_yukle\Scripts\python src/roboflow_yukle.py
+.venv_yukle\Scripts\python src/roboflow_yukle.py           # ana model
+.venv_yukle\Scripts\python src/roboflow_yukle.py --insan   # insan uzmanı
 
 python src/roboflow_test.py   # Workflow'u ornekler/ üzerinde çalıştırır, yerel modelle karşılaştırır
 ```
@@ -213,6 +215,8 @@ Workflow girdileri: `image`, `confidence` (varsayılan 0.25), `iou` (varsayılan
 varsayılan NMS eşiği 0.3'tür; kalabalıkta yan yana duran insanları birleştirdiği için (örnek drone
 görüntüsünde 79 → 58) eşik, yerel değerlendirmeyle aynı olacak şekilde 0.7'ye çekildi. Bu ayarla
 örneklerde bulut/yerel sonuçlar: drone 76/79 insan, uydu görüntüsünde hasar sınıfları birebir aynı.
+İnsan uzmanı eklendikten sonra: drone örneğinde bulut 77, yerel 86 insan (gerçek ~91). Fark, Roboflow'un
+modeli sabit 640 px girdiyle çalıştırmasından geliyor; yerelde uzman 1280 px'te çalışır.
 
 ---
 
