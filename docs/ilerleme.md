@@ -176,4 +176,7 @@ Devam eğitimi epoch 8–12: 0.668, 0.673, 0.678, 0.683, 0.686 — yeniden ısı
 | drone-leak SAR val | 0.860 | **0.890** |
 | SARD val | 0.840 | **0.864** |
 
-Üçünde de daha iyi → v2 seçildi (HERIDAL harici testi bitince `modeller/insan_uzman.pt` olarak kopyalanacak).
+Üçünde de daha iyi → v2 seçildi, `modeller/insan_uzman.pt` ve Roboflow `disastervision-insan` güncellendi.
+
+**HERIDAL harici test** (hiç eğitimde yok, 5.808 döşeme / 4.555 insan, 1280): ana model **0.253**, uzman v1 **0.621**, uzman v2 **0.628**
+(AP50-95: 0.129 / 0.326 / 0.328). VisDrone test-dev v2 ölçümü YOLOv8m eğitiminden sonra (`egitim_zinciri20`).

@@ -17,7 +17,8 @@ import numpy as np
 KOK = Path(__file__).resolve().parent.parent
 VARSAYILAN_MODEL = KOK / "modeller" / "disastervision.pt"
 # Yalnız insan sınıfı, 1280 px'te VisDrone + arama-kurtarma (drone-leak, SARD) ile eğitildi.
-# Val insan AP50: VisDrone 0.607 → 0.666, SAR 0.260 → 0.860, SARD 0.315 → 0.840 (ana modele göre).
+# Val insan AP50 (ana model → uzman v2): VisDrone 0.607 → 0.690, SAR 0.260 → 0.890, SARD 0.315 → 0.864;
+# harici HERIDAL (eğitimde yok) 0.253 → 0.628.
 INSAN_MODEL = KOK / "modeller" / "insan_uzman.pt"
 INSAN_BOYUT, INSAN_DILIM = 1280, 960
 

@@ -54,12 +54,16 @@ Universe setleri kareleri rastgele bölüyor (ardışık, neredeyse aynı karele
 doğrulama **video / kare aralığı bazında** ayrıldı, hiçbir doğrulama karesi ya da komşusu eğitimde yok.
 `tahmin.py` ve uygulama insanları artık bu modelden, hasarı ana modelden alıyor.
 
-| İnsan AP50 | Ana model (1280) | **İnsan uzmanı** |
-| :--- | :---: | :---: |
-| VisDrone val | 0.607 | **0.666** |
-| Arama-kurtarma drone videoları (görülmemiş 3 video) | 0.260 | **0.860** |
-| SARD (ayrılmış son %15 kare) | 0.315 | **0.840** |
-| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | **0.458** |
+| İnsan AP50 | Ana model (1280) | İnsan uzmanı v1 | **İnsan uzmanı v2** |
+| :--- | :---: | :---: | :---: |
+| VisDrone val | 0.607 | 0.666 | **0.690** |
+| Arama-kurtarma drone videoları (görülmemiş 3 video) | 0.260 | 0.860 | **0.890** |
+| SARD (ayrılmış son %15 kare) | 0.315 | 0.840 | **0.864** |
+| **HERIDAL** (Hırvatistan dağ/orman, eğitimde hiç yok, 5.808 döşeme) | 0.253 | 0.621 | **0.628** |
+| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | 0.458 | ölçülecek |
+
+v2 = v1'den aynı veriyle 12 epoch daha (`runs/insan_sar2`). HERIDAL hiçbir modelin eğitiminde yok: uzman, tamamen
+farklı arazi/kamera/ülkede de ana modelden **2,5 kat** iyi — kazanç ezber değil, gerçek genelleme.
 
 Aynı test-dev'de orijinal model 0.022, ilk yeni model (640 px) 0.343 idi. Örnek kalabalık drone görüntüsünde
 (VisDrone test-dev, gerçek ~91 kişi) bulunan insan: ana model 640 px 79, 1280 px 103 (yanlış alarmlarla), uzman **86**.
