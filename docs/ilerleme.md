@@ -163,3 +163,6 @@ HERIDAL ilk indirmede bağlantı koptu (2,6/4,3 GB), yeniden indiriliyor → har
 * `egitim_zinciri17`: uzman v1'den aynı veriyle 12 epoch daha (`runs/insan_sar2`); karar val setlerinde (v1: 0.666 / 0.860 / 0.840).
 * HERIDAL (new-workspace-qsuag/heridal-t428z, CC BY 4.0): 13 bölgeden 1.546 adet 4000×3000 dağ/orman karesi →
   `src/heridal_veri.py` ile 5.808 döşeme / 4.555 insan. **Hiç eğitimde yok**; ana model, uzman v1 ve v2 karşılaştırılacak (`egitim_zinciri18`).
+* Uzman v2 (devam eğitimi) VisDrone val: epoch 1–7 = 0.625, 0.632, 0.615, 0.606, 0.620, 0.622, 0.654 (v1 0.666); yeniden ısınma düşüşü sonrası toparlanıyor.
+* Kuyrukta (`egitim_zinciri19`, zincir18 bitince): **YOLOv8m** insan uzmanı (COCO başlangıç, 1280, batch 2, 10 epoch, aynı veri) →
+  model kapasitesinin küçük insanlarda fark yaratıp yaratmadığı; aynı val setleri + HERIDAL.
