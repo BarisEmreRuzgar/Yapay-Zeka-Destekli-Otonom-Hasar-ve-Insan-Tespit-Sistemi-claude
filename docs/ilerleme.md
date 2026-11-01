@@ -166,3 +166,14 @@ HERIDAL ilk indirmede bağlantı koptu (2,6/4,3 GB), yeniden indiriliyor → har
 * Uzman v2 (devam eğitimi) VisDrone val: epoch 1–7 = 0.625, 0.632, 0.615, 0.606, 0.620, 0.622, 0.654 (v1 0.666); yeniden ısınma düşüşü sonrası toparlanıyor.
 * Kuyrukta (`egitim_zinciri19`, zincir18 bitince): **YOLOv8m** insan uzmanı (COCO başlangıç, 1280, batch 2, 10 epoch, aynı veri) →
   model kapasitesinin küçük insanlarda fark yaratıp yaratmadığı; aynı val setleri + HERIDAL.
+
+### Uzman v2 sonucu (`runs/insan_sar2`)
+Devam eğitimi epoch 8–12: 0.668, 0.673, 0.678, 0.683, 0.686 — yeniden ısınma düşüşünden (0.606) sonra v1'i geçti.
+
+| İnsan AP50 (1280, val) | v1 | **v2** |
+| :--- | :---: | :---: |
+| VisDrone val | 0.666 | **0.690** |
+| drone-leak SAR val | 0.860 | **0.890** |
+| SARD val | 0.840 | **0.864** |
+
+Üçünde de daha iyi → v2 seçildi (HERIDAL harici testi bitince `modeller/insan_uzman.pt` olarak kopyalanacak).
