@@ -200,7 +200,7 @@ Eğitim RTX 3050 6 GB'ta yapıldı (batch 12, ~3 GB VRAM; toplam ~7 saat).
 
 ### Roboflow bulut dağıtımı
 İki model Roboflow'a yüklendi: hasar için ana model (`disastervision-yolov8s`) ve insan uzmanı
-(`disastervision-insan-yolov8s`). `disastervision-tespit` Workflow'u ikisini birlikte çalıştırır: hasar
+(`disastervision-insan-v2`). `disastervision-tespit` Workflow'u ikisini birlikte çalıştırır: hasar
 ana modelden, insanlar uzmandan; çıktılar `tespitler` (hasar), `insanlar`, `insan_sayisi` ve çizilmiş `gorsel`. Anahtar `.env` içindeki
 `ROBOFLOW_API_KEY` satırından okunur.
 
@@ -219,8 +219,8 @@ Workflow girdileri: `image`, `confidence` (varsayılan 0.25), `iou` (varsayılan
 varsayılan NMS eşiği 0.3'tür; kalabalıkta yan yana duran insanları birleştirdiği için (örnek drone
 görüntüsünde 79 → 58) eşik, yerel değerlendirmeyle aynı olacak şekilde 0.7'ye çekildi. Bu ayarla
 örneklerde bulut/yerel sonuçlar: drone 76/79 insan, uydu görüntüsünde hasar sınıfları birebir aynı.
-İnsan uzmanı eklendikten sonra: drone örneğinde bulut 77, yerel 86 insan (gerçek ~91). Fark, Roboflow'un
-modeli sabit 640 px girdiyle çalıştırmasından geliyor; yerelde uzman 1280 px'te çalışır.
+İnsan uzmanı v2 ile: drone örneğinde bulut 91, yerel 78 insan (gerçek ~91; conf 0.25). Roboflow modeli kendi
+girdi boyutuyla çalıştırır, yerelde uzman 1280 px'te çalışır; sayılar bu yüzden biraz farklı.
 
 ---
 
