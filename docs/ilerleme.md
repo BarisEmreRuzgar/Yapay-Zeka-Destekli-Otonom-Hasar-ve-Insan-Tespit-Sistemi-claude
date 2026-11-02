@@ -221,3 +221,8 @@ Arka planda çalışan iş yok (yalnız `otomatik_kayit.ps1`). Sıradaki adaylar
 * `egitim_zinciri24` (23 bitince): **YOLOv8m bina konum modeli** (`runs/bina_m`, COCO başlangıç, 640, batch 8, 30 epoch).
   Gerekçe: hasar sisteminde tahmin kutularıyla val 0.588, gerçek kutularla 0.771 → boşluk konumda; küçük binaların
   (<256 px²) yalnız %58'i bulunuyor. Kıyas: konum v2 (YOLOv8s) bina val mAP50 **0.793**; karar iki aşama val (iki+tek 0.588) ile.
+* **Uzman v2 VisDrone test-dev (tek seferlik): AP50 0.469**, AP50-95 0.180 (v1 0.458, ana model @1280 0.407). README güncellendi.
+* Yumuşak füzyon denemesi (`src/birlesim_dene.py`, val_son.pkl, CPU): konum kutusunun sınıf olasılığını örtüşen tek-model
+  skoruyla harmanlama + sınıf başına tek-model ağırlığı. En iyi sınıf başına seçimle val mAP50 0.588 → 0.594 (hafif 0.403 → 0.412).
+  8 ayarla +0.006 aşırı uyum payı içinde → **benimsenmedi**; mevcut NMS birleşimi kalır.
+* `bina_m` eğitimi başladı: 1.688 adım/epoch, 2.6 it/s (~11 dk/epoch), VRAM 3.4 GB.

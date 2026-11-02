@@ -60,7 +60,7 @@ doğrulama **video / kare aralığı bazında** ayrıldı, hiçbir doğrulama ka
 | Arama-kurtarma drone videoları (görülmemiş 3 video) | 0.260 | 0.860 | **0.890** |
 | SARD (ayrılmış son %15 kare) | 0.315 | 0.840 | **0.864** |
 | **HERIDAL** (Hırvatistan dağ/orman, eğitimde hiç yok, 5.808 döşeme) | 0.253 | 0.621 | **0.628** |
-| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | 0.458 | ölçülecek |
+| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | 0.458 | **0.469** |
 
 v2 = v1'den aynı veriyle 12 epoch daha (`runs/insan_sar2`). HERIDAL hiçbir modelin eğitiminde yok: uzman, tamamen
 farklı arazi/kamera/ülkede de ana modelden **2,5 kat** iyi — kazanç ezber değil, gerçek genelleme.
