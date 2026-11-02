@@ -63,3 +63,29 @@ if __name__ == "__main__":
     print("== B"); puanla(b, ["iki+tek"])
     for esik in (0.5, 0.6):
         print(f"== WBF esik={esik}"); puanla(birlestir(a, b, esik), ["iki+tek"])
+
+
+def eslesik(a, b, esik=0.6, kutu_esik=0.55):
+    """NMS ile kutu seç; skor = iki modelin o kutuyla eşleşen (IoU >= esik) en iyi skorlarının ortalaması."""
+    from iki_asama import nms
+    ham = {}
+    for g, da in a.items():
+        db = b[g]; d = dict(da)
+        KA, KB = da["kon_kutu"].reshape(-1, 4), db["kon_kutu"].reshape(-1, 4)
+        K = np.r_[KA, KB]; S = np.r_[da["kon_skor"], db["kon_skor"]]
+        if not len(K):
+            ham[g] = d; continue
+        t = nms(K, S, kutu_esik); K = K[t]
+        skor, olas = [], []
+        for KX, d_ in ((KA, da), (KB, db)):
+            if len(KX):
+                M = iou(K, KX); j = M.argmax(1); ok = M[np.arange(len(K)), j] >= esik
+                skor.append(np.where(ok, d_["kon_skor"][j], 0)); olas.append((d_["kon_olas"][j], ok))
+            else:
+                skor.append(np.zeros(len(K))); olas.append((np.zeros((len(K), 4)), np.zeros(len(K), bool)))
+        (pa, oa), (pb, ob) = olas
+        w = oa.astype(float) + ob
+        P = (pa * oa[:, None] + pb * ob[:, None]) / np.maximum(w, 1)[:, None]
+        d["kon_kutu"], d["kon_skor"], d["kon_olas"] = K, (skor[0] + skor[1]) / 2, P
+        ham[g] = d
+    return ham

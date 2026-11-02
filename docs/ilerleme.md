@@ -262,3 +262,16 @@ nepal-flooding 0.60**, palu 0.71. Bunların iki+tek mAP'leri de en düşükler.
 * Çare: **zayıf afetleri çoğaltarak ince ayar** — `veri/bina_os` (sabit bağlantı; sunda ×4, mexico/palu ×3, nepal/matthew ×2;
   17.715 döşeme), AdamW lr0 0.0005, 10 epoch (`egit.py --lr0` eklendi). Karar iki aşama val'de, afet bazında da bakılacak.
 * `degerlendir.py --tta` eklendi; `egitim_zinciri27`: uzman v2'de TTA (SAR/SARD/VisDrone/su val).
+
+### YOLOv8m konum sonucu (val, 1.446 döşeme, sınıflandırıcı v2+v4 T=2, iki+tek)
+| Konum | konum AP50 | yıkık | ağır | hafif | hasarsız | mAP50 |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| v2 (YOLOv8s) | 0.788 | 0.691 | 0.525 | 0.403 | 0.731 | 0.588 |
+| bina_m (YOLOv8m, COCO'dan 30 epoch) | 0.786 | 0.686 | 0.532 | 0.402 | 0.730 | 0.587 |
+| WBF (iki model) | 0.776–0.785 | | | | | 0.540–0.557 |
+| **eşleşmeli topluluk** (NMS + iki modelin eşleşen skor ortalaması) | **0.801** | 0.693 | 0.534 | 0.406 | 0.737 | **0.592** |
+
+Büyük model tek başına kazanç getirmedi (kapasite değil veri/alan sorunu — hata analiziyle uyumlu). Topluluk +0.004 ama
+çıkarımı ~3 kat ağırlaştırıyor → şimdilik benimsenmedi (`konum_topluluk.eslesik`, ileride son birleştirmede düşünülebilir).
+Sıradaki: `egitim_zinciri28` — konum v2'den çoğaltmalı ince ayar (`runs/bina_os`), 27 bitince.
+* Uzman v4 (`runs/insan_su`) eğitimi başladı: 4.449 adım/epoch, 3.0 it/s (~25 dk/epoch), VRAM 3.6 GB.
