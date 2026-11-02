@@ -246,3 +246,6 @@ Yalnız `swimmer` → insan; 960 px döşemeler: test 893 kare → 830 döşeme,
   SAR payını korumak için tümü değil), 1280, 8 epoch → VisDrone/SAR/SARD/su val + HERIDAL. Su testi yalnız sonda.
 * bina_m epoch 6–13: 0.722, 0.738, 0.745, 0.743, 0.750, 0.748, 0.757, 0.760 (yavaş ama düzenli yükseliş).
 * bina_m epoch 14–24: 0.767 → 0.791 (mozaiksiz son 10 epoch başladı; konum v2 0.793 seviyesine ulaştı).
+* bina_m eğitimi bitti: bina val mAP50 epoch 30 = **0.793** (konum v2 YOLOv8s ile aynı). İki aşama val değerlendirmesi çalışıyor.
+* Hazır: `src/konum_topluluk.py` — iki konum modelinin kayıtlı val tahminlerini WBF ile birleştirir (CPU, 1.446 döşeme ~10 s).
+  Aynı mAP'li iki farklı mimari farklı binaları kaçırıyorsa topluluk konum boşluğunu (0.588 ↔ 0.771) daraltabilir.
