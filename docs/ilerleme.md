@@ -230,3 +230,10 @@ Arka planda çalışan iş yok (yalnız `otomatik_kayit.ps1`). Sıradaki adaylar
   örneklerde uydu görüntüsü seçilince otomatik işaretli).
 * Sudaki insanlar verisi (sigmoidal-ivbj6/search-and-rescue-y6x1c, 8.930 görüntü, kamu malı, `swimmer` sınıfı) iniyor →
   sel senaryosu için uzman v2 sıfır-atış ölçümü.
+
+### Sudaki insanlar (sel senaryosu) — harici veri
+`src/su_veri.py`: sigmoidal-ivbj6/search-and-rescue-y6x1c (kamu malı, 2728×1816 deniz/göl kareleri; SeaDronesSee benzeri).
+Roboflow her kareyi 4 artırılmış kopyayla vermiş → her kareden **tek kopya**; bölümler arasında ortak kare yok.
+Yalnız `swimmer` → insan; 960 px döşemeler: test 893 kare → 830 döşeme, valid 1.786 kare → 1.686 döşeme / 2.729 insan.
+İnsanlar çok küçük: kutu genişliği medyan 34 px (p10 15, p90 85). Uzman hiç su görmedi → sıfır-atış ölçümü (CPU, eğitim GPU'da).
+* bina_m (YOLOv8m konum) epoch 1–5: 0.625, 0.660, 0.664, 0.701, 0.716 (kıyas: konum v2 0.793).
