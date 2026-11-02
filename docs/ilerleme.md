@@ -215,3 +215,9 @@ arama-kurtarma başarısını azalttı → bu yön bırakıldı. Etkin model: `m
 Arka planda çalışan iş yok (yalnız `otomatik_kayit.ps1`). Sıradaki adaylar:
 1. Uzman v2'nin **tek seferlik** VisDrone test-dev ölçümü (`degerlendir.py runs\insan_sar2\weightsest.pt --veri veri\insan.yaml --bolum test --imgsz 1280`) → README tablosundaki "ölçülecek".
 2. Fikir: SAR payını koruyarak veri büyütme (SAR'ı çoğaltma/oversample) veya hafif hasar sınıfı (en zayıf, test 0.30).
+
+## 2026-11-02 öğleden sonra
+* `egitim_zinciri23`: uzman v2'nin tek seferlik VisDrone test-dev ölçümü (çalışıyor).
+* `egitim_zinciri24` (23 bitince): **YOLOv8m bina konum modeli** (`runs/bina_m`, COCO başlangıç, 640, batch 8, 30 epoch).
+  Gerekçe: hasar sisteminde tahmin kutularıyla val 0.588, gerçek kutularla 0.771 → boşluk konumda; küçük binaların
+  (<256 px²) yalnız %58'i bulunuyor. Kıyas: konum v2 (YOLOv8s) bina val mAP50 **0.793**; karar iki aşama val (iki+tek 0.588) ile.
