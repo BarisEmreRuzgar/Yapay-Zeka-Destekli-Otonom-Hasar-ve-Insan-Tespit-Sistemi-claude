@@ -207,10 +207,11 @@ Karar val setleri + HERIDAL'de v2'ye göre.
   `PYTORCH_CUDA_ALLOC_CONF=garbage_collection_threshold:0.7,max_split_size_mb:128` ile sürdürüldü.
 
 ## Oturum devri (2026-11-02)
-Arka planda (benden bağımsız) çalışıyor: `egitim_zinciri22.ps1` → v3 eğitimi (epoch 6–8, `runs/insan_sar3`), ardından
-val / SAR / SARD / HERIDAL değerlendirmesi (`deg_insan_sar3_*.log`, bitince `zincir22_bitti.txt`).
-Sıradaki adımlar:
-1. v3'ü v2 ile karşılaştır (v2: VisDrone 0.690, SAR 0.890, SARD 0.864, HERIDAL 0.628). Daha iyiyse `modeller/insan_uzman.pt`'ye
-   kopyala, Roboflow'a yeni adla yükle (`roboflow_yukle.py --insan`, model_name'i değiştir; aynı ad 404 veriyor), workflow'u güncelle.
-2. Seçilen uzmanın **tek seferlik** VisDrone test-dev ölçümü (`degerlendir.py ... --veri veri\insan.yaml --bolum test --imgsz 1280`), README tablosu.
-3. Epoch ortasında yavaşlarsa (`s/it`): epoch sonunu bekle ya da hemen durdurup `--devam` ile sürdür (sürdürme epoch'u baştan alır).
+**Uzman v3 sonucu: v2 korunur.** v3 epoch 6'da CUDA OOM ile çöktü (`max_split_size_mb` ayarı taşmayı yavaşlama yerine
+hataya çevirdi — bu ayarı kullanma). Epoch 5 en iyisiyle (VisDrone val 0.678) değerlendirme: SAR **0.864** (v2 0.890),
+SARD **0.843** (v2 0.864), HERIDAL **0.600** (v2 0.628). VisDrone'u 8k → 18k büyütmek SAR verisinin payını düşürüp
+arama-kurtarma başarısını azalttı → bu yön bırakıldı. Etkin model: `modeller/insan_uzman.pt` = v2 (yerel + Roboflow `disastervision-insan-v2`).
+
+Arka planda çalışan iş yok (yalnız `otomatik_kayit.ps1`). Sıradaki adaylar:
+1. Uzman v2'nin **tek seferlik** VisDrone test-dev ölçümü (`degerlendir.py runs\insan_sar2\weightsest.pt --veri veri\insan.yaml --bolum test --imgsz 1280`) → README tablosundaki "ölçülecek".
+2. Fikir: SAR payını koruyarak veri büyütme (SAR'ı çoğaltma/oversample) veya hafif hasar sınıfı (en zayıf, test 0.30).
