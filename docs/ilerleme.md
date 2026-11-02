@@ -321,3 +321,10 @@ sahneleri tam da bu bağlam. **Ders: kısmi etiketli (yalnız bir alt tür insan
   yarıda kaldı → GPU kuyruğu boşalınca `egitim_zinciri31` yeniden derliyor, ardından **su modu modeli v2** (`runs/insan_su2`):
   v2'den, tüm su eğitim verisi + drone-leak SAR eğitim döşemeleri (nehir kıyısı insanlar tam etiketli; kısmi etiket etkisini
   dengelemek için), 1280, 8 epoch → su valid2'de v2 / v4 / su2 kıyası + SAR val.
+
+### Çoğaltmalı konum ince ayarı (`runs/bina_os`) sonucu: değişiklik yok
+Bina val mAP50 epoch 1–10: 0.773 → 0.794 (v2 0.793). İki aşama val: **0.589** (v2 0.588), konum AP 0.789 (0.788).
+Zayıf afetlerde konum: sunda 0.344 → 0.356, mexico 0.432 → 0.438, nepal 0.604 → 0.608, palu 0.709 → 0.704.
+Bu afetlerin 3–4 kat çoğaltılması bile konumu kıpırdatmadı → sorun veri miktarı değil; görsel incelemede görülen
+**etiketsiz binalar / çatıdan küçük GT kutuları** (etiket kalitesi) en olası açıklama — veri setinin kendi tavanı.
+Karar: konum v2 korunur. Konum tarafında denenenler (YOLOv8m, 1024 çıkarım, WBF, eşleşmeli topluluk, çoğaltma) en fazla +0.004.
