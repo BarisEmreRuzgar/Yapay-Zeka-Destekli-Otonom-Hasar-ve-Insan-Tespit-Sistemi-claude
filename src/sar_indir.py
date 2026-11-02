@@ -16,6 +16,7 @@ SETLER = [  # (çalışma alanı, proje, sürüm) — Universe'te bulunanlar
     ("trash-32e51", "search-rescue", 14),
     ("sandr", "drone-aerial", 1),
     ("new-workspace-qsuag", "heridal-t428z", 2),
+    ("sigmoidal-ivbj6", "search-and-rescue-y6x1c", 1),  # sudaki insanlar (sel senaryosu), kamu malı
 ]
 
 if __name__ == "__main__":

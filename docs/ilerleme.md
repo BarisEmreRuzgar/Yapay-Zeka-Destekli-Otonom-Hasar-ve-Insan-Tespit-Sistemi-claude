@@ -226,3 +226,7 @@ Arka planda çalışan iş yok (yalnız `otomatik_kayit.ps1`). Sıradaki adaylar
   skoruyla harmanlama + sınıf başına tek-model ağırlığı. En iyi sınıf başına seçimle val mAP50 0.588 → 0.594 (hafif 0.403 → 0.412).
   8 ayarla +0.006 aşırı uyum payı içinde → **benimsenmedi**; mevcut NMS birleşimi kalır.
 * `bina_m` eğitimi başladı: 1.688 adım/epoch, 2.6 it/s (~11 dk/epoch), VRAM 3.4 GB.
+* Uygulama: tek görüntü sekmesine **"Uydu görüntüsü — insan aramayı kapat"** seçeneği (uydu örneğinde 1 yanlış insan → 0;
+  örneklerde uydu görüntüsü seçilince otomatik işaretli).
+* Sudaki insanlar verisi (sigmoidal-ivbj6/search-and-rescue-y6x1c, 8.930 görüntü, kamu malı, `swimmer` sınıfı) iniyor →
+  sel senaryosu için uzman v2 sıfır-atış ölçümü.
