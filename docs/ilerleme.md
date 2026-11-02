@@ -203,3 +203,14 @@ Karar val setleri + HERIDAL'de v2'ye göre.
 * v3 epoch 1–3: 0.660, 0.659, 0.657. Epoch 3'te adım süresi 0.33 → 2.7 s'ye çıktı: tam VisDrone'daki çok kalabalık döşemeler
   (yüzlerce insan) kutu atama belleğini şişirdi, VRAM 6.47 GB'a çıkıp paylaşımlı belleğe taştı. Epoch sonunda durdurulup
   `--devam` ile sürdürüldü (`egitim_zinciri22`) → 3.67 GB, 3.0 it/s. Ders: veri büyüyünce VRAM'i epoch içinde de izle.
+* v3 epoch 4–5: 0.668, 0.678. Epoch 6 ortasında yine yavaşlama (2.4 s/it) → durdurulup `--devam` +
+  `PYTORCH_CUDA_ALLOC_CONF=garbage_collection_threshold:0.7,max_split_size_mb:128` ile sürdürüldü.
+
+## Oturum devri (2026-11-02)
+Arka planda (benden bağımsız) çalışıyor: `egitim_zinciri22.ps1` → v3 eğitimi (epoch 6–8, `runs/insan_sar3`), ardından
+val / SAR / SARD / HERIDAL değerlendirmesi (`deg_insan_sar3_*.log`, bitince `zincir22_bitti.txt`).
+Sıradaki adımlar:
+1. v3'ü v2 ile karşılaştır (v2: VisDrone 0.690, SAR 0.890, SARD 0.864, HERIDAL 0.628). Daha iyiyse `modeller/insan_uzman.pt`'ye
+   kopyala, Roboflow'a yeni adla yükle (`roboflow_yukle.py --insan`, model_name'i değiştir; aynı ad 404 veriyor), workflow'u güncelle.
+2. Seçilen uzmanın **tek seferlik** VisDrone test-dev ölçümü (`degerlendir.py ... --veri veri\insan.yaml --bolum test --imgsz 1280`), README tablosu.
+3. Epoch ortasında yavaşlarsa (`s/it`): epoch sonunu bekle ya da hemen durdurup `--devam` ile sürdür (sürdürme epoch'u baştan alır).
