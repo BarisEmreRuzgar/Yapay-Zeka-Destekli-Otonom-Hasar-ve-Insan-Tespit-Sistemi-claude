@@ -200,3 +200,6 @@ Karar val setleri + HERIDAL'de v2'ye göre.
 
 0.30 üç sette de en iyiye 0.013'ten yakın; duyarlılık tarafında kalındı (arama-kurtarmada kaçırma pahalı).
 `tahmin.py`, uygulama ve Roboflow workflow varsayılanı 0.30.
+* v3 epoch 1–3: 0.660, 0.659, 0.657. Epoch 3'te adım süresi 0.33 → 2.7 s'ye çıktı: tam VisDrone'daki çok kalabalık döşemeler
+  (yüzlerce insan) kutu atama belleğini şişirdi, VRAM 6.47 GB'a çıkıp paylaşımlı belleğe taştı. Epoch sonunda durdurulup
+  `--devam` ile sürdürüldü (`egitim_zinciri22`) → 3.67 GB, 3.0 it/s. Ders: veri büyüyünce VRAM'i epoch içinde de izle.
