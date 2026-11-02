@@ -285,3 +285,9 @@ A'da öğren → B: 0.574 → **0.575**; B'de öğren → A: 0.590 → **0.584**
 **reddedildi**. (Not: val seçimi `Random(ad) < 0.1` olduğu için kat tohumu farklı olmalı — ilk denemede herkes A'ya düşmüştü.)
 * Uzman v4 epoch 1–2 VisDrone val: 0.662, 0.622 (v2 devam eğitimindeki yeniden ısınma eğrisine benzer).
 * `egitim_zinciri29` (28'den sonra): hasar iki aşamada hiç ölçülmemiş çıkarım artırmaları — konum TTA (`--konum-tta`) ve sınıflandırıcı panel TTA (`--tta 4`), val.
+
+### HERIDAL bölge ayrımı (uzman v5 hazırlığı)
+HERIDAL dosya adlarında 13 bölge kodu var. İnsan tarafındaki en düşük metrik HERIDAL (0.628) olduğu için dağ/orman alanını
+eğitime katmak üzere bölgeye göre ayrıldı (`src/heridal_bolge.py`): eğitim ZRI, VRD, JAS, BRA, BRS, SB → 3.178 döşeme / 2.928 insan;
+**hiç görülmeyen bölgeler** GOR, MED, BRK, TRS, BLA, CAP, RAK → 2.630 döşeme / 1.627 insan (`veri/heridal_bolge_test.yaml`).
+Kıyas için v2 ve v4 bu test bölgelerinde ayrıca ölçülecek (eski tam HERIDAL sayıları bununla doğrudan kıyaslanamaz).
