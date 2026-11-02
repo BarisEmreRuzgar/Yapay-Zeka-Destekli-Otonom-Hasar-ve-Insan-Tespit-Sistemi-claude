@@ -9,14 +9,14 @@ import cv2
 import gradio as gr
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
-from tahmin import TR, VARSAYILAN_MODEL, ciz, ozet, tespit  # noqa: E402
+from tahmin import INSAN_MODEL, SU_MODEL, TR, VARSAYILAN_MODEL, ciz, ozet, tespit  # noqa: E402
 
 
-def calistir(goruntu_rgb, conf, dilimle, uydu=False):
+def calistir(goruntu_rgb, conf, dilimle, uydu=False, su=False):
     if goruntu_rgb is None:
         return None, "Önce bir görüntü yükleyin."
     bgr = cv2.cvtColor(goruntu_rgb, cv2.COLOR_RGB2BGR)
-    t = tespit(bgr, VARSAYILAN_MODEL, conf, dilimle)
+    t = tespit(bgr, VARSAYILAN_MODEL, conf, dilimle, insan_modeli=SU_MODEL if su else INSAN_MODEL)
     if uydu:  # uydu çözünürlüğünde (~0.5 m/piksel) insan görünmez; bulunan her "insan" yanlış alarmdır
         t = [x for x in t if x[0] != "person"]
     say = ozet(t)
@@ -50,11 +50,12 @@ with gr.Blocks(title="DisasterVision") as demo:
             conf = gr.Slider(0.05, 0.9, value=0.3, step=0.05, label="Güven eşiği (0.30: val F1 dengesi)")
             dilimle = gr.Checkbox(label="Döşemeli çıkarım (SAHI) — büyük görüntülerde küçük insanları yakalar", value=False)
             uydu = gr.Checkbox(label="Uydu görüntüsü — insan aramayı kapat (bu çözünürlükte insan görünmez)", value=False)
+            su = gr.Checkbox(label="Su / sel sahnesi — sudaki insanlar için özel model", value=False)
             buton = gr.Button("Tespit et", variant="primary")
         with gr.Column():
             cikti = gr.Image(label="Sonuç")
             rapor = gr.Markdown()
-        buton.click(calistir, [giris, conf, dilimle, uydu], [cikti, rapor])
+        buton.click(calistir, [giris, conf, dilimle, uydu, su], [cikti, rapor])
         ornekler = sorted(p for p in (Path(__file__).parent / "ornekler").glob("*.jpg") if "_once" not in p.stem)
         if ornekler:
             gr.Examples([[str(p), "uydu" in p.stem] for p in ornekler], inputs=[giris, uydu])

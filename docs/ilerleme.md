@@ -308,3 +308,12 @@ etiketli, tekne/kıyıdaki insanlar etiketsiz → model "bazı bağlamlarda insa
 sahneleri tam da bu bağlam. **Ders: kısmi etiketli (yalnız bir alt tür insan) veri genel insan uzmanını bozar.** v2 etkin kalır.
 * `egitim_zinciri30` (29'dan sonra): v2 ve v4'ü HERIDAL görülmemiş bölgelerde ölç → **uzman v5** = v2'den, v2 verisi + HERIDAL
   eğitim bölgeleri (16.671 görüntü), 1280, 8 epoch → görülmemiş HERIDAL bölgeleri + VisDrone/SAR/SARD val.
+* v2 su val (blok ayrımı, eski tek-kopya veri): **0.188** (v4 0.558) → v4 su sahnelerinde 3 kat iyi, karada kötü. Çözüm:
+  v4 ayrı **su / sel modu** olarak sunuldu (`modeller/insan_su.pt`; `tahmin.py --su`, uygulamada "Su / sel sahnesi" kutusu).
+  Normal mod v2 olarak kalır.
+* **İnsan TTA reddedildi** (uzman v2, ultralytics augment): SAR 0.890 → 0.849, SARD 0.864 → 0.861, VisDrone 0.690 → 0.670,
+  su 0.188 → 0.217. Ultralytics TTA ölçekleri 1 / 0.83 / 0.67 — küçültme zaten birkaç piksellik insanları yok ediyor.
+* **Su verisi hatası düzeltildi:** aynı kare numarası ~4 *farklı* görüntüde geçiyor (farklı kaynak dizileri; parlaklıkları
+  165/169/108/111, içerikleri farklı — biri yüzücüler, biri şamandıra). "Her numaradan tek kopya" verinin %75'ini atmıştı.
+  `su_veri.py` artık hepsini kullanıyor (`veri/su_yolo2`; aynı numaralılar aynı bölümde, blok ayrımı korunuyor).
+  Siyah dikdörtgenler veri setinin kendi yok sayılan bölgeleri (artırma değil; README: artırma yok).

@@ -20,6 +20,9 @@ VARSAYILAN_MODEL = KOK / "modeller" / "disastervision.pt"
 # Val insan AP50 (ana model → uzman v2): VisDrone 0.607 → 0.690, SAR 0.260 → 0.890, SARD 0.315 → 0.864;
 # harici HERIDAL (eğitimde yok) 0.253 → 0.628.
 INSAN_MODEL = KOK / "modeller" / "insan_uzman.pt"
+# Su / sel sahnesi modeli (uzman v4 = v2 + sudaki insan verisi): su val AP50 0.188 → 0.558, ama kara SAR'da daha kötü
+# (SAR 0.890 → 0.768) — yalnız su/sel sahnesinde kullanılır.
+SU_MODEL = KOK / "modeller" / "insan_su.pt"
 INSAN_BOYUT, INSAN_DILIM = 1280, 960
 
 # BGR; insan dikkat çeksin diye parlak camgöbeği, hasar yeşilden kırmızıya
@@ -105,6 +108,7 @@ if __name__ == "__main__":
     ap.add_argument("kaynak")
     ap.add_argument("--model", default=str(VARSAYILAN_MODEL))
     ap.add_argument("--insan-modeli", default=str(INSAN_MODEL), help='"" verilirse insanlar da ana modelden')
+    ap.add_argument("--su", action="store_true", help="su / sel sahnesi: insanlar su modelinden (modeller/insan_su.pt)")
     ap.add_argument("--conf", type=float, default=0.3, help="val F1 eşik taraması: VisDrone 0.28, SAR 0.44, SARD 0.41 en iyi")
     ap.add_argument("--dilimle", action="store_true", help="SAHI döşemeli çıkarım (küçük nesneler için)")
     ap.add_argument("--cikti", default=None)
@@ -113,7 +117,7 @@ if __name__ == "__main__":
     img = cv2.imread(a.kaynak)
     if img is None:
         raise SystemExit(f"Görüntü okunamadı: {a.kaynak}")
-    t = tespit(img, a.model, a.conf, a.dilimle, insan_modeli=a.insan_modeli)
+    t = tespit(img, a.model, a.conf, a.dilimle, insan_modeli=str(SU_MODEL) if a.su else a.insan_modeli)
     cikti = a.cikti or str(Path(a.kaynak).with_name(Path(a.kaynak).stem + "_tespit.jpg"))
     cv2.imwrite(cikti, ciz(img, t))
     print(ozet(t))

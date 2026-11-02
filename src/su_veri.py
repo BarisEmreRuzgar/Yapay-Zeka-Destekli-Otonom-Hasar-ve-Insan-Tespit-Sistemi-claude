@@ -1,7 +1,8 @@
 """Sudaki insanlar (sel / su baskını senaryosu) → veri/su_yolo/<bölüm>: 960 px döşemeler, yalnız `swimmer` → insan.
 
 Kaynak: Roboflow Universe sigmoidal-ivbj6/search-and-rescue-y6x1c v1 (kamu malı), 2728x1816 deniz/göl kareleri.
-Roboflow her kareyi 4 artırılmış kopyayla vermiş; her kareden yalnız bir kopya alınır.
+Aynı kare numarası ~4 farklı görüntüde geçiyor (farklı kaynak dizileri; README'ye göre artırma yok, görüntüler gerçekten
+farklı) → hepsi kullanılır; aynı numaralılar aynı bölüme gider. Siyah dikdörtgenler veri setinin kendi yok sayılan bölgeleri.
 Roboflow bölmesi rastgele kare bazlı: test karelerinin %84'ünün ±1 komşu karesi eğitimde (ardışık video kareleri → sızıntı).
 Bu yüzden üç bölüm birleştirilip **kare numarası bloklarına göre** yeniden ayrılır; blok kenarlarında 30 kare tampon atılır.
 
@@ -35,10 +36,7 @@ def bolumu(no):
 
 
 def tum_kareler():
-    tekil = {}
-    for yol in sorted(KAYNAK.glob("*/images/*.jpg")):
-        tekil.setdefault(int(yol.name.split("_jpg.rf.")[0]), yol)
-    return tekil
+    return [(int(yol.name.split("_jpg.rf.")[0]), yol) for yol in sorted(KAYNAK.glob("*/images/*.jpg"))]
 
 
 def kutular(etiket, w, h):
@@ -50,13 +48,14 @@ def kutular(etiket, w, h):
 
 
 def bolum_hazirla(bolum, rng):
-    hedef = KOK / "veri" / "su_yolo" / bolum
+    hedef = KOK / "veri" / "su_yolo2" / bolum
     shutil.rmtree(hedef, ignore_errors=True)
     for alt in ("images", "labels"):
         (hedef / alt).mkdir(parents=True)
-    tekil = {no: y for no, y in tum_kareler().items() if bolumu(no) == bolum}
+    tekil = [(no, y) for no, y in tum_kareler() if bolumu(no) == bolum]
     n = k = 0
-    for kok_ad, yol in tekil.items():
+    for no, yol in tekil:
+        kok_ad = yol.stem.replace("_jpg.rf.", "_")[:24]
         im = Image.open(yol)
         w, h = im.size
         kk = list(kutular(yol.parent.parent / "labels" / (yol.stem + ".txt"), w, h))
