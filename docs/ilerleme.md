@@ -237,3 +237,10 @@ Roboflow her kareyi 4 artırılmış kopyayla vermiş → her kareden **tek kopy
 Yalnız `swimmer` → insan; 960 px döşemeler: test 893 kare → 830 döşeme, valid 1.786 kare → 1.686 döşeme / 2.729 insan.
 İnsanlar çok küçük: kutu genişliği medyan 34 px (p10 15, p90 85). Uzman hiç su görmedi → sıfır-atış ölçümü (CPU, eğitim GPU'da).
 * bina_m (YOLOv8m konum) epoch 1–5: 0.625, 0.660, 0.664, 0.701, 0.716 (kıyas: konum v2 0.793).
+* **Sıfır-atış (Roboflow'un rastgele test bölmesi):** uzman v2 AP50 **0.147** (AP50-95 0.051), ana model 0.075 → sudaki
+  insanlar büyük bir boşluk.
+* **Sızıntı bulundu:** Roboflow bölmesi kare bazlı rastgele; test karelerinin %84'ünün ±1 komşusu eğitimde. `su_veri.py`
+  bölümleri birleştirip kare numarası bloklarıyla yeniden ayırıyor (valid 3000–4000 ve 11000–12000, test 7000–8000 ve
+  14000–15000, kenarlarda 30 kare tampon): eğitim 6.902 döşeme / 11.840 insan, valid 807 / 494, test 642 / 1.646.
+* `egitim_zinciri25` (24 bitince): **uzman v4** = v2'den, v2 verisi (13.493) + su 4.300 döşeme (insanlı 4.000 + boş 300;
+  SAR payını korumak için tümü değil), 1280, 8 epoch → VisDrone/SAR/SARD/su val + HERIDAL. Su testi yalnız sonda.

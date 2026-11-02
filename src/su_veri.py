@@ -1,8 +1,9 @@
 """Sudaki insanlar (sel / su baskını senaryosu) → veri/su_yolo/<bölüm>: 960 px döşemeler, yalnız `swimmer` → insan.
 
 Kaynak: Roboflow Universe sigmoidal-ivbj6/search-and-rescue-y6x1c v1 (kamu malı), 2728x1816 deniz/göl kareleri.
-Roboflow her kareyi 4 artırılmış kopyayla vermiş; her kareden yalnız bir kopya alınır (yineleme ve sızıntı olmasın).
-Bölümlerin kare adları kesişmiyor (kontrol edildi). Önce **harici test**: uzman hiç su görmedi.
+Roboflow her kareyi 4 artırılmış kopyayla vermiş; her kareden yalnız bir kopya alınır.
+Roboflow bölmesi rastgele kare bazlı: test karelerinin %84'ünün ±1 komşu karesi eğitimde (ardışık video kareleri → sızıntı).
+Bu yüzden üç bölüm birleştirilip **kare numarası bloklarına göre** yeniden ayrılır; blok kenarlarında 30 kare tampon atılır.
 
 Kullanım: python src/su_veri.py [test valid train]
 """
@@ -19,6 +20,25 @@ KOK = Path(__file__).resolve().parent.parent
 KAYNAK = KOK / "veri" / "ham" / "sar" / "sigmoidal-ivbj6__search-and-rescue-y6x1c"
 SWIMMER = 4
 BOS_ORAN = 0.1
+# kare numarası aralıkları (numaralar 2–16731); kalan her şey eğitim
+BLOKLAR = {"valid": [(3000, 4000), (11000, 12000)], "test": [(7000, 8000), (14000, 15000)]}
+TAMPON = 30
+
+
+def bolumu(no):
+    for b, araliklar in BLOKLAR.items():
+        if any(a <= no < z for a, z in araliklar):
+            return b
+    if any(a - TAMPON <= no < z + TAMPON for ar in BLOKLAR.values() for a, z in ar):
+        return None  # tampon
+    return "train"
+
+
+def tum_kareler():
+    tekil = {}
+    for yol in sorted(KAYNAK.glob("*/images/*.jpg")):
+        tekil.setdefault(int(yol.name.split("_jpg.rf.")[0]), yol)
+    return tekil
 
 
 def kutular(etiket, w, h):
@@ -34,14 +54,12 @@ def bolum_hazirla(bolum, rng):
     shutil.rmtree(hedef, ignore_errors=True)
     for alt in ("images", "labels"):
         (hedef / alt).mkdir(parents=True)
-    tekil = {}
-    for yol in sorted((KAYNAK / bolum / "images").glob("*.jpg")):
-        tekil.setdefault(yol.name.split("_jpg.rf.")[0], yol)
+    tekil = {no: y for no, y in tum_kareler().items() if bolumu(no) == bolum}
     n = k = 0
     for kok_ad, yol in tekil.items():
         im = Image.open(yol)
         w, h = im.size
-        kk = list(kutular(KAYNAK / bolum / "labels" / (yol.stem + ".txt"), w, h))
+        kk = list(kutular(yol.parent.parent / "labels" / (yol.stem + ".txt"), w, h))
         for x0 in baslangiclar(w):
             for y0 in baslangiclar(h):
                 satirlar = []
