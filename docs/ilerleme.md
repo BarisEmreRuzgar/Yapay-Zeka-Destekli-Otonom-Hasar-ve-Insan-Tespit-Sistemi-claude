@@ -249,3 +249,16 @@ Yalnız `swimmer` → insan; 960 px döşemeler: test 893 kare → 830 döşeme,
 * bina_m eğitimi bitti: bina val mAP50 epoch 30 = **0.793** (konum v2 YOLOv8s ile aynı). İki aşama val değerlendirmesi çalışıyor.
 * Hazır: `src/konum_topluluk.py` — iki konum modelinin kayıtlı val tahminlerini WBF ile birleştirir (CPU, 1.446 döşeme ~10 s).
   Aynı mAP'li iki farklı mimari farklı binaları kaçırıyorsa topluluk konum boşluğunu (0.588 ↔ 0.771) daraltabilir.
+
+### Hasar: konum hata analizi (val_son.pkl, CPU)
+Afet bazında konum AP50 (sınıf-bağımsız): moore/joplin/florence ~0.91–0.93, ama **sunda-tsunami 0.34, mexico-earthquake 0.43,
+nepal-flooding 0.60**, palu 0.71. Bunların iki+tek mAP'leri de en düşükler.
+* Boyut değil: Meksika medyan bina kenarı 36 px (Moore 37.5 px, orada bulunma %91).
+* Öncesi/sonrası kayması değil: eşleşen kutularda ortalama merkez farkı < 1 px.
+* Maskeden kutu çıkarımında bitişik binaların birleşmesi (bağlı bileşen) küçük bir etken: kaçırılanların yalnız %2.4'ü.
+  Görsel incelemede Meksika'da **etiketsiz binalar** ve çatıdan küçük GT kutuları da görüldü (etiket kalitesi).
+* **Asıl neden:** bu afetler eğitimde en az temsil edilenler (sunda 234, mexico 417 döşeme; portugal 1.939) ve bina yoğunlukları
+  en yüksek; kaçırılan binaların ~%32'si 0.05–0.25 güvenle zaten bulunuyor → model bu alanlarda az emin.
+* Çare: **zayıf afetleri çoğaltarak ince ayar** — `veri/bina_os` (sabit bağlantı; sunda ×4, mexico/palu ×3, nepal/matthew ×2;
+  17.715 döşeme), AdamW lr0 0.0005, 10 epoch (`egit.py --lr0` eklendi). Karar iki aşama val'de, afet bazında da bakılacak.
+* `degerlendir.py --tta` eklendi; `egitim_zinciri27`: uzman v2'de TTA (SAR/SARD/VisDrone/su val).

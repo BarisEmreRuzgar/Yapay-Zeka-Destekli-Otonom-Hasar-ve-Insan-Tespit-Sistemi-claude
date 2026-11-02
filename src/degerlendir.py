@@ -16,11 +16,12 @@ if __name__ == "__main__":
     ap.add_argument("--veri", default="veri/birlesik/data.yaml")
     ap.add_argument("--bolum", default="test")
     ap.add_argument("--imgsz", type=int, default=640)
+    ap.add_argument("--tta", action="store_true", help="ultralytics test zamanı artırma (ölçek + çevirme)")
     a = ap.parse_args()
 
     sonuclar = {}
     for m in a.modeller:
-        r = YOLO(m).val(data=str(KOK / a.veri), split=a.bolum, imgsz=a.imgsz, batch=8,
+        r = YOLO(m).val(data=str(KOK / a.veri), split=a.bolum, imgsz=a.imgsz, batch=4 if a.tta else 8, augment=a.tta,
                         plots=False, verbose=False, project=str(KOK / "runs" / "val"), name="v", exist_ok=True)
         adlar = r.names
         sinif = {adlar[int(c)]: {"AP50": float(r.box.ap50[i]), "AP50-95": float(r.box.ap[i])}

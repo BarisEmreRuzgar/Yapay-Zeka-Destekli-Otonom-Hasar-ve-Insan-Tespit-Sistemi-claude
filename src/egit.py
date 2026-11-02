@@ -20,6 +20,7 @@ if __name__ == "__main__":
     ap.add_argument("--imgsz", type=int, default=640)
     ap.add_argument("--batch", type=int, default=12)
     ap.add_argument("--workers", type=int, default=2, help="veri yükleyici işçi sayısı (RAM'e göre)")
+    ap.add_argument("--lr0", type=float, default=None, help="başlangıç öğrenme oranı (ince ayar için düşük, örn. 0.002)")
     ap.add_argument("--devam", action="store_true", help="yarıda kalan eğitimi sürdür")
     a = ap.parse_args()
 
@@ -34,4 +35,5 @@ if __name__ == "__main__":
             project=str(KOK / "runs"), name=a.ad, exist_ok=True, seed=0,
             # havadan görüntü: yukarıdan bakışta dikey çevirme anlamlı
             flipud=0.5, degrees=10.0,
+            **({"lr0": a.lr0, "optimizer": "AdamW"} if a.lr0 else {}),
         )
