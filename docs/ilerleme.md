@@ -291,3 +291,20 @@ HERIDAL dosya adlarında 13 bölge kodu var. İnsan tarafındaki en düşük met
 eğitime katmak üzere bölgeye göre ayrıldı (`src/heridal_bolge.py`): eğitim ZRI, VRD, JAS, BRA, BRS, SB → 3.178 döşeme / 2.928 insan;
 **hiç görülmeyen bölgeler** GOR, MED, BRK, TRS, BLA, CAP, RAK → 2.630 döşeme / 1.627 insan (`veri/heridal_bolge_test.yaml`).
 Kıyas için v2 ve v4 bu test bölgelerinde ayrıca ölçülecek (eski tam HERIDAL sayıları bununla doğrudan kıyaslanamaz).
+
+### Uzman v4 (su verisiyle) sonucu: reddedildi
+Eğitim içi VisDrone val epoch 1–8: 0.662, 0.622, 0.613, 0.652, 0.652, 0.667, 0.675, 0.680.
+
+| İnsan AP50 (val, 1280) | v2 | v4 |
+| :--- | :---: | :---: |
+| VisDrone val | **0.690** | 0.666 |
+| drone-leak SAR val | **0.890** | 0.768 |
+| SARD val | **0.864** | 0.762 |
+| HERIDAL (tam, harici) | **0.628** | 0.597 |
+| su val (blok ayrımı) | (zincir 26) | 0.558 |
+
+Su verisi su sahnesinde kazanç sağladı ama SAR'da −0.12, SARD'da −0.10. Olası neden: veri setinde yalnız `swimmer`
+etiketli, tekne/kıyıdaki insanlar etiketsiz → model "bazı bağlamlarda insanı görmezden gel" öğreniyor; nehir kıyısı SAR
+sahneleri tam da bu bağlam. **Ders: kısmi etiketli (yalnız bir alt tür insan) veri genel insan uzmanını bozar.** v2 etkin kalır.
+* `egitim_zinciri30` (29'dan sonra): v2 ve v4'ü HERIDAL görülmemiş bölgelerde ölç → **uzman v5** = v2'den, v2 verisi + HERIDAL
+  eğitim bölgeleri (16.671 görüntü), 1280, 8 epoch → görülmemiş HERIDAL bölgeleri + VisDrone/SAR/SARD val.
