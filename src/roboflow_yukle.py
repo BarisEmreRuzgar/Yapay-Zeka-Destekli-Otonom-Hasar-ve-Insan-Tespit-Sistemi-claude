@@ -31,6 +31,6 @@ ws.deploy_model(
     model_type="yolov8s",
     model_path=str(KOK / "runs" / ("insan_sar2" if insan else "genis2")),
     project_ids=[PROJE + "-insan" if insan else PROJE],
-    model_name="disastervision-insan-yolov8s" if insan else "disastervision-yolov8s",
+    model_name="disastervision-insan-v2" if insan else "disastervision-yolov8s",
     filename="weights/best.pt",
 )
