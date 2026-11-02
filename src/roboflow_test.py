@@ -16,7 +16,7 @@ from dotenv import dotenv_values
 KOK = Path(__file__).resolve().parent.parent
 URL = "https://serverless.roboflow.com/baris-emre-ruzgar/workflows/disastervision-tespit"
 CIKTI = KOK / "ornekler" / "roboflow_cikti"
-GUVEN = 0.25
+GUVEN = 0.3
 
 anahtar = dotenv_values(KOK / ".env")["ROBOFLOW_API_KEY"].strip()
 gorseller = [Path(p) for p in sys.argv[1:]] or sorted((KOK / "ornekler").glob("*.jpg"))

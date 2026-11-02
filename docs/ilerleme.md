@@ -188,3 +188,15 @@ COCO ağırlıklarından, 1280, batch 2: VisDrone val epoch 1–3 = 0.313, 0.310
 ### Uzman v3 (`egitim_zinciri21`)
 v2'den başlayarak **VisDrone'un tüm 18.098 eğitim döşemesi** (önce 8.000) + drone-leak SAR + SARD 2k = 23.591 görüntü, 1280, 8 epoch (~5 saat).
 Karar val setleri + HERIDAL'de v2'ye göre.
+
+### Güven eşiği (uzman v2, val setlerinde F1 taraması, `src/esik_bul.py`, CPU)
+| conf | VisDrone F1 | SAR F1 | SARD F1 |
+| :---: | :---: | :---: | :---: |
+| 0.10 | 0.577 | 0.732 | 0.685 |
+| 0.20 | 0.665 | 0.804 | 0.781 |
+| 0.25 (eski varsayılan) | 0.679 | 0.823 | 0.813 |
+| **0.30 (yeni varsayılan)** | 0.679 | 0.838 | 0.833 |
+| en iyi | 0.680 @0.28 | 0.849 @0.44 | 0.846 @0.41 |
+
+0.30 üç sette de en iyiye 0.013'ten yakın; duyarlılık tarafında kalındı (arama-kurtarmada kaçırma pahalı).
+`tahmin.py`, uygulama ve Roboflow workflow varsayılanı 0.30.

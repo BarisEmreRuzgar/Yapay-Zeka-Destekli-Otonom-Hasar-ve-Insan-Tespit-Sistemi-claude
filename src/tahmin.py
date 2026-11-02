@@ -36,7 +36,7 @@ def cikarim_boyutu(uzun_kenar: int) -> int:
     return int(min(1280, max(640, round(uzun_kenar * 4 / 3 / 32) * 32)))
 
 
-def tespit(goruntu_bgr: np.ndarray, model_yolu=VARSAYILAN_MODEL, conf=0.25, dilimle=False, dilim=640,
+def tespit(goruntu_bgr: np.ndarray, model_yolu=VARSAYILAN_MODEL, conf=0.3, dilimle=False, dilim=640,
            insan_modeli=INSAN_MODEL):
     """[(sınıf_adı, güven, x1, y1, x2, y2), ...] döndürür. insan_modeli verilirse (ve dosya varsa) insanlar
     ana modelden değil, ondan alınır; hasar her zaman ana modelden gelir."""
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     ap.add_argument("kaynak")
     ap.add_argument("--model", default=str(VARSAYILAN_MODEL))
     ap.add_argument("--insan-modeli", default=str(INSAN_MODEL), help='"" verilirse insanlar da ana modelden')
-    ap.add_argument("--conf", type=float, default=0.25)
+    ap.add_argument("--conf", type=float, default=0.3, help="val F1 eşik taraması: VisDrone 0.28, SAR 0.44, SARD 0.41 en iyi")
     ap.add_argument("--dilimle", action="store_true", help="SAHI döşemeli çıkarım (küçük nesneler için)")
     ap.add_argument("--cikti", default=None)
     a = ap.parse_args()
