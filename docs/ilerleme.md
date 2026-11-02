@@ -317,3 +317,7 @@ sahneleri tam da bu bağlam. **Ders: kısmi etiketli (yalnız bir alt tür insan
   165/169/108/111, içerikleri farklı — biri yüzücüler, biri şamandıra). "Her numaradan tek kopya" verinin %75'ini atmıştı.
   `su_veri.py` artık hepsini kullanıyor (`veri/su_yolo2`; aynı numaralılar aynı bölümde, blok ayrımı korunuyor).
   Siyah dikdörtgenler veri setinin kendi yok sayılan bölgeleri (artırma değil; README: artırma yok).
+* `su_yolo2`: test 2.660 / valid 3.304 döşeme hazır (eski tek-kopya: 642 / 807). Eğitim bölümünün derlemesi bellek baskısıyla
+  yarıda kaldı → GPU kuyruğu boşalınca `egitim_zinciri31` yeniden derliyor, ardından **su modu modeli v2** (`runs/insan_su2`):
+  v2'den, tüm su eğitim verisi + drone-leak SAR eğitim döşemeleri (nehir kıyısı insanlar tam etiketli; kısmi etiket etkisini
+  dengelemek için), 1280, 8 epoch → su valid2'de v2 / v4 / su2 kıyası + SAR val.
