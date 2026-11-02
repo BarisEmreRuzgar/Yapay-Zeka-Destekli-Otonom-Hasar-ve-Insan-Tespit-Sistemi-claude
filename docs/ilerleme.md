@@ -284,3 +284,4 @@ xBD'de etiketleme alışkanlığı afet türüne göre değişiyor). Meksika/Sun
 A'da öğren → B: 0.574 → **0.575**; B'de öğren → A: 0.590 → **0.584**. Kat içi kazanç (+0.007/+0.010) aktarılmıyor → aşırı uyum,
 **reddedildi**. (Not: val seçimi `Random(ad) < 0.1` olduğu için kat tohumu farklı olmalı — ilk denemede herkes A'ya düşmüştü.)
 * Uzman v4 epoch 1–2 VisDrone val: 0.662, 0.622 (v2 devam eğitimindeki yeniden ısınma eğrisine benzer).
+* `egitim_zinciri29` (28'den sonra): hasar iki aşamada hiç ölçülmemiş çıkarım artırmaları — konum TTA (`--konum-tta`) ve sınıflandırıcı panel TTA (`--tta 4`), val.
