@@ -244,3 +244,4 @@ Yalnız `swimmer` → insan; 960 px döşemeler: test 893 kare → 830 döşeme,
   14000–15000, kenarlarda 30 kare tampon): eğitim 6.902 döşeme / 11.840 insan, valid 807 / 494, test 642 / 1.646.
 * `egitim_zinciri25` (24 bitince): **uzman v4** = v2'den, v2 verisi (13.493) + su 4.300 döşeme (insanlı 4.000 + boş 300;
   SAR payını korumak için tümü değil), 1280, 8 epoch → VisDrone/SAR/SARD/su val + HERIDAL. Su testi yalnız sonda.
+* bina_m epoch 6–13: 0.722, 0.738, 0.745, 0.743, 0.750, 0.748, 0.757, 0.760 (yavaş ama düzenli yükseliş).
