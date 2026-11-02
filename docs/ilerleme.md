@@ -180,3 +180,11 @@ Devam eğitimi epoch 8–12: 0.668, 0.673, 0.678, 0.683, 0.686 — yeniden ısı
 
 **HERIDAL harici test** (hiç eğitimde yok, 5.808 döşeme / 4.555 insan, 1280): ana model **0.253**, uzman v1 **0.621**, uzman v2 **0.628**
 (AP50-95: 0.129 / 0.326 / 0.328). VisDrone test-dev v2 ölçümü YOLOv8m eğitiminden sonra (`egitim_zinciri20`).
+
+### YOLOv8m denemesi: durduruldu
+COCO ağırlıklarından, 1280, batch 2: VisDrone val epoch 1–3 = 0.313, 0.310, 0.364 (epoch başına ~46 dk). Eğilimle 10 epoch'ta
+~0.6'ya ulaşabilir, uzman v2'nin (0.690) altında → 3. epoch'ta durduruldu. Daha büyük model bu VRAM'de (batch 2) ve bu sürede kazanç sağlamıyor.
+
+### Uzman v3 (`egitim_zinciri21`)
+v2'den başlayarak **VisDrone'un tüm 18.098 eğitim döşemesi** (önce 8.000) + drone-leak SAR + SARD 2k = 23.591 görüntü, 1280, 8 epoch (~5 saat).
+Karar val setleri + HERIDAL'de v2'ye göre.
