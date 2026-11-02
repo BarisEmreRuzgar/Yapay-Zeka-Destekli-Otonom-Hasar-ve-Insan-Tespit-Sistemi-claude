@@ -275,3 +275,12 @@ Büyük model tek başına kazanç getirmedi (kapasite değil veri/alan sorunu �
 çıkarımı ~3 kat ağırlaştırıyor → şimdilik benimsenmedi (`konum_topluluk.eslesik`, ileride son birleştirmede düşünülebilir).
 Sıradaki: `egitim_zinciri28` — konum v2'den çoğaltmalı ince ayar (`runs/bina_os`), 27 bitince.
 * Uzman v4 (`runs/insan_su`) eğitimi başladı: 4.449 adım/epoch, 3.0 it/s (~25 dk/epoch), VRAM 3.6 GB.
+
+### Sınıflandırıcı hata analizi + afet türü kalibrasyonu (CPU, val_son.pkl)
+Gerçek kutularda sınıf doğruluğu: yıkık 0.83, ağır 0.71, hafif 0.60, hasarsız 0.88. Hatalar kasırgalarda yoğun:
+Matthew'da hasarsızların %94'ü "hafif", Harvey'de yıkık ve hafif yalnız %9 doğru (sel hasarı çatıdan görünmüyor;
+xBD'de etiketleme alışkanlığı afet türüne göre değişiyor). Meksika/Sunda'da sınıflandırma iyi (0.92–0.98) — orada sorun yalnız konum.
+**Deneme:** afet türü (6 tür) başına sınıf çarpanı (`src/tur_kalibrasyon.py`), val görüntü adına göre iki kata bölünüp çapraz:
+A'da öğren → B: 0.574 → **0.575**; B'de öğren → A: 0.590 → **0.584**. Kat içi kazanç (+0.007/+0.010) aktarılmıyor → aşırı uyum,
+**reddedildi**. (Not: val seçimi `Random(ad) < 0.1` olduğu için kat tohumu farklı olmalı — ilk denemede herkes A'ya düşmüştü.)
+* Uzman v4 epoch 1–2 VisDrone val: 0.662, 0.622 (v2 devam eğitimindeki yeniden ısınma eğrisine benzer).
