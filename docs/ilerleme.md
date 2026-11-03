@@ -410,3 +410,9 @@ v7, v5'ten ince ayarlandığı için ağırlıkları aynı havzada; doğrusal or
 | **0.3·v5 + 0.7·v7 (= v8)** | 0.689 | **0.902** | 0.863 | **0.861** | **0.722** |
 α=0.7 beş setin hepsinde v7'den iyi → **uzman v8 benimsendi** (`runs/insan_v8`). Zincir 39: v8 tek seferlik Lacmus testi +
 VisDrone test-dev; zincir 40: v6'yı da katan çorbalar (v5:v6:v7 = 1:1:2, 0.3·v6 + 0.7·v7, 0.4·v5 + 0.6·v7).
+* **v8 tek seferlik testler:** Lacmus test **0.886** (v7 0.897), VisDrone test-dev **0.473** (v7 0.461, v5 0.471). Seçim val'e göre → v8 kalır.
+* Zincir 40, ek çorbalar (val; VisDrone / SAR / SARD / HERIDAL / Lacmus):
+  v5:v6:v7 = 1:1:2 → 0.693 / 0.904 / 0.863 / 0.860 / 0.712; 0.3·v6 + 0.7·v7 → 0.690 / 0.905 / 0.859 / 0.863 / 0.715;
+  0.4·v5 + 0.6·v7 → 0.690 / 0.901 / 0.864 / 0.859 / 0.721. Hiçbiri v8'i açıkça geçmiyor (Lacmus −0.010'a kadar) → **reddedildi**.
+* Roboflow: disastervision-insan-v8 yüklendi, workflow insan adımı v8'e geçirildi.
+* Sırada: aynı çorba fikri hasar konum modelinde (bina2 ← bina v1'den, bina_os ← bina2'den ince ayar → aynı havza).
