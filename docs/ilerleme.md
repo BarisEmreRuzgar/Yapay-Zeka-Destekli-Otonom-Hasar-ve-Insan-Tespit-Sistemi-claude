@@ -388,3 +388,7 @@ Roboflow kareleri 2048×2048'e germiş (aslı 4:3) → `src/lacmus_veri.py` 2048
 ±10 tampon), 960 px döşeme. Tarla, orman, kar, kalabalık meydan sahneleri; insanlar ~50–150 px.
 `egitim_zinciri36`: v5 sıfır-atış Lacmus val → **uzman v7** (v5'ten, v5 verisi + Lacmus eğitim, 8 epoch) → Lacmus val + HERIDAL +
 VisDrone/SAR/SARD val. Lacmus testi yalnız sonda. Ayrıca indiriliyor: search-and-rescue-drone (orman örtüsü altı, 7.835 görüntü).
+* Lacmus döşemeleri: eğitim 2.508 kaynak → 4.500 döşeme / 4.701 insan; valid 511 → 827 / 1.416; test 549 → 973 / 1.018.
+  **v5 sıfır-atış Lacmus val: 0.591** → yeni bir zayıf alan (yaban arazisi / tarla / kar).
+* search-and-rescue-drone (7.835): sınıflar "0/1/2" (anlamı belirsiz; "2" 12.573 kutu), "person-like", 640'a gerdirilmiş,
+  karma dosya adları (dizi bazlı ayrım imkânsız) → v4 dersine göre (belirsiz/kısmi etiket genel modeli bozar) **kullanılmadı**.
