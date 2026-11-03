@@ -375,3 +375,5 @@ Eğitim içi VisDrone val epoch 1–8: 0.653, 0.652, 0.620, 0.636, 0.655, 0.674,
 | SARD val | **0.865** | 0.854 |
 Ek eğitim doygun (v1→v2'deki kazanç tekrarlanmadı) → v5 etkin kalır.
 * `egitim_zinciri34`: v5'i eğitimsiz olarak **1536 px** çıkarımda ölç (küçük insanlar; eğitim 1280).
+* v5 @1536 (eğitimsiz): HERIDAL 0.768 (1280: 0.793), SAR 0.865 (0.870), SARD 0.860 (0.865), VisDrone val **0.700** (0.682).
+  Yoğun VisDrone kalabalığında +0.018, arama-kurtarma setlerinde zarar; ortalama 0.803 → 0.798 → **1280 korunur**.
