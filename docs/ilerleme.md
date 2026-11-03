@@ -359,3 +359,6 @@ Tüm su verisi (`su_yolo2` eğitim: 27.334 döşeme / 46.472 insan; eskisinin ~4
 | su valid2 (3.304 döşeme) | 0.187 | 0.571 | **0.703** |
 | drone-leak SAR val | 0.890 | 0.768 | 0.820 |
 Tam etiketli nehir kıyısı SAR verisi kısmi etiket zararını büyük ölçüde giderdi. `modeller/insan_su.pt` = su v2 (yalnız su/sel modu).
+* `egitim_zinciri33`: **uzman v6** = v5'ten aynı veriyle 8 epoch daha (v1→v2'de bu +0.02–0.03 getirmişti; v5 eğrisi son epoch'ta hâlâ yükseliyordu).
+* Roboflow: v5 `disastervision-insan-v5` olarak yüklendi (`roboflow_yukle.py --insan`; `--kosu/--ad` eklendi) ve
+  `disastervision-tespit` workflow'u v5'e geçirildi (sunucu önbelleği ~8 dk).
