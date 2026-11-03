@@ -364,3 +364,14 @@ Tam etiketli nehir kıyısı SAR verisi kısmi etiket zararını büyük ölçü
   `disastervision-tespit` workflow'u v5'e geçirildi (sunucu önbelleği ~8 dk).
 * v5 eşik taraması (val F1): en iyi VisDrone 0.679 @0.27, SAR 0.829 @0.35, SARD 0.849 @0.38, HERIDAL görülmemiş 0.760 @0.17.
   0.30'da 0.678 / 0.825 / 0.837 / 0.743 (ortalama 0.771; 0.25'te 0.768) → varsayılan 0.30 korunur.
+
+### Uzman v6 (v5'ten aynı veriyle 8 epoch daha): reddedildi
+Eğitim içi VisDrone val epoch 1–8: 0.653, 0.652, 0.620, 0.636, 0.655, 0.674, 0.670, 0.679 (v5 son: 0.678).
+| AP50 | v5 | v6 |
+| :--- | :---: | :---: |
+| HERIDAL görülmemiş | **0.793** | 0.792 |
+| VisDrone val | 0.682 | 0.682 |
+| SAR val | **0.870** | 0.866 |
+| SARD val | **0.865** | 0.854 |
+Ek eğitim doygun (v1→v2'deki kazanç tekrarlanmadı) → v5 etkin kalır.
+* `egitim_zinciri34`: v5'i eğitimsiz olarak **1536 px** çıkarımda ölç (küçük insanlar; eğitim 1280).
