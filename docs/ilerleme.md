@@ -377,3 +377,5 @@ Ek eğitim doygun (v1→v2'deki kazanç tekrarlanmadı) → v5 etkin kalır.
 * `egitim_zinciri34`: v5'i eğitimsiz olarak **1536 px** çıkarımda ölç (küçük insanlar; eğitim 1280).
 * v5 @1536 (eğitimsiz): HERIDAL 0.768 (1280: 0.793), SAR 0.865 (0.870), SARD 0.860 (0.865), VisDrone val **0.700** (0.682).
   Yoğun VisDrone kalabalığında +0.018, arama-kurtarma setlerinde zarar; ortalama 0.803 → 0.798 → **1280 korunur**.
+* **Tek seferlik xBD testi, konum TTA'lı son sistem:** mAP50 **0.511** (önce 0.510): yıkık 0.561 (0.546), ağır 0.483 (0.490),
+  hafif 0.308 (0.303), hasarsız 0.693 (0.700); konum AP 0.759; gerçek kutularla tavan 0.758. Val'deki +0.005 testte ~0.

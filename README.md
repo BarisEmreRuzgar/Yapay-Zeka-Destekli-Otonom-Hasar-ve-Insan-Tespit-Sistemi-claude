@@ -100,7 +100,8 @@ xBD testinde (aynı 337 döşeme, aynı AP50 hesabı, `src/iki_asama.py`):
 | İki aşama v1 (bina dedektörü + YOLOv8s-cls) | 0.446 | 0.388 | 0.168 | 0.616 | 0.404 |
 | **İki aşama, son** (konum v2 + 2 sınıflandırıcı + birleştirme) | **0.546** | **0.490** | **0.303** | **0.700** | **0.510** |
 
-Konum aşamasında test zamanı artırma (ölçek + çevirme) artık varsayılan: val 0.588 → 0.593 (dört sınıfta da artış).
+Konum aşamasında test zamanı artırma (ölçek + çevirme) artık varsayılan: val 0.588 → 0.593 (dört sınıfta da artış);
+tek seferlik testte 0.510 → 0.511 (yıkık 0.546 → 0.561, diğerleri ±0.007) — pratikte aynı.
 | Gerçek kutular + son sınıflandırıcılar (tavan) | 0.880 | 0.743 | 0.450 | 0.957 | 0.758 |
 
 Yıkık sınıfı **4.5 kat** (0.12 → 0.55), genel hasar mAP50'si **0.29 → 0.51**. Hafif hasar çatıdan zor görüldüğü için
