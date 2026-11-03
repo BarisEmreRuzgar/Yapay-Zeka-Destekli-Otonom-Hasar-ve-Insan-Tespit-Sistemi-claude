@@ -416,3 +416,8 @@ VisDrone test-dev; zincir 40: v6'yı da katan çorbalar (v5:v6:v7 = 1:1:2, 0.3·
   0.4·v5 + 0.6·v7 → 0.690 / 0.901 / 0.864 / 0.859 / 0.721. Hiçbiri v8'i açıkça geçmiyor (Lacmus −0.010'a kadar) → **reddedildi**.
 * Roboflow: disastervision-insan-v8 yüklendi, workflow insan adımı v8'e geçirildi.
 * Sırada: aynı çorba fikri hasar konum modelinde (bina2 ← bina v1'den, bina_os ← bina2'den ince ayar → aynı havza).
+* Konum modeli çorbaları (bina val mAP50, 640): bina2 0.793; 0.5·bina2 + 0.5·bina_os 0.794; 0.3·bina + 0.7·bina2 0.792;
+  bina:bina_os:bina2 = 1:1:2 0.792 → fark yok, **reddedildi** (konum tavanı yine etiket kalitesi).
+* Sınıflandırıcı çorbaları: cift2/cift3/cift4 aynı ImageNet yolov8m-cls başlangıcından → ağırlık ortalaması anlamlı.
+  Zincir 42: 0.5·cift2 + 0.5·cift4 ve cift2:cift3:cift4 = 1:1:1 tek model olarak iki aşama val (kıyas topluluk 0.593).
+  Topluluk düzeyinde çıkarsa çıkarım maliyeti yarıya iner.
