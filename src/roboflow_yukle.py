@@ -1,7 +1,8 @@
 """Eğitilmiş DisasterVision ağırlıklarını Roboflow workspace'ine yükler.
 
 Kullanım (proje kökünden):  .venv\\Scripts\\python src\\roboflow_yukle.py [--sadece-kontrol] [--insan]
-  --insan: insan uzmanını (runs/insan_sar2) disastervision-insan projesine yükler.
+  --insan: insan uzmanını disastervision-insan projesine yükler (koşu ve ad: --kosu insan_v5 --ad disastervision-insan-v5;
+           Roboflow aynı adla yeniden yüklemede 404 veriyor → her sürüme yeni ad).
 Anahtar .env içindeki ROBOFLOW_API_KEY satırından okunur.
 """
 import os
@@ -26,11 +27,15 @@ print("workspace erişimi tamam:", ws.url)
 if "--sadece-kontrol" in sys.argv:
     sys.exit(0)
 
+def arg(ad, varsayilan):
+    return sys.argv[sys.argv.index(ad) + 1] if ad in sys.argv else varsayilan
+
+
 insan = "--insan" in sys.argv
 ws.deploy_model(
     model_type="yolov8s",
-    model_path=str(KOK / "runs" / ("insan_sar2" if insan else "genis2")),
+    model_path=str(KOK / "runs" / arg("--kosu", "insan_v5" if insan else "genis2")),
     project_ids=[PROJE + "-insan" if insan else PROJE],
-    model_name="disastervision-insan-v2" if insan else "disastervision-yolov8s",
+    model_name=arg("--ad", "disastervision-insan-v5" if insan else "disastervision-yolov8s"),
     filename="weights/best.pt",
 )

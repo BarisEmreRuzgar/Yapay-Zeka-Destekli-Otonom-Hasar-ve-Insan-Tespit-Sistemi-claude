@@ -351,3 +351,11 @@ Eğitim içi VisDrone val epoch 1–8: 0.645, 0.635, 0.598, 0.625, 0.650, 0.664,
 
 Dağ/orman aramasında +0.17, diğerlerinde ±0.02 → `modeller/insan_uzman.pt` = v5. Kalabalık örnekte aynı eşikte v2 69 / v5 70 insan.
 Sırada: v5 için eşik taraması (esik_bul), Roboflow'a v5 yükleme, su modu v2 (zincir 31) sonucu.
+
+### Su modu v2 (`runs/insan_su2`): benimsendi
+Tüm su verisi (`su_yolo2` eğitim: 27.334 döşeme / 46.472 insan; eskisinin ~4 katı) + drone-leak SAR eğitim döşemeleri, v2'den, 8 epoch.
+| AP50 (1280) | v2 | su v1 (v4) | **su v2** |
+| :--- | :---: | :---: | :---: |
+| su valid2 (3.304 döşeme) | 0.187 | 0.571 | **0.703** |
+| drone-leak SAR val | 0.890 | 0.768 | 0.820 |
+Tam etiketli nehir kıyısı SAR verisi kısmi etiket zararını büyük ölçüde giderdi. `modeller/insan_su.pt` = su v2 (yalnız su/sel modu).

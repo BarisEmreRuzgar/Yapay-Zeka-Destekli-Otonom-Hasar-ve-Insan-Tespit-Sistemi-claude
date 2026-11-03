@@ -68,9 +68,10 @@ farklı arazi/kamera/ülkede de ana modelden **2,5 kat** iyiydi. **v5** = v2 + H
 kalan 7 bölge hiç görülmeyen test): dağ/orman aramasında **0.622 → 0.793**, diğer setlerde ±0.02 (`runs/insan_v5`).
 
 **Su / sel modu** (`modeller/insan_su.pt`, `tahmin.py --su`, uygulamada kutucuk): sudaki insan verisiyle ayrı model —
-su sahnesinde v2'nin 3 katı (0.188 → 0.558), ama karada daha kötü olduğu için yalnız su/sel sahnesinde kullanılır.
+su sahnesinde genel modelin ~4 katı (val 0.187 → **0.703**), karada daha kötü olduğu için yalnız su/sel sahnesinde kullanılır.
 (Sudaki insan verisinde yalnız yüzücüler etiketli, teknedeki/kıyıdaki insanlar değil; genel modele katılınca kara
-arama-kurtarmayı 0.89 → 0.77'ye düşürdü — kısmi etiketli veri genel modeli bozar.)
+arama-kurtarmayı 0.89 → 0.77'ye düşürdü — kısmi etiketli veri genel modeli bozar. Su modeline tam etiketli nehir kıyısı
+SAR verisi eklenince hem su 0.571 → 0.703 hem kara SAR 0.768 → 0.820 yükseldi.)
 
 Aynı test-dev'de orijinal model 0.022, ilk yeni model (640 px) 0.343 idi. Örnek kalabalık drone görüntüsünde
 (VisDrone test-dev, gerçek ~91 kişi) bulunan insan: ana model 640 px 79, 1280 px 103 (yanlış alarmlarla), uzman **86**.

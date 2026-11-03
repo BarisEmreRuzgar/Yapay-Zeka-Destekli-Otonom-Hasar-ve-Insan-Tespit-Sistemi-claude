@@ -20,8 +20,8 @@ VARSAYILAN_MODEL = KOK / "modeller" / "disastervision.pt"
 # Val insan AP50 (ana model → uzman v5): VisDrone 0.607 → 0.682, SAR 0.260 → 0.870, SARD 0.315 → 0.865;
 # HERIDAL görülmemiş 7 bölge 0.622 (v2) → 0.793.
 INSAN_MODEL = KOK / "modeller" / "insan_uzman.pt"
-# Su / sel sahnesi modeli (uzman v4 = v2 + sudaki insan verisi): su val AP50 0.188 → 0.558, ama kara SAR'da daha kötü
-# (SAR 0.890 → 0.768) — yalnız su/sel sahnesinde kullanılır.
+# Su / sel sahnesi modeli (su v2 = v2'den, tüm sudaki insan verisi + drone-leak SAR): su val AP50 0.187 → 0.703,
+# kara SAR'da genel modelden kötü (0.820) — yalnız su/sel sahnesinde kullanılır.
 SU_MODEL = KOK / "modeller" / "insan_su.pt"
 INSAN_BOYUT, INSAN_DILIM = 1280, 960
 
