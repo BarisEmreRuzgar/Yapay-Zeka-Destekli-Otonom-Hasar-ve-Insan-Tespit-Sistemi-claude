@@ -379,3 +379,4 @@ Ek eğitim doygun (v1→v2'deki kazanç tekrarlanmadı) → v5 etkin kalır.
   Yoğun VisDrone kalabalığında +0.018, arama-kurtarma setlerinde zarar; ortalama 0.803 → 0.798 → **1280 korunur**.
 * **Tek seferlik xBD testi, konum TTA'lı son sistem:** mAP50 **0.511** (önce 0.510): yıkık 0.561 (0.546), ağır 0.483 (0.490),
   hafif 0.308 (0.303), hasarsız 0.693 (0.700); konum AP 0.759; gerçek kutularla tavan 0.758. Val'deki +0.005 testte ~0.
+* v5 VisDrone test-dev (tek seferlik): **0.471** (v2 0.469).
