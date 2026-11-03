@@ -48,24 +48,28 @@ Afet bölgelerinde havadan (İHA/drone ve uydu) çekilen görüntüler üzerinde
 
 ### İnsan uzmanı: arama-kurtarma verisiyle
 Ana model hasar ve insanı birlikte 640 px'te öğreniyor; birkaç piksellik insanlar için hem ölçek hem veri yetersiz.
-Ayrı bir **yalnız-insan** modeli (`modeller/insan_uzman.pt`, şu an v5) 1280 px'te eğitildi: VisDrone (8.000 döşeme) +
+Ayrı bir **yalnız-insan** modeli (`modeller/insan_uzman.pt`, şu an v7) 1280 px'te eğitildi: VisDrone (8.000 döşeme) +
 Roboflow Universe'ten iki arama-kurtarma seti (4K drone videoları ve SARD: moloz/kaya arasında kısmen gizli insanlar).
 Universe setleri kareleri rastgele bölüyor (ardışık, neredeyse aynı kareler train ile test'e düşüyor); burada
 doğrulama **video / kare aralığı bazında** ayrıldı, hiçbir doğrulama karesi ya da komşusu eğitimde yok.
 `tahmin.py` ve uygulama insanları artık bu modelden, hasarı ana modelden alıyor.
 
-| İnsan AP50 | Ana model (1280) | Uzman v1 | Uzman v2 | **Uzman v5 (etkin)** |
-| :--- | :---: | :---: | :---: | :---: |
-| VisDrone val | 0.607 | 0.666 | 0.690 | **0.682** |
-| Arama-kurtarma drone videoları (görülmemiş 3 video) | 0.260 | 0.860 | 0.890 | **0.870** |
-| SARD (ayrılmış son %15 kare) | 0.315 | 0.840 | 0.864 | **0.865** |
-| **HERIDAL görülmemiş 7 bölge** (dağ/orman, 2.630 döşeme) | — | — | 0.622 | **0.793** |
-| HERIDAL tamamı (v1/v2 için hiç eğitimde yok) | 0.253 | 0.621 | 0.628 | — |
-| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | 0.458 | 0.469 | **0.471** |
+| İnsan AP50 | Ana model (1280) | Uzman v1 | Uzman v2 | Uzman v5 | **Uzman v7 (etkin)** |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| VisDrone val | 0.607 | 0.666 | 0.690 | 0.682 | **0.679** |
+| Arama-kurtarma drone videoları (görülmemiş 3 video) | 0.260 | 0.860 | 0.890 | 0.870 | **0.887** |
+| SARD (ayrılmış son %15 kare) | 0.315 | 0.840 | 0.864 | 0.865 | **0.857** |
+| **HERIDAL görülmemiş 7 bölge** (dağ/orman, 2.630 döşeme) | — | — | 0.622 | 0.793 | **0.852** |
+| HERIDAL tamamı (v1/v2 için hiç eğitimde yok) | 0.253 | 0.621 | 0.628 | — | — |
+| **Lacmus val** (yaban arazisi/tarla/kar, 827 döşeme) | — | — | — | 0.591 | **0.717** |
+| **Lacmus test** (tek seferlik, 973 döşeme) | — | — | — | 0.702 | **0.897** |
+| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | 0.458 | 0.469 | 0.471 | — |
 
 v2 = v1'den aynı veriyle 12 epoch daha (`runs/insan_sar2`). HERIDAL v1/v2'nin eğitiminde yoktu: uzman, tamamen
 farklı arazi/kamera/ülkede de ana modelden **2,5 kat** iyiydi. **v5** = v2 + HERIDAL'in 6 bölgesi (bölgeye göre ayrıldı;
 kalan 7 bölge hiç görülmeyen test): dağ/orman aramasında **0.622 → 0.793**, diğer setlerde ±0.02 (`runs/insan_v5`).
+**v7** = v5 + Lacmus/LADD eğitim blokları (8 epoch, `runs/insan_v7`): yaban arazisinde Lacmus test **0.702 → 0.897**,
+HERIDAL görülmemiş bölgeler **0.793 → 0.852**, SAR 0.887; VisDrone/SARD −0.003/−0.008.
 
 **Su / sel modu** (`modeller/insan_su.pt`, `tahmin.py --su`, uygulamada kutucuk): sudaki insan verisiyle ayrı model —
 su sahnesinde genel modelin ~4 katı (val 0.187 → **0.703**), karada daha kötü olduğu için yalnız su/sel sahnesinde kullanılır.
@@ -241,7 +245,7 @@ girdi boyutuyla çalıştırır, yerelde uzman 1280 px'te çalışır; sayılar 
 ├── app.py                  # Gradio arayüzü
 ├── modeller/
 │   ├── disastervision.pt   # ana model: insan + hasar (tek görüntü)
-│   ├── insan_uzman.pt      # yalnız insan (uzman v5), 1280 px, VisDrone + arama-kurtarma + HERIDAL bölgeleri
+│   ├── insan_uzman.pt      # yalnız insan (uzman v7), 1280 px, VisDrone + arama-kurtarma + HERIDAL bölgeleri + Lacmus
 │   ├── insan_su.pt         # su / sel modu: sudaki insanlar (tahmin.py --su)
 │   ├── bina_konum.pt       # afet öncesi görüntüde bina konumu
 │   ├── hasar_cift.pt       # öncesi/sonrası çiftiyle hasar sınıflandırıcı

@@ -392,3 +392,6 @@ VisDrone/SAR/SARD val. Lacmus testi yalnız sonda. Ayrıca indiriliyor: search-a
   **v5 sıfır-atış Lacmus val: 0.591** → yeni bir zayıf alan (yaban arazisi / tarla / kar).
 * search-and-rescue-drone (7.835): sınıflar "0/1/2" (anlamı belirsiz; "2" 12.573 kutu), "person-like", 640'a gerdirilmiş,
   karma dosya adları (dizi bazlı ayrım imkânsız) → v4 dersine göre (belirsiz/kısmi etiket genel modeli bozar) **kullanılmadı**.
+* **Uzman v7 sonuçları** (val; v5 → v7): Lacmus val 0.591 → **0.717**, HERIDAL görülmemiş bölgeler 0.793 → **0.852**,
+  SAR 0.870 → **0.887**, SARD 0.865 → 0.857, VisDrone val 0.682 → 0.679. Eğitim VisDrone val epoch'ları 0.649…0.675.
+* **Tek seferlik Lacmus testi:** v5 0.702 → **v7 0.897**. **Karar: v7 benimsendi** (`modeller/insan_uzman.pt`).
