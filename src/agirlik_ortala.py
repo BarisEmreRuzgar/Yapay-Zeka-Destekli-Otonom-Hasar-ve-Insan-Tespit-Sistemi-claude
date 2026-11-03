@@ -1,20 +1,35 @@
-"""Aynı soydan iki YOLOv8 ağırlığının doğrusal ortalaması (model çorbası / WiSE-FT): w = (1-a)·A + a·B.
+"""Aynı soydan YOLOv8 ağırlıklarının ağırlıklı ortalaması (model çorbası / WiSE-FT).
 
-Kullanım: python src/agirlik_ortala.py A.pt B.pt 0.5 cikti.pt
+Kullanım: python src/agirlik_ortala.py cikti.pt A.pt:0.3 B.pt:0.7 [C.pt:w ...]   (ağırlıklar 1'e normalize edilir)
+Son bileşenin kontrol noktası (args vb.) çıktıya taşınır.
 """
 import sys
 
 import torch
 
+
+def model(yol):
+    ck = torch.load(yol, map_location="cpu", weights_only=False)
+    return ck, (ck.get("ema") or ck["model"]).float()
+
+
 if __name__ == "__main__":
-    a_yol, b_yol, alfa, cikti = sys.argv[1], sys.argv[2], float(sys.argv[3]), sys.argv[4]
-    A = torch.load(a_yol, map_location="cpu", weights_only=False)
-    B = torch.load(b_yol, map_location="cpu", weights_only=False)
-    ma = (A.get("ema") or A["model"]).float()
-    mb = (B.get("ema") or B["model"]).float()
-    sb = mb.state_dict()
-    yeni = {k: ((1 - alfa) * v + alfa * sb[k]) if v.dtype.is_floating_point else sb[k] for k, v in ma.state_dict().items()}
-    mb.load_state_dict(yeni)
-    B["model"] = mb.half(); B["ema"] = None; B["optimizer"] = None
-    torch.save(B, cikti)
-    print("kaydedildi:", cikti)
+    cikti, parcalar = sys.argv[1], [p.rsplit(":", 1) for p in sys.argv[2:]]
+    toplam = sum(float(w) for _, w in parcalar)
+    ortalama, son = None, None
+    for yol, w in parcalar:
+        ck, m = model(yol)
+        w = float(w) / toplam
+        sd = m.state_dict()
+        if ortalama is None:
+            ortalama = {k: v * w if v.dtype.is_floating_point else v for k, v in sd.items()}
+        else:
+            for k, v in sd.items():
+                if v.dtype.is_floating_point:
+                    ortalama[k] += v * w
+        son = (ck, m)
+    ck, m = son
+    m.load_state_dict(ortalama)
+    ck["model"] = m.half(); ck["ema"] = None; ck["optimizer"] = None
+    torch.save(ck, cikti)
+    print("kaydedildi:", cikti, [(y, w) for y, w in parcalar])

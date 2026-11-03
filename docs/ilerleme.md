@@ -399,3 +399,14 @@ VisDrone/SAR/SARD val. Lacmus testi yalnız sonda. Ayrıca indiriliyor: search-a
   HERIDAL görülmemiş 0.796@0.27 / 0.794, Lacmus 0.726@0.28 / 0.720 → **0.30 korundu**.
 * v7 VisDrone test-dev (tek seferlik): **0.461** (v5 0.471). Kentsel kalabalıkta −0.010, yaban arazisi/dağda +0.06…+0.20 → v7 kalır.
 * Roboflow: disastervision-insan-v7 yüklendi, workflow `disastervision-tespit` insan adımı v7'ye geçirildi.
+
+### Model çorbası (ağırlık ortalaması, `src/agirlik_ortala.py`) — uzman v8
+v7, v5'ten ince ayarlandığı için ağırlıkları aynı havzada; doğrusal ortalama (WiSE-FT) ek eğitim olmadan denendi (val, 1280):
+| Model | VisDrone | SAR | SARD | HERIDAL görülmemiş | Lacmus val |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| v5 | 0.682 | 0.870 | 0.865 | 0.793 | 0.591 |
+| v7 | 0.679 | 0.887 | 0.857 | 0.852 | 0.717 |
+| 0.5·v5 + 0.5·v7 | **0.691** | 0.899 | **0.866** | 0.854 | 0.718 |
+| **0.3·v5 + 0.7·v7 (= v8)** | 0.689 | **0.902** | 0.863 | **0.861** | **0.722** |
+α=0.7 beş setin hepsinde v7'den iyi → **uzman v8 benimsendi** (`runs/insan_v8`). Zincir 39: v8 tek seferlik Lacmus testi +
+VisDrone test-dev; zincir 40: v6'yı da katan çorbalar (v5:v6:v7 = 1:1:2, 0.3·v6 + 0.7·v7, 0.4·v5 + 0.6·v7).
