@@ -48,7 +48,7 @@ Afet bölgelerinde havadan (İHA/drone ve uydu) çekilen görüntüler üzerinde
 
 ### İnsan uzmanı: arama-kurtarma verisiyle
 Ana model hasar ve insanı birlikte 640 px'te öğreniyor; birkaç piksellik insanlar için hem ölçek hem veri yetersiz.
-Ayrı bir **yalnız-insan** modeli (`modeller/insan_uzman.pt`) 1280 px'te eğitildi: VisDrone (8.000 döşeme) +
+Ayrı bir **yalnız-insan** modeli (`modeller/insan_uzman.pt`, şu an v5) 1280 px'te eğitildi: VisDrone (8.000 döşeme) +
 Roboflow Universe'ten iki arama-kurtarma seti (4K drone videoları ve SARD: moloz/kaya arasında kısmen gizli insanlar).
 Universe setleri kareleri rastgele bölüyor (ardışık, neredeyse aynı kareler train ile test'e düşüyor); burada
 doğrulama **video / kare aralığı bazında** ayrıldı, hiçbir doğrulama karesi ya da komşusu eğitimde yok.
@@ -240,7 +240,8 @@ girdi boyutuyla çalıştırır, yerelde uzman 1280 px'te çalışır; sayılar 
 ├── app.py                  # Gradio arayüzü
 ├── modeller/
 │   ├── disastervision.pt   # ana model: insan + hasar (tek görüntü)
-│   ├── insan_uzman.pt      # yalnız insan, 1280 px, VisDrone + arama-kurtarma verisi
+│   ├── insan_uzman.pt      # yalnız insan (uzman v5), 1280 px, VisDrone + arama-kurtarma + HERIDAL bölgeleri
+│   ├── insan_su.pt         # su / sel modu: sudaki insanlar (tahmin.py --su)
 │   ├── bina_konum.pt       # afet öncesi görüntüde bina konumu
 │   ├── hasar_cift.pt       # öncesi/sonrası çiftiyle hasar sınıflandırıcı
 │   └── hasar_cift_v4.pt    # topluluğun ikinci üyesi
@@ -259,6 +260,13 @@ girdi boyutuyla çalıştırır, yerelde uzman 1280 px'te çalışır; sayılar 
 │   ├── sar_indir.py        # Universe'ten arama-kurtarma veri setleri
 │   ├── sar_veri.py         # drone-leak 4K kareleri → döşemeler (video bazlı bölme)
 │   ├── sard_veri.py        # SARD → 16:9'a geri açma (kare aralığıyla bölme)
+│   ├── heridal_veri.py     # HERIDAL → harici test döşemeleri
+│   ├── heridal_bolge.py    # HERIDAL bölgeye göre eğitim / görülmemiş test
+│   ├── su_veri.py          # sudaki insanlar (sel) → döşemeler (kare bloklarıyla bölme)
+│   ├── esik_bul.py         # val F1 ile güven eşiği seçimi
+│   ├── konum_topluluk.py   # iki konum modelinin birleşimi (deneme)
+│   ├── birlesim_dene.py    # iki aşama + tek model birleştirme denemeleri
+│   ├── tur_kalibrasyon.py  # afet türü kalibrasyonu (deneme, reddedildi)
 │   ├── roboflow_yukle.py   # ağırlıkları Roboflow'a yükleme
 │   └── roboflow_test.py    # Roboflow Workflow testi
 ├── ornekler/               # örnek görüntüler
