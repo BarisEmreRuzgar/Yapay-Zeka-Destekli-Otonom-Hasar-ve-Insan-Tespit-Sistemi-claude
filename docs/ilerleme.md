@@ -380,3 +380,11 @@ Ek eğitim doygun (v1→v2'deki kazanç tekrarlanmadı) → v5 etkin kalır.
 * **Tek seferlik xBD testi, konum TTA'lı son sistem:** mAP50 **0.511** (önce 0.510): yıkık 0.561 (0.546), ağır 0.483 (0.490),
   hafif 0.308 (0.303), hasarsız 0.693 (0.700); konum AP 0.759; gerçek kutularla tavan 0.758. Val'deki +0.005 testte ~0.
 * v5 VisDrone test-dev (tek seferlik): **0.471** (v2 0.469).
+
+### Lacmus / LADD (yaban arazisi arama-kurtarma) — uzman v7 hazırlığı
+Universe 2-8hh1e/lacmus v4 (CC BY 4.0): 14.176 dosya = 1.356 numara × ~4 kaynak görüntü × 3 artırma (pozlama ±%4, tuz-biber).
+Roboflow kareleri 2048×2048'e germiş (aslı 4:3) → `src/lacmus_veri.py` 2048×1536'ya geri açıyor, her kaynaktan tek kopya
+(aynı numara + aynı etiket = aynı kaynak), numara bloklarıyla ayırıyor (valid 300–400 + 900–1000, test 600–700 + 1200–1300,
+±10 tampon), 960 px döşeme. Tarla, orman, kar, kalabalık meydan sahneleri; insanlar ~50–150 px.
+`egitim_zinciri36`: v5 sıfır-atış Lacmus val → **uzman v7** (v5'ten, v5 verisi + Lacmus eğitim, 8 epoch) → Lacmus val + HERIDAL +
+VisDrone/SAR/SARD val. Lacmus testi yalnız sonda. Ayrıca indiriliyor: search-and-rescue-drone (orman örtüsü altı, 7.835 görüntü).
