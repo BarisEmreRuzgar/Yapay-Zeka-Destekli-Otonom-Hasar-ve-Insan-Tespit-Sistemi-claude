@@ -63,13 +63,14 @@ doğrulama **video / kare aralığı bazında** ayrıldı, hiçbir doğrulama ka
 | HERIDAL tamamı (v1/v2 için hiç eğitimde yok) | 0.253 | 0.621 | 0.628 | — | — |
 | **Lacmus val** (yaban arazisi/tarla/kar, 827 döşeme) | — | — | — | 0.591 | **0.717** |
 | **Lacmus test** (tek seferlik, 973 döşeme) | — | — | — | 0.702 | **0.897** |
-| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | 0.458 | 0.469 | 0.471 | — |
+| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | 0.458 | 0.469 | 0.471 | 0.461 |
 
 v2 = v1'den aynı veriyle 12 epoch daha (`runs/insan_sar2`). HERIDAL v1/v2'nin eğitiminde yoktu: uzman, tamamen
 farklı arazi/kamera/ülkede de ana modelden **2,5 kat** iyiydi. **v5** = v2 + HERIDAL'in 6 bölgesi (bölgeye göre ayrıldı;
 kalan 7 bölge hiç görülmeyen test): dağ/orman aramasında **0.622 → 0.793**, diğer setlerde ±0.02 (`runs/insan_v5`).
 **v7** = v5 + Lacmus/LADD eğitim blokları (8 epoch, `runs/insan_v7`): yaban arazisinde Lacmus test **0.702 → 0.897**,
-HERIDAL görülmemiş bölgeler **0.793 → 0.852**, SAR 0.887; VisDrone/SARD −0.003/−0.008.
+HERIDAL görülmemiş bölgeler **0.793 → 0.852**, SAR 0.887; VisDrone/SARD −0.003/−0.008, VisDrone test-dev 0.471 → 0.461 (kentsel kalabalıkta küçük kayıp, arama-kurtarmada büyük kazanç).
+Varsayılan güven eşiği 0.30 korundu (beş val setinde en iyi F1'in en fazla 0.006 altında).
 
 **Su / sel modu** (`modeller/insan_su.pt`, `tahmin.py --su`, uygulamada kutucuk): sudaki insan verisiyle ayrı model —
 su sahnesinde genel modelin ~4 katı (val 0.187 → **0.703**), karada daha kötü olduğu için yalnız su/sel sahnesinde kullanılır.

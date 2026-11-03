@@ -395,3 +395,7 @@ VisDrone/SAR/SARD val. Lacmus testi yalnız sonda. Ayrıca indiriliyor: search-a
 * **Uzman v7 sonuçları** (val; v5 → v7): Lacmus val 0.591 → **0.717**, HERIDAL görülmemiş bölgeler 0.793 → **0.852**,
   SAR 0.870 → **0.887**, SARD 0.865 → 0.857, VisDrone val 0.682 → 0.679. Eğitim VisDrone val epoch'ları 0.649…0.675.
 * **Tek seferlik Lacmus testi:** v5 0.702 → **v7 0.897**. **Karar: v7 benimsendi** (`modeller/insan_uzman.pt`).
+* v7 eşik taraması (val F1, en iyi conf / 0.30'da): VisDrone 0.674@0.25 / 0.670, SAR 0.834@0.33 / 0.832, SARD 0.838@0.41 / 0.834,
+  HERIDAL görülmemiş 0.796@0.27 / 0.794, Lacmus 0.726@0.28 / 0.720 → **0.30 korundu**.
+* v7 VisDrone test-dev (tek seferlik): **0.461** (v5 0.471). Kentsel kalabalıkta −0.010, yaban arazisi/dağda +0.06…+0.20 → v7 kalır.
+* Roboflow: disastervision-insan-v7 yüklendi, workflow `disastervision-tespit` insan adımı v7'ye geçirildi.
