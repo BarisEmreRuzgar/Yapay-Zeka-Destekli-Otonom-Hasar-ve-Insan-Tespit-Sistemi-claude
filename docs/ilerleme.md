@@ -421,3 +421,13 @@ VisDrone test-dev; zincir 40: v6'yı da katan çorbalar (v5:v6:v7 = 1:1:2, 0.3·
 * Sınıflandırıcı çorbaları: cift2/cift3/cift4 aynı ImageNet yolov8m-cls başlangıcından → ağırlık ortalaması anlamlı.
   Zincir 42: 0.5·cift2 + 0.5·cift4 ve cift2:cift3:cift4 = 1:1:1 tek model olarak iki aşama val (kıyas topluluk 0.593).
   Topluluk düzeyinde çıkarsa çıkarım maliyeti yarıya iner.
+* **Zincir 42 sonucu** (iki aşama val, iki+tek; topluluk cift2 + cift4(T=2) = **0.593**):
+  0.5·cift2 + 0.5·cift4 çorbası tek model **0.591** (yıkık 0.688, ağır 0.531, hafif 0.408, hasarsız 0.738) — topluluğa
+  denk, sınıflandırıcı maliyeti yarı; cift2:cift3:cift4 çorbası 0.544 (aşırı emin cift3 bozuyor).
+  Kayıtlı olasılıklarla çevrimdışı: topluluk ⊕ çorba (0.5/0.5) 0.598 (+0.005), ama ağırlık val'de seçildi, üç model gerekiyor
+  ve önceki +0.005'lik val kazançları teste geçmedi (konum TTA: val +0.005 → test +0.001) → **varsayılan değişmedi**.
+  Hızlı mod gerekirse `--siniflandirici runs/corba/cift24.pt --sicaklik 1` (−0.002).
+* Panel çözünürlüğü: paneller 128 px, kırpma ~1.6 × bina (xBD binaları 10–40 px) → kaynak zaten büyütülüyor; daha büyük panel
+  bilgi eklemez, denenmedi. Hasar tarafı bu donanımda doymuş görünüyor.
+* **Zincir 43:** uzman v9 = v8'den devam (v7 verisi, AdamW lr0 5e-4, 6 epoch, ~3 saat) → v8+v9 çorbaları (0.5, 0.3) → beş val seti.
+  (v6 tek başına reddedilmişti ama çorbada SAR/VisDrone'a katkı verdi; "devam + çorba" tarifi.)
