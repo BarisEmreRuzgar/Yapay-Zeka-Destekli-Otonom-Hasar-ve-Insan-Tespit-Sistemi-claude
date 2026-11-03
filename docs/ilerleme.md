@@ -328,3 +328,26 @@ Zayıf afetlerde konum: sunda 0.344 → 0.356, mexico 0.432 → 0.438, nepal 0.6
 Bu afetlerin 3–4 kat çoğaltılması bile konumu kıpırdatmadı → sorun veri miktarı değil; görsel incelemede görülen
 **etiketsiz binalar / çatıdan küçük GT kutuları** (etiket kalitesi) en olası açıklama — veri setinin kendi tavanı.
 Karar: konum v2 korunur. Konum tarafında denenenler (YOLOv8m, 1024 çıkarım, WBF, eşleşmeli topluluk, çoğaltma) en fazla +0.004.
+
+### Hasar TTA (zincir 29, val, konum v2 + v2/v4 T=2, iki+tek)
+| Kurgu | yıkık | ağır | hafif | hasarsız | mAP50 |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| temel | 0.691 | 0.525 | 0.403 | 0.731 | 0.588 |
+| **konum TTA** (ultralytics ölçek+çevirme) | 0.698 | 0.534 | 0.406 | 0.734 | **0.593** |
+| sınıflandırıcı panel TTA ×4 | 0.694 | 0.524 | 0.407 | 0.733 | 0.590 |
+Konum TTA dört sınıfta da artış → **varsayılan yapıldı** (`cift_tespit(konum_tta=True)`, CLI `--konum-tta` varsayılan açık).
+Tek çift görüntüde maliyeti küçük. Sınıflandırıcı TTA (+0.002, 4 kat maliyet) benimsenmedi.
+
+### Uzman v5 (v2 + HERIDAL eğitim bölgeleri): **benimsendi**
+Eğitim içi VisDrone val epoch 1–8: 0.645, 0.635, 0.598, 0.625, 0.650, 0.664, 0.668, 0.678.
+
+| İnsan AP50 (1280) | v2 | v4 (su) | **v5** |
+| :--- | :---: | :---: | :---: |
+| **HERIDAL görülmemiş 7 bölge** | 0.622 | 0.568 | **0.793** |
+| VisDrone val | 0.690 | 0.666 | 0.682 |
+| drone-leak SAR val | 0.890 | 0.768 | 0.870 |
+| SARD val | 0.864 | 0.762 | 0.865 |
+| 4 set ortalaması | 0.767 | 0.691 | **0.803** |
+
+Dağ/orman aramasında +0.17, diğerlerinde ±0.02 → `modeller/insan_uzman.pt` = v5. Kalabalık örnekte aynı eşikte v2 69 / v5 70 insan.
+Sırada: v5 için eşik taraması (esik_bul), Roboflow'a v5 yükleme, su modu v2 (zincir 31) sonucu.

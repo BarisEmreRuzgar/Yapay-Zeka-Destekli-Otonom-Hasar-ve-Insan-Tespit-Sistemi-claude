@@ -244,7 +244,7 @@ def _model(anahtar, kur):
 
 
 def cift_tespit(once, sonra, conf=0.25, siniflandirici=None, sicaklik="", konumlayici=None, konum_imgsz=640,
-                konum_tta=False, tta=0):
+                konum_tta=True, tta=0):
     """Öncesi/sonrası RGB görüntü çifti (aynı hizada) → [(hasar_sınıfı, skor, x1, y1, x2, y2), ...].
     Konum öncesi görüntüde, hasar çift sınıflandırıcıyla; sonrası görüntüdeki ana model kutuları birleştirilir."""
     if not siniflandirici:
@@ -297,7 +297,8 @@ if __name__ == "__main__":
     ap.add_argument("--bolum", choices=["test", "val"], default="test")
     ap.add_argument("--kurgu", default="tek,iki,iki+tek,iki+gt", help="virgülle: tek, iki, iki+tek, iki+gt")
     ap.add_argument("--konum-imgsz", type=int, default=640)
-    ap.add_argument("--konum-tta", action="store_true", help="konum modelinde ultralytics TTA (ölçek + çevirme)")
+    ap.add_argument("--konum-tta", action=argparse.BooleanOptionalAction, default=True,
+                    help="konum modelinde ultralytics TTA (ölçek + çevirme); val 0.588 → 0.593, varsayılan açık")
     ap.add_argument("--tta", type=int, default=0, help="sınıflandırıcıda kaç panel-içi çevirmenin ortalaması (0/1 = yok, en çok 8)")
     ap.add_argument("--sinir", type=int, default=0, help="en fazla bu kadar görüntü (hızlı deneme)")
     ap.add_argument("--kaydet", help="ham tahminleri pickle olarak kaydet (puanlama denemeleri için)")

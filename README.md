@@ -54,16 +54,23 @@ Universe setleri kareleri rastgele bölüyor (ardışık, neredeyse aynı karele
 doğrulama **video / kare aralığı bazında** ayrıldı, hiçbir doğrulama karesi ya da komşusu eğitimde yok.
 `tahmin.py` ve uygulama insanları artık bu modelden, hasarı ana modelden alıyor.
 
-| İnsan AP50 | Ana model (1280) | İnsan uzmanı v1 | **İnsan uzmanı v2** |
-| :--- | :---: | :---: | :---: |
-| VisDrone val | 0.607 | 0.666 | **0.690** |
-| Arama-kurtarma drone videoları (görülmemiş 3 video) | 0.260 | 0.860 | **0.890** |
-| SARD (ayrılmış son %15 kare) | 0.315 | 0.840 | **0.864** |
-| **HERIDAL** (Hırvatistan dağ/orman, eğitimde hiç yok, 5.808 döşeme) | 0.253 | 0.621 | **0.628** |
-| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | 0.458 | **0.469** |
+| İnsan AP50 | Ana model (1280) | Uzman v1 | Uzman v2 | **Uzman v5 (etkin)** |
+| :--- | :---: | :---: | :---: | :---: |
+| VisDrone val | 0.607 | 0.666 | 0.690 | **0.682** |
+| Arama-kurtarma drone videoları (görülmemiş 3 video) | 0.260 | 0.860 | 0.890 | **0.870** |
+| SARD (ayrılmış son %15 kare) | 0.315 | 0.840 | 0.864 | **0.865** |
+| **HERIDAL görülmemiş 7 bölge** (dağ/orman, 2.630 döşeme) | — | — | 0.622 | **0.793** |
+| HERIDAL tamamı (v1/v2 için hiç eğitimde yok) | 0.253 | 0.621 | 0.628 | — |
+| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | 0.458 | 0.469 | — |
 
-v2 = v1'den aynı veriyle 12 epoch daha (`runs/insan_sar2`). HERIDAL hiçbir modelin eğitiminde yok: uzman, tamamen
-farklı arazi/kamera/ülkede de ana modelden **2,5 kat** iyi — kazanç ezber değil, gerçek genelleme.
+v2 = v1'den aynı veriyle 12 epoch daha (`runs/insan_sar2`). HERIDAL v1/v2'nin eğitiminde yoktu: uzman, tamamen
+farklı arazi/kamera/ülkede de ana modelden **2,5 kat** iyiydi. **v5** = v2 + HERIDAL'in 6 bölgesi (bölgeye göre ayrıldı;
+kalan 7 bölge hiç görülmeyen test): dağ/orman aramasında **0.622 → 0.793**, diğer setlerde ±0.02 (`runs/insan_v5`).
+
+**Su / sel modu** (`modeller/insan_su.pt`, `tahmin.py --su`, uygulamada kutucuk): sudaki insan verisiyle ayrı model —
+su sahnesinde v2'nin 3 katı (0.188 → 0.558), ama karada daha kötü olduğu için yalnız su/sel sahnesinde kullanılır.
+(Sudaki insan verisinde yalnız yüzücüler etiketli, teknedeki/kıyıdaki insanlar değil; genel modele katılınca kara
+arama-kurtarmayı 0.89 → 0.77'ye düşürdü — kısmi etiketli veri genel modeli bozar.)
 
 Aynı test-dev'de orijinal model 0.022, ilk yeni model (640 px) 0.343 idi. Örnek kalabalık drone görüntüsünde
 (VisDrone test-dev, gerçek ~91 kişi) bulunan insan: ana model 640 px 79, 1280 px 103 (yanlış alarmlarla), uzman **86**.
@@ -91,6 +98,8 @@ xBD testinde (aynı 337 döşeme, aynı AP50 hesabı, `src/iki_asama.py`):
 | Tek görüntü (son model) | 0.121 | 0.328 | 0.195 | 0.507 | 0.288 |
 | İki aşama v1 (bina dedektörü + YOLOv8s-cls) | 0.446 | 0.388 | 0.168 | 0.616 | 0.404 |
 | **İki aşama, son** (konum v2 + 2 sınıflandırıcı + birleştirme) | **0.546** | **0.490** | **0.303** | **0.700** | **0.510** |
+
+Konum aşamasında test zamanı artırma (ölçek + çevirme) artık varsayılan: val 0.588 → 0.593 (dört sınıfta da artış).
 | Gerçek kutular + son sınıflandırıcılar (tavan) | 0.880 | 0.743 | 0.450 | 0.957 | 0.758 |
 
 Yıkık sınıfı **4.5 kat** (0.12 → 0.55), genel hasar mAP50'si **0.29 → 0.51**. Hafif hasar çatıdan zor görüldüğü için
