@@ -362,3 +362,5 @@ Tam etiketli nehir kıyısı SAR verisi kısmi etiket zararını büyük ölçü
 * `egitim_zinciri33`: **uzman v6** = v5'ten aynı veriyle 8 epoch daha (v1→v2'de bu +0.02–0.03 getirmişti; v5 eğrisi son epoch'ta hâlâ yükseliyordu).
 * Roboflow: v5 `disastervision-insan-v5` olarak yüklendi (`roboflow_yukle.py --insan`; `--kosu/--ad` eklendi) ve
   `disastervision-tespit` workflow'u v5'e geçirildi (sunucu önbelleği ~8 dk).
+* v5 eşik taraması (val F1): en iyi VisDrone 0.679 @0.27, SAR 0.829 @0.35, SARD 0.849 @0.38, HERIDAL görülmemiş 0.760 @0.17.
+  0.30'da 0.678 / 0.825 / 0.837 / 0.743 (ortalama 0.771; 0.25'te 0.768) → varsayılan 0.30 korunur.
