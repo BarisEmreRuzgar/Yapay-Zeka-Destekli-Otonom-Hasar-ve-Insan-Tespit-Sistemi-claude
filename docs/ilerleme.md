@@ -485,3 +485,7 @@ Etiketler görsel olarak doğrulandı (sallardaki insanlar doğru kutulu).
   su3 karada (VisDrone/SARD/HERIDAL/Lacmus) çökmüş: su verisindeki kısmi etiket (yalnız yüzücüler) karadaki insanları
   bastırmayı öğretiyor. Çorbalar kara setlerinde 0.1–0.25 kaybediyor → su modu ayrı kalır; README'ye "karada açmayın" eklendi.
 * Zincir 48: tek seferlik su testi (su2 ile su3) + su3 Tambo testi (v11 0.423).
+* **Zincir 48 (tek seferlik):** su test su2 0.611 → **su3 0.639**; Tambo test su3 **0.448** (v11 0.423).
+* Zincir 49: Tambo val çıkarım boyutu taraması (v11, su3; 1600/1920/2272). Tambo kareleri 1138×640, test insanları ~13 px →
+  büyütülmüş çıkarım yardımcı olursa tahmin.py'de "düşük çözünürlüklü kare → büyük imgsz" kuralı düşünülecek
+  (diğer val setleri 960 döşeme; 1536 daha önce VisDrone val +0.018, HERIDAL −0.025 vermişti).

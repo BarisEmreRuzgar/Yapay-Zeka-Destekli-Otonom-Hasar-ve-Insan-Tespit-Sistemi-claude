@@ -50,7 +50,8 @@ Afet bölgelerinde havadan (İHA/drone ve uydu) çekilen görüntüler üzerinde
 | :--- | :---: | :---: | :---: |
 | İnsan, VisDrone test-dev | 0.022 | 0.343 | **0.470** (insan uzmanı v11, 1280 px) |
 | İnsan, yaban arazisi arama-kurtarma (Lacmus test) | — | — | **0.900** |
-| İnsan, nehir/sal drone videosu (Tambo test) | — | — | **0.423** (v8: 0.123) |
+| İnsan, nehir/sal drone videosu (Tambo test) | — | — | **0.423** (v8: 0.123; su modu v3: 0.448) |
+| İnsan, sudaki yüzücüler (su test, su modu) | — | — | **0.639** (su modu v3; su2: 0.611) |
 | Bina hasarı, xBD test mAP50 | 0.054 | 0.294 | **0.511** (iki aşama: konum + öncesi/sonrası sınıflandırıcı) |
 
 Ayrıntılar ve tüm ara sürümler aşağıdaki bölümlerde; deney günlüğü `docs/ilerleme.md`.
@@ -95,6 +96,7 @@ yeni bir videoya genelleme sınırlı; nehir/sal sahneleri hâlâ en zayıf alan
 **Su / sel modu** (`modeller/insan_su.pt`, `tahmin.py --su`, uygulamada kutucuk): **su modu v3** (`runs/insan_su3`) —
 v11'den başlatılıp sudaki insan verisi + nehir kıyısı SAR (drone-leak) + Tambo nehir/sal videolarıyla 8 epoch eğitildi.
 Su val: genel model 0.390, su2 0.703 → **v3 0.715**; nehir/sal (Tambo val): su2 0.000, v11 0.806 → **v3 0.887**.
+Tek seferlik testler: su test su2 0.611 → **v3 0.639**; Tambo test v11 0.423 → **v3 0.448**.
 Yani v3 hem açık sudaki yüzücüleri hem sal/tekne/kıyıdaki insanları buluyor (su2 nehir/sal sahnelerinde hiç bulamıyordu).
 **Karada su modunu açmayın:** v3 karada çok zayıf (VisDrone val 0.071, SARD 0.377, HERIDAL 0.254; v11: 0.689 / 0.856 / 0.855).
 v11 ile ağırlık ortalaması da tek model vermedi (yarı yarıya: VisDrone 0.444, su 0.665) — iki model ayrı kalır.
