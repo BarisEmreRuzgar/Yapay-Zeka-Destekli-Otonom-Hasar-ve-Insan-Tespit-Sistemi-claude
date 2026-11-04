@@ -489,3 +489,7 @@ Etiketler görsel olarak doğrulandı (sallardaki insanlar doğru kutulu).
 * Zincir 49: Tambo val çıkarım boyutu taraması (v11, su3; 1600/1920/2272). Tambo kareleri 1138×640, test insanları ~13 px →
   büyütülmüş çıkarım yardımcı olursa tahmin.py'de "düşük çözünürlüklü kare → büyük imgsz" kuralı düşünülecek
   (diğer val setleri 960 döşeme; 1536 daha önce VisDrone val +0.018, HERIDAL −0.025 vermişti).
+* **Zincir 49 sonucu — reddedildi.** Tambo val çıkarım boyutu (v11 / su3): 1280 0.806 / 0.887; 1600 0.810 / 0.893;
+  1920 0.790 / 0.886; 2272 0.763 / 0.857. Büyütme kazancı ≤0.006 → kural eklenmedi (küçük insan sorunu çıkarım boyutuyla çözülmüyor).
+* Zincir 50: v11 @1536 tüm kara val setleri + Tambo (v11 @1280: VisDrone 0.689, SAR 0.895, SARD 0.856, HERIDAL 0.855,
+  Lacmus 0.732, Tambo 0.806). Ortalama belirgin artmazsa 1280 kalır.
