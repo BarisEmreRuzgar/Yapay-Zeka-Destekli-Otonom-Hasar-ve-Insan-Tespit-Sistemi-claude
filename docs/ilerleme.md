@@ -505,3 +505,10 @@ Son denemelerin hepsi (v9 devam, konum/sınıflandırıcı/su çorbaları, birle
 * xBD hasar 0.511: tavan etiket kalitesi (bina sınırı/hasar sınıfı tutarsız, hafif hasar zayıf).
 * Tambo test 0.423/0.448: 5 eğitim videosu, test videosunda ~13 px insanlar.
 Bunları aşmak için yeni ve tam etiketli veri ya da daha büyük GPU gerekir. Otonom döngü burada durduruldu.
+
+### Kullanıcı "devam" (2026-11-05) — zincir 51: 1536 ince ayar
+* Universe'te yeni drone insan verisi arandı: büyük setlerin çoğu kaynağı belirsiz (VisDrone türevi olabilir → test-dev
+  sızıntısı riski) → kullanılmadı.
+* Zincir 50'de 1536 çıkarım VisDrone'a +0.019 verdi ama HERIDAL −0.025 (model 1280'de eğitilmiş). Hipotez: 1536'da ince ayar
+  bu kaybı kapatır. **v12** = v11'den, v10 verisi, imgsz 1536, batch 2, 6 epoch → v11⊕v12 çorbaları (0.5, 0.7) →
+  6 val seti @1280 ve @1536. Ölçüt: ortalama ≥ +0.01 ve hiçbir set > 0.01 düşmesin.
