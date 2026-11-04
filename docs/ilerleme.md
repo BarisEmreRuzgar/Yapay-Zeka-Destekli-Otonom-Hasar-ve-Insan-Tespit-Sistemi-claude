@@ -440,3 +440,13 @@ VisDrone test-dev; zincir 40: v6'yı da katan çorbalar (v5:v6:v7 = 1:1:2, 0.3·
   | 0.7·v8 + 0.3·v9 | 0.691 | 0.917 | 0.852 | 0.856 | 0.721 | 0.807 |
   SAR kazancı (tek veri seti, 3 video) SARD/HERIDAL kaybıyla dengeleniyor → **reddedildi**, v8 kalır. Mevcut veriyle insan
   uzmanı doygunluğa yakın; sonraki kazanç yeni veri alanından gelmeli.
+
+### Tambo nehir/sal drone verisi (uzman v10 hazırlığı)
+Universe tiny-person-public/tiny-person-detection-stwdp v6 (CC BY 4.0): adı "Tiny Person" ama TinyPerson değil — 8 nehir/kıyı
+drone videosunun ("Tambo") 24.002 kopyası; sallardaki, kıyıdaki ve sudaki çok küçük insanlar (sel senaryosuna yakın).
+Roboflow 640×640'a germiş + her kareden 3 kopya (±10° döndürme, yatay çevirme). `src/tambo_veri.py`: her kareden en az siyah
+köşeli (en az döndürülmüş) kopya, 1138×640'a geri açma, **video bazında** ayrım (valid New-Tambo-5 + 8-17-23-Tambo-2,
+test New-Tambo-2, eğitim kalan 5 video her 3. kare): eğitim 2.677 kare / 9.022 insan, valid 1.177 / 4.260, test 778 / 1.533.
+Etiketler görsel olarak doğrulandı (sallardaki insanlar doğru kutulu).
+* **Sıfır-atış Tambo val: v8 0.141, su modu 0.000** → çok zayıf yeni alan (düşük çözünürlük, sal üstü insanlar).
+* Zincir 44: **uzman v10** = v8'den, v7 verisi + Tambo eğitim, 8 epoch → v8+v10 çorbaları (0.5, 0.7) → Tambo val + beş val seti.

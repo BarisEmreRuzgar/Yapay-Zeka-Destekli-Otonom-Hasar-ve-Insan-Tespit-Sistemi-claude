@@ -19,6 +19,7 @@ SETLER = [  # (çalışma alanı, proje, sürüm) — Universe'te bulunanlar
     ("sigmoidal-ivbj6", "search-and-rescue-y6x1c", 1),  # sudaki insanlar (sel senaryosu), kamu malı
     ("2-8hh1e", "lacmus", 4),  # LADD/Lacmus: tarla-orman yaban arazisi arama-kurtarma
     ("search-and-rescue-drone", "search-and-rescue-drone", 6),  # orman örtüsü altında insan
+    ("tiny-person-public", "tiny-person-detection-stwdp", 6),  # TinyPerson: uzak mesafe sahil/deniz, çok küçük insanlar
 ]
 
 if __name__ == "__main__":
