@@ -475,3 +475,13 @@ Etiketler görsel olarak doğrulandı (sallardaki insanlar doğru kutulu).
   (eski su2 yedeği `runs/insan_su2_yedek.pt`). README'deki "nehir/sal'da su modunu açmayın" uyarısı kaldırıldı.
 * Zincir 47: su3 v11 soyundan → v11⊕su3 çorbaları (su3 payı 0.5, 0.7) + su3 tek başına; su, Tambo ve beş kara val seti.
   Amaç: karada v11 düzeyini koruyan tek bir model (su modu anahtarı gereksiz olur).
+* **Zincir 47 sonucu — birleşik model reddedildi.** Val mAP50:
+  | Model | Su | Tambo | VisDrone | SAR | SARD | HERIDAL | Lacmus |
+  | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+  | v11 | 0.390 | 0.806 | 0.689 | 0.895 | 0.856 | 0.855 | 0.732 |
+  | su3 | **0.715** | **0.887** | 0.071 | 0.799 | 0.377 | 0.254 | 0.177 |
+  | 0.5·v11 + 0.5·su3 | 0.665 | 0.874 | 0.444 | 0.898 | 0.743 | 0.721 | 0.573 |
+  | 0.3·v11 + 0.7·su3 | 0.701 | 0.886 | 0.255 | 0.869 | 0.631 | 0.567 | 0.404 |
+  su3 karada (VisDrone/SARD/HERIDAL/Lacmus) çökmüş: su verisindeki kısmi etiket (yalnız yüzücüler) karadaki insanları
+  bastırmayı öğretiyor. Çorbalar kara setlerinde 0.1–0.25 kaybediyor → su modu ayrı kalır; README'ye "karada açmayın" eklendi.
+* Zincir 48: tek seferlik su testi (su2 ile su3) + su3 Tambo testi (v11 0.423).

@@ -96,6 +96,8 @@ yeni bir videoya genelleme sınırlı; nehir/sal sahneleri hâlâ en zayıf alan
 v11'den başlatılıp sudaki insan verisi + nehir kıyısı SAR (drone-leak) + Tambo nehir/sal videolarıyla 8 epoch eğitildi.
 Su val: genel model 0.390, su2 0.703 → **v3 0.715**; nehir/sal (Tambo val): su2 0.000, v11 0.806 → **v3 0.887**.
 Yani v3 hem açık sudaki yüzücüleri hem sal/tekne/kıyıdaki insanları buluyor (su2 nehir/sal sahnelerinde hiç bulamıyordu).
+**Karada su modunu açmayın:** v3 karada çok zayıf (VisDrone val 0.071, SARD 0.377, HERIDAL 0.254; v11: 0.689 / 0.856 / 0.855).
+v11 ile ağırlık ortalaması da tek model vermedi (yarı yarıya: VisDrone 0.444, su 0.665) — iki model ayrı kalır.
 (Sudaki insan verisinde yalnız yüzücüler etiketli, teknedeki/kıyıdaki insanlar değil; genel modele katılınca kara
 arama-kurtarmayı 0.89 → 0.77'ye düşürdü — kısmi etiketli veri genel modeli bozar. Su modeline tam etiketli nehir kıyısı
 SAR verisi eklenince hem su 0.571 → 0.703 hem kara SAR 0.768 → 0.820 yükseldi.)
