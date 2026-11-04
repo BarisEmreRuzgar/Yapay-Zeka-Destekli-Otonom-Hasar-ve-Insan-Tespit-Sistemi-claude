@@ -450,3 +450,13 @@ test New-Tambo-2, eğitim kalan 5 video her 3. kare): eğitim 2.677 kare / 9.022
 Etiketler görsel olarak doğrulandı (sallardaki insanlar doğru kutulu).
 * **Sıfır-atış Tambo val: v8 0.141, su modu 0.000** → çok zayıf yeni alan (düşük çözünürlük, sal üstü insanlar).
 * Zincir 44: **uzman v10** = v8'den, v7 verisi + Tambo eğitim, 8 epoch → v8+v10 çorbaları (0.5, 0.7) → Tambo val + beş val seti.
+* **Zincir 44 sonucu — uzman v10** (v8'den, + Tambo eğitim, 8 epoch; eğitim VisDrone val 0.654 → 0.674). Val:
+  | Model | Tambo | VisDrone | SAR | SARD | HERIDAL | Lacmus |
+  | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+  | v8 | 0.141 | 0.689 | 0.902 | 0.863 | 0.861 | 0.722 |
+  | v10 | **0.885** | 0.681 | 0.866 | 0.838 | 0.829 | 0.723 |
+  | 0.5·v8 + 0.5·v10 | 0.558 | 0.693 | 0.907 | 0.859 | 0.863 | 0.737 |
+  | **0.3·v8 + 0.7·v10 (= v11)** | **0.806** | 0.689 | 0.895 | 0.856 | 0.855 | 0.732 |
+  v10 tek başına yeni alanı öğreniyor ama eski SAR setlerinde −0.03 (unutma). Çorba 0.7 Tambo'nun çoğunu koruyup diğerlerinde
+  ≤0.007 kaybediyor, Lacmus +0.010 → **uzman v11 benimsendi** (`runs/insan_v11`, Roboflow disastervision-insan-v11).
+  Zincir 45: tek seferlik Tambo testi (v8 ile), Lacmus testi, VisDrone test-dev.

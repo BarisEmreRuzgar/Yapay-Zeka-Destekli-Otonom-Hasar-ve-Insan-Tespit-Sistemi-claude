@@ -17,8 +17,8 @@ import numpy as np
 KOK = Path(__file__).resolve().parent.parent
 VARSAYILAN_MODEL = KOK / "modeller" / "disastervision.pt"
 # Yalnız insan sınıfı, 1280 px'te VisDrone + arama-kurtarma (drone-leak, SARD, HERIDAL eğitim bölgeleri, Lacmus) ile eğitildi.
-# Uzman v8 = ağırlık ortalaması 0.3·v5 + 0.7·v7. Val insan AP50 (ana model → v8): VisDrone 0.607 → 0.689,
-# SAR 0.260 → 0.902, SARD 0.315 → 0.863; HERIDAL görülmemiş 7 bölge 0.861; Lacmus val 0.591 (v5) → 0.722.
+# Uzman v11 = ağırlık ortalaması 0.3·v8 + 0.7·v10 (v10: + Tambo nehir/sal videoları). Val insan AP50 (ana model → v11):
+# VisDrone 0.607 → 0.689, SAR 0.260 → 0.895, SARD 0.315 → 0.856; HERIDAL görülmemiş 0.855; Lacmus 0.732; Tambo 0.141 (v8) → 0.806.
 INSAN_MODEL = KOK / "modeller" / "insan_uzman.pt"
 # Su / sel sahnesi modeli (su v2 = v2'den, tüm sudaki insan verisi + drone-leak SAR): su val AP50 0.187 → 0.703,
 # kara SAR'da genel modelden kötü (0.820) — yalnız su/sel sahnesinde kullanılır.
