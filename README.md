@@ -92,13 +92,13 @@ sallardaki/kıyıdaki küçük insanlarda **0.141 → 0.806**, diğer setlerde �
 Tek seferlik Tambo testi (hiç görülmemiş 3. video) 0.123 → **0.423**: val'deki 0.806'nın çok altında — yalnız 5 eğitim videosu var,
 yeni bir videoya genelleme sınırlı; nehir/sal sahneleri hâlâ en zayıf alan.
 
-**Su / sel modu** (`modeller/insan_su.pt`, `tahmin.py --su`, uygulamada kutucuk): sudaki insan verisiyle ayrı model —
-su sahnesinde genel modelin ~4 katı (val 0.187 → **0.703**), karada daha kötü olduğu için yalnız su/sel sahnesinde kullanılır.
+**Su / sel modu** (`modeller/insan_su.pt`, `tahmin.py --su`, uygulamada kutucuk): **su modu v3** (`runs/insan_su3`) —
+v11'den başlatılıp sudaki insan verisi + nehir kıyısı SAR (drone-leak) + Tambo nehir/sal videolarıyla 8 epoch eğitildi.
+Su val: genel model 0.390, su2 0.703 → **v3 0.715**; nehir/sal (Tambo val): su2 0.000, v11 0.806 → **v3 0.887**.
+Yani v3 hem açık sudaki yüzücüleri hem sal/tekne/kıyıdaki insanları buluyor (su2 nehir/sal sahnelerinde hiç bulamıyordu).
 (Sudaki insan verisinde yalnız yüzücüler etiketli, teknedeki/kıyıdaki insanlar değil; genel modele katılınca kara
 arama-kurtarmayı 0.89 → 0.77'ye düşürdü — kısmi etiketli veri genel modeli bozar. Su modeline tam etiketli nehir kıyısı
 SAR verisi eklenince hem su 0.571 → 0.703 hem kara SAR 0.768 → 0.820 yükseldi.)
-**Not:** su modu açık suda yüzen insanlar içindir; sal/tekne/kıyıdaki insanlarda (Tambo nehir videoları) su modeli 0.000,
-varsayılan uzman v11 0.806 — bu sahnelerde su modunu açmayın.
 
 Aynı test-dev'de orijinal model 0.022, ilk yeni model (640 px) 0.343 idi. Örnek kalabalık drone görüntüsünde
 (VisDrone test-dev, gerçek ~91 kişi) bulunan insan: ana model 640 px 79, 1280 px 103 (yanlış alarmlarla), uzman **86**.

@@ -470,3 +470,8 @@ Etiketler görsel olarak doğrulandı (sallardaki insanlar doğru kutulu).
   0.3·su2 0.586 / 0.147; 0.5·su2 0.656 / 0.005; 0.7·su2 0.689 / 0.000 → su2 nehir/sal sahnelerini bastırıyor, **reddedildi**.
   Not: nehir/sal sahnelerinde su modu değil varsayılan uzman (v11) kullanılmalı.
 * Zincir 46: **su modu v3** = v11'den, su verisi + drone-leak + Tambo eğitim, 8 epoch → su val (kıyas 0.703) + Tambo val.
+* **Zincir 46 sonucu — su modu v3 benimsendi** (`runs/insan_su3`, eğitim içi su val 0.646 → 0.715, 8 epoch ~6,6 saat).
+  Su val: su2 0.703 → **0.715**; Tambo val: su2 0.000 → **0.887** (v11 0.806). `modeller/insan_su.pt` = su3
+  (eski su2 yedeği `runs/insan_su2_yedek.pt`). README'deki "nehir/sal'da su modunu açmayın" uyarısı kaldırıldı.
+* Zincir 47: su3 v11 soyundan → v11⊕su3 çorbaları (su3 payı 0.5, 0.7) + su3 tek başına; su, Tambo ve beş kara val seti.
+  Amaç: karada v11 düzeyini koruyan tek bir model (su modu anahtarı gereksiz olur).
