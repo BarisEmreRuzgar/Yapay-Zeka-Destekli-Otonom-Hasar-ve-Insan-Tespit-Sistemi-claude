@@ -48,9 +48,9 @@ Afet bölgelerinde havadan (İHA/drone ve uydu) çekilen görüntüler üzerinde
 
 | Görev | Orijinal yöntem | Tek model (yukarıda) | **Güncel sistem** |
 | :--- | :---: | :---: | :---: |
-| İnsan, VisDrone test-dev | 0.022 | 0.343 | ⏳ (insan uzmanı v11, 1280 px; v8: 0.473) |
-| İnsan, yaban arazisi arama-kurtarma (Lacmus test) | — | — | ⏳ (v8: 0.886) |
-| İnsan, nehir/sal drone videosu (Tambo test) | — | — | ⏳ |
+| İnsan, VisDrone test-dev | 0.022 | 0.343 | **0.470** (insan uzmanı v11, 1280 px) |
+| İnsan, yaban arazisi arama-kurtarma (Lacmus test) | — | — | **0.900** |
+| İnsan, nehir/sal drone videosu (Tambo test) | — | — | **0.423** (v8: 0.123) |
 | Bina hasarı, xBD test mAP50 | 0.054 | 0.294 | **0.511** (iki aşama: konum + öncesi/sonrası sınıflandırıcı) |
 
 Ayrıntılar ve tüm ara sürümler aşağıdaki bölümlerde; deney günlüğü `docs/ilerleme.md`.
@@ -73,10 +73,10 @@ doğrulama **video / kare aralığı bazında** ayrıldı, hiçbir doğrulama ka
 | **HERIDAL görülmemiş 7 bölge** (dağ/orman, 2.630 döşeme) | — | — | 0.622 | 0.793 | 0.852 | 0.861 | **0.855** |
 | HERIDAL tamamı (v1/v2 için hiç eğitimde yok) | 0.253 | 0.621 | 0.628 | — | — | — | — |
 | **Lacmus val** (yaban arazisi/tarla/kar, 827 döşeme) | — | — | — | 0.591 | 0.717 | 0.722 | **0.732** |
-| **Lacmus test** (tek seferlik, 973 döşeme) | — | — | — | 0.702 | 0.897 | 0.886 | ⏳ |
+| **Lacmus test** (tek seferlik, 973 döşeme) | — | — | — | 0.702 | 0.897 | 0.886 | **0.900** |
 | **Tambo val** (nehir/sal drone videoları, görülmemiş 2 video) | — | — | — | — | — | 0.141 | **0.806** |
-| **Tambo test** (tek seferlik, görülmemiş 1 video) | — | — | — | — | — | ⏳ | ⏳ |
-| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | 0.458 | 0.469 | 0.471 | 0.461 | 0.473 | ⏳ |
+| **Tambo test** (tek seferlik, görülmemiş 1 video) | — | — | — | — | — | 0.123 | **0.423** |
+| **VisDrone test-dev** (tek seferlik, 3.057 döşeme) | 0.407 | 0.458 | 0.469 | 0.471 | 0.461 | 0.473 | 0.470 |
 
 v2 = v1'den aynı veriyle 12 epoch daha (`runs/insan_sar2`). HERIDAL v1/v2'nin eğitiminde yoktu: uzman, tamamen
 farklı arazi/kamera/ülkede de ana modelden **2,5 kat** iyiydi. **v5** = v2 + HERIDAL'in 6 bölgesi (bölgeye göre ayrıldı;
@@ -89,6 +89,8 @@ tek seferlik testlerde VisDrone test-dev 0.461 → 0.473, Lacmus test 0.897 → 
 **v11** = 0.3·v8 + 0.7·v10 (v10 = v8 + Tambo nehir/sal drone videoları, 8 epoch; `src/tambo_veri.py`, video bazında ayrım):
 sallardaki/kıyıdaki küçük insanlarda **0.141 → 0.806**, diğer setlerde ±0.01 (v10 tek başına Tambo'da 0.885 ama SAR/SARD/HERIDAL'de −0.03;
 çorba bu unutmayı engelliyor).
+Tek seferlik Tambo testi (hiç görülmemiş 3. video) 0.123 → **0.423**: val'deki 0.806'nın çok altında — yalnız 5 eğitim videosu var,
+yeni bir videoya genelleme sınırlı; nehir/sal sahneleri hâlâ en zayıf alan.
 
 **Su / sel modu** (`modeller/insan_su.pt`, `tahmin.py --su`, uygulamada kutucuk): sudaki insan verisiyle ayrı model —
 su sahnesinde genel modelin ~4 katı (val 0.187 → **0.703**), karada daha kötü olduğu için yalnız su/sel sahnesinde kullanılır.

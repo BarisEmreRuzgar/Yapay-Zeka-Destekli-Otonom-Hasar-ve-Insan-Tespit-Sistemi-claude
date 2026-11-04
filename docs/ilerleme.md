@@ -460,3 +460,7 @@ Etiketler görsel olarak doğrulandı (sallardaki insanlar doğru kutulu).
   v10 tek başına yeni alanı öğreniyor ama eski SAR setlerinde −0.03 (unutma). Çorba 0.7 Tambo'nun çoğunu koruyup diğerlerinde
   ≤0.007 kaybediyor, Lacmus +0.010 → **uzman v11 benimsendi** (`runs/insan_v11`, Roboflow disastervision-insan-v11).
   Zincir 45: tek seferlik Tambo testi (v8 ile), Lacmus testi, VisDrone test-dev.
+* **v11 tek seferlik testler:** Tambo test (New-Tambo-2) v8 0.123 → **0.423**; Lacmus test **0.900** (v8 0.886);
+  VisDrone test-dev 0.470 (v8 0.473). Tambo val 0.806 ile test 0.423 arasındaki fark büyük: 5 eğitim videosu yeni videoya
+  sınırlı genelleşiyor (val videoları eğitim videolarına benziyor olabilir). Nehir/sal hâlâ en zayıf alan.
+* Roboflow: disastervision-insan-v11 yüklendi, workflow insan adımı v11'e geçirildi.
