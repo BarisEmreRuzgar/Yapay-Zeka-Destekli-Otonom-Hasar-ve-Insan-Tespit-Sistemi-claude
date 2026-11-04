@@ -44,6 +44,16 @@ Afet bölgelerinde havadan (İHA/drone ve uydu) çekilen görüntüler üzerinde
 
 ¹ Orijinal defterdeki düzen (YOLOv8s, yalnız Roboflow verisi) aynı donanımda yeniden eğitildi.
 
+**Güncel sistem (`tahmin.py` / uygulama varsayılanı), tek seferlik testler:**
+
+| Görev | Orijinal yöntem | Tek model (yukarıda) | **Güncel sistem** |
+| :--- | :---: | :---: | :---: |
+| İnsan, VisDrone test-dev | 0.022 | 0.343 | **0.473** (insan uzmanı v8, 1280 px) |
+| İnsan, yaban arazisi arama-kurtarma (Lacmus test) | — | — | **0.886** |
+| Bina hasarı, xBD test mAP50 | 0.054 | 0.294 | **0.511** (iki aşama: konum + öncesi/sonrası sınıflandırıcı) |
+
+Ayrıntılar ve tüm ara sürümler aşağıdaki bölümlerde; deney günlüğü `docs/ilerleme.md`.
+
 **Yorum:** Orijinal model yalnızca eğitildiği veriye benzeyen görüntülerde çalışıyordu (Roboflow testi 0.50). Gerçek drone görüntüsünde insanları neredeyse hiç bulamıyor (0.02), başka afetlerde de hasarı göremiyordu (0.05). Yeni model orijinal testte aynı seviyede kalırken bağımsız testlerde **5–15 kat** daha iyi.
 
 ### İnsan uzmanı: arama-kurtarma verisiyle
