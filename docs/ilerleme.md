@@ -431,3 +431,12 @@ VisDrone test-dev; zincir 40: v6'yı da katan çorbalar (v5:v6:v7 = 1:1:2, 0.3·
   bilgi eklemez, denenmedi. Hasar tarafı bu donanımda doymuş görünüyor.
 * **Zincir 43:** uzman v9 = v8'den devam (v7 verisi, AdamW lr0 5e-4, 6 epoch, ~3 saat) → v8+v9 çorbaları (0.5, 0.3) → beş val seti.
   (v6 tek başına reddedilmişti ama çorbada SAR/VisDrone'a katkı verdi; "devam + çorba" tarifi.)
+* **Zincir 43 sonucu — uzman v9** (v8'den devam, 6 epoch; eğitim VisDrone val 0.651 → 0.687). Val (VisDrone / SAR / SARD / HERIDAL / Lacmus):
+  | Model | VisDrone | SAR | SARD | HERIDAL | Lacmus | ort. |
+  | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+  | v8 | 0.689 | 0.902 | 0.863 | 0.861 | 0.722 | 0.807 |
+  | v9 | 0.685 | 0.896 | 0.859 | 0.838 | 0.721 | 0.800 |
+  | 0.5·v8 + 0.5·v9 | 0.690 | 0.914 | 0.856 | 0.851 | 0.722 | 0.807 |
+  | 0.7·v8 + 0.3·v9 | 0.691 | 0.917 | 0.852 | 0.856 | 0.721 | 0.807 |
+  SAR kazancı (tek veri seti, 3 video) SARD/HERIDAL kaybıyla dengeleniyor → **reddedildi**, v8 kalır. Mevcut veriyle insan
+  uzmanı doygunluğa yakın; sonraki kazanç yeni veri alanından gelmeli.
