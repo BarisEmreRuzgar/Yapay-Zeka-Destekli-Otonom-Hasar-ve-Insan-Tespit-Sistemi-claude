@@ -493,3 +493,15 @@ Etiketler görsel olarak doğrulandı (sallardaki insanlar doğru kutulu).
   1920 0.790 / 0.886; 2272 0.763 / 0.857. Büyütme kazancı ≤0.006 → kural eklenmedi (küçük insan sorunu çıkarım boyutuyla çözülmüyor).
 * Zincir 50: v11 @1536 tüm kara val setleri + Tambo (v11 @1280: VisDrone 0.689, SAR 0.895, SARD 0.856, HERIDAL 0.855,
   Lacmus 0.732, Tambo 0.806). Ortalama belirgin artmazsa 1280 kalır.
+* **Zincir 50 sonucu — reddedildi.** v11 @1536 (1280'e göre): VisDrone 0.708 (+0.019), SAR 0.894, SARD 0.855,
+  HERIDAL 0.830 (−0.025), Lacmus 0.721 (−0.011), Tambo 0.807 → ortalama −0.003. 1280 kalır.
+
+### Durum değerlendirmesi (2026-11-05)
+Arama-kurtarma setleri ~0.9'a ulaştı: Lacmus test 0.900, SAR val 0.895, SARD 0.856, HERIDAL 0.855; su modu v3 Tambo val 0.887.
+Son denemelerin hepsi (v9 devam, konum/sınıflandırıcı/su çorbaları, birleşik su+kara çorbası, çıkarım boyutu 1536/1600+)
+≤+0.006 ya da zararlı → mevcut veri ve 6 GB GPU ile tavan. Kalan zayıf alanlar yapısal:
+* VisDrone test-dev 0.470: şehir kalabalığı, çok küçük insanlar; yayınlanmış YOLO sonuçları da bu bandda. Daha büyük model
+  (YOLOv8m) 6 GB VRAM'de batch 2 ile v2'nin altında kaldı.
+* xBD hasar 0.511: tavan etiket kalitesi (bina sınırı/hasar sınıfı tutarsız, hafif hasar zayıf).
+* Tambo test 0.423/0.448: 5 eğitim videosu, test videosunda ~13 px insanlar.
+Bunları aşmak için yeni ve tam etiketli veri ya da daha büyük GPU gerekir. Otonom döngü burada durduruldu.
