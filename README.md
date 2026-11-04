@@ -97,6 +97,8 @@ su sahnesinde genel modelin ~4 katı (val 0.187 → **0.703**), karada daha köt
 (Sudaki insan verisinde yalnız yüzücüler etiketli, teknedeki/kıyıdaki insanlar değil; genel modele katılınca kara
 arama-kurtarmayı 0.89 → 0.77'ye düşürdü — kısmi etiketli veri genel modeli bozar. Su modeline tam etiketli nehir kıyısı
 SAR verisi eklenince hem su 0.571 → 0.703 hem kara SAR 0.768 → 0.820 yükseldi.)
+**Not:** su modu açık suda yüzen insanlar içindir; sal/tekne/kıyıdaki insanlarda (Tambo nehir videoları) su modeli 0.000,
+varsayılan uzman v11 0.806 — bu sahnelerde su modunu açmayın.
 
 Aynı test-dev'de orijinal model 0.022, ilk yeni model (640 px) 0.343 idi. Örnek kalabalık drone görüntüsünde
 (VisDrone test-dev, gerçek ~91 kişi) bulunan insan: ana model 640 px 79, 1280 px 103 (yanlış alarmlarla), uzman **86**.

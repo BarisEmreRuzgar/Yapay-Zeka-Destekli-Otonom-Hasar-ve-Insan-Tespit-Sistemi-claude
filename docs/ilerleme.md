@@ -464,3 +464,9 @@ Etiketler görsel olarak doğrulandı (sallardaki insanlar doğru kutulu).
   VisDrone test-dev 0.470 (v8 0.473). Tambo val 0.806 ile test 0.423 arasındaki fark büyük: 5 eğitim videosu yeni videoya
   sınırlı genelleşiyor (val videoları eğitim videolarına benziyor olabilir). Nehir/sal hâlâ en zayıf alan.
 * Roboflow: disastervision-insan-v11 yüklendi, workflow insan adımı v11'e geçirildi.
+* Tambo test neden düşük: test videosunda insanlar daha küçük (medyan yükseklik 13 px; eğitim 17, val 20) ve daha az
+  (1.97/kare; val 3.62) — daha yüksek irtifa, 640'a indirilmiş kaynakta birkaç piksellik noktalar. Veri çözünürlüğü sınırı.
+* **Su modu çorbaları** (v11 ⊕ su2; su2 de v2 soyundan). Su val / Tambo val: su2 0.703 / 0.000; v11 0.390 / 0.806;
+  0.3·su2 0.586 / 0.147; 0.5·su2 0.656 / 0.005; 0.7·su2 0.689 / 0.000 → su2 nehir/sal sahnelerini bastırıyor, **reddedildi**.
+  Not: nehir/sal sahnelerinde su modu değil varsayılan uzman (v11) kullanılmalı.
+* Zincir 46: **su modu v3** = v11'den, su verisi + drone-leak + Tambo eğitim, 8 epoch → su val (kıyas 0.703) + Tambo val.
