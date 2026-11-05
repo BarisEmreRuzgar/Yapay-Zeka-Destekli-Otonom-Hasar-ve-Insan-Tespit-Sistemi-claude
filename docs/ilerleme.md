@@ -512,3 +512,13 @@ Bunları aşmak için yeni ve tam etiketli veri ya da daha büyük GPU gerekir. 
 * Zincir 50'de 1536 çıkarım VisDrone'a +0.019 verdi ama HERIDAL −0.025 (model 1280'de eğitilmiş). Hipotez: 1536'da ince ayar
   bu kaybı kapatır. **v12** = v11'den, v10 verisi, imgsz 1536, batch 2, 6 epoch → v11⊕v12 çorbaları (0.5, 0.7) →
   6 val seti @1280 ve @1536. Ölçüt: ortalama ≥ +0.01 ve hiçbir set > 0.01 düşmesin.
+* **Zincir 51 sonucu — v12 reddedildi.** Val mAP50 (v12 / 0.5·v11+0.5·v12 / 0.3·v11+0.7·v12):
+  | | VisDrone | SAR | SARD | HERIDAL | Lacmus | Tambo |
+  | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+  | v11 @1280 | 0.689 | 0.895 | 0.856 | 0.855 | 0.732 | 0.806 |
+  | @1280 | 0.645 / 0.679 / 0.668 | 0.842 / 0.890 / 0.876 | 0.763 / 0.815 / 0.792 | 0.814 / 0.853 / 0.840 | 0.743 / 0.744 / 0.744 | 0.656 / 0.785 / 0.758 |
+  | @1536 | 0.670 / 0.700 / 0.693 | 0.823 / 0.890 / 0.871 | 0.778 / 0.824 / 0.809 | 0.787 / 0.827 / 0.815 | 0.718 / 0.729 / 0.727 | — |
+  1536 ince ayar (batch 2) SARD/Tambo'yu bozdu; en iyi çorba bile SARD −0.04. v11 korunur.
+* Zincir 52: **YOLO11s** (ultralytics 8.4, COCO'dan) v10 veri karışımı, 1280, batch 4, 12 epoch (~12 saat) → 6 val seti.
+  Farklı mimari → çorba yok; doğrudan v11 ile kıyas. Not: Roboflow yüklemesi için .venv_yukle (ultralytics 8.0.196) YOLO11'i
+  tanımaz → benimsenirse yükleme yolu ayrıca çözülecek.
