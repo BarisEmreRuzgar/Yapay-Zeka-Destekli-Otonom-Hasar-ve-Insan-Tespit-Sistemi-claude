@@ -522,3 +522,15 @@ Bunları aşmak için yeni ve tam etiketli veri ya da daha büyük GPU gerekir. 
 * Zincir 52: **YOLO11s** (ultralytics 8.4, COCO'dan) v10 veri karışımı, 1280, batch 4, 12 epoch (~12 saat) → 6 val seti.
   Farklı mimari → çorba yok; doğrudan v11 ile kıyas. Not: Roboflow yüklemesi için .venv_yukle (ultralytics 8.0.196) YOLO11'i
   tanımaz → benimsenirse yükleme yolu ayrıca çözülecek.
+* **Zincir 52 durduruldu — YOLO11s reddedildi.** COCO'dan VisDrone val: epoch 1–3 0.365, 0.397, 0.397 (~36 dk/epoch).
+  YOLOv8m denemesiyle aynı tablo (epoch 3 0.364): v11'in arkasında yüzlerce epoch'luk soy (genis → genis2 → v1 … v11) var;
+  yeni mimari 12 epoch'ta yetişemez, yetişmesi ~40+ saat ister ve kazanç belirsiz → durduruldu.
+
+### Durum (2026-11-05 öğlen) — tavan
+"devam" sonrası iki deneme daha (1536 ince ayar, YOLO11s) kazanç vermedi. Hasar tarafında konum (YOLOv8m, WBF, eşleşmeli
+topluluk, çoğaltma, 1024) ve sınıflandırıcı (çorba, üçlü, panel çözünürlüğü) seçenekleri daha önce tükenmişti.
+Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme için gerekenler:
+1. VisDrone 0.47: tam etiketli yeni şehir/kalabalık drone verisi (kaynağı belli, VisDrone türevi olmayan) ya da ≥12 GB GPU
+   (YOLOv8m/YOLO11m 1280, batch ≥8).
+2. xBD 0.51: hasar etiketlerinin temizlenmesi (özellikle hafif hasar) — elle etiket düzeltme.
+3. Tambo test 0.45: daha fazla nehir/sal videosu (yüksek irtifa, küçük insan).
