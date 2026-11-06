@@ -551,3 +551,5 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
 * 2026-11-06 ~14:10 bilgisayar kapandı/uyudu (epoch 7/8 %95'te; otomatik kayıt da durdu). 17:50 **zincir 53b**:
   `egit.py --devam` ile v13 sürdürüldü → v11⊕v13 çorbaları (0.5, 0.7) → 7 val seti (Okutama + altı eski set).
 * v13 epoch 7 (devamdan sonra): Okutama val **0.673** (v11 sıfır-atış 0.637).
+* v13 epoch 8: Okutama val **0.680** (eğitim bitti; best.pt = ep8). Sırada çorbalar + 7 val seti.
+* Okutama val (degerlendir.py, 1280): v11 0.637 → **v13 0.773**, 0.5 çorba 0.723, 0.7 çorba 0.750.
