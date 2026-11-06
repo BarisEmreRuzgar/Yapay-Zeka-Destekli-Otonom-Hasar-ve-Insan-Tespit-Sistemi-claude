@@ -594,3 +594,9 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   örtüşme) ile 3.960 döşeme / 1.926 kutu: **v11 0.618, v14 0.661** — diğer SAR setlerinin (~0.88) çok altında → WiSARD'ın
   tamamı yüksek değerli. WiSARDv1.zip (41 GB) Drive kotasına takıldı; `wisard_indir.ps1` 5 dk arayla 30 kez deniyor.
   Not: bu örnek uçuş tam sette de var → eğitimde MtErie uçuşları val'e ayrılmalı.
+* Universe aynaları (Drive kotası beklenirken) — ikisi de **reddedildi**:
+  - helmetdetection-426oy/nomad-aerial-human-2 (2.058 kare, NOMAD alt kümesi): 640×640'a ezilmiş, yansıtma dolgulu
+    (kutular aynalanmış bölgede kopyalanıyor), yalnız a10/a30, oyuncu karelerinin yarısı etiketsiz → bozuk.
+  - roboflow-public/sarnet-search-and-rescue v5: mozaik + 3× çoğaltılmış, çok yüksek irtifa, `target` sınıfı insan dışı
+    nesneleri de içeriyor, hedefler birkaç piksel → uyumsuz.
+  Sıradaki gerçek kaynaklar: WiSARD (41 GB) ve NOMAD (zip başına 38 GB), Drive kotası açılınca kendiliğinden inecek.
