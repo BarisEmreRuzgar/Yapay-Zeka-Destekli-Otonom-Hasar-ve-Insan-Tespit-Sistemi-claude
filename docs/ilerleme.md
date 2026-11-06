@@ -569,3 +569,12 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   workflow disastervision-tespit insan adımı v14'e geçirildi. README güncellendi.
 * Ders: kısmi etiketli görünen veri (seyirciler etiketsiz) bu kez zarar vermedi — etiketsizler kenarda ve seyrek; çoğunluk tam
   etiketli. Su verisinde ise kişilerin çoğu (teknedekiler) etiketsizdi. Ölçüt: etiketsiz insan oranı.
+
+### Yeni tam etiketli insan verisi arayışı (2026-11-06 akşam)
+* **NOMAD** (Notre Dame, WACV 2024; 100 oyuncu, 10–90 m, gizlenen/yatan insanlar, 42.8k kare, YOLO etiketli) — ideal SAR verisi
+  ama Google Drive'da 10 × 38 GB zip (5.4K kareler) → bu bağlantıyla (≤2 MB/s) pratik değil; annotations.json kotaya takıldı.
+  İleride tek zip (10 oyuncu) gece indirmesi düşünülebilir.
+* **AU-AIR** (ICRA 2020, CC BY 4.0; Drive aynası fmi-data-index): 32.8k kare 1920×1080, 5–30 m trafik videoları, 8 sınıf tam
+  etiketli; Human 5.158 kutu / 4.712 kare, medyan yükseklik 68 px. İndiriliyor (2.2 GB). `src/auair_veri.py`: yalnız insan,
+  video bazlı bölme (~%15 valid), insanlı karelerin yarısı + insansız karelerin 1/40'ı (gerçek negatif).
+* **Zincir 55 — v14 eşik taraması:** en iyi F1 eşikleri 0.27–0.36 aralığında; 0.30 her sette en iyinin ≤0.004 altında → varsayılan conf 0.30 korunur.
