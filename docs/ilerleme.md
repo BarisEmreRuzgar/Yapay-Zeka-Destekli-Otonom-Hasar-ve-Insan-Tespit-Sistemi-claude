@@ -546,3 +546,4 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
 * Dikkat: yalnız eylem oyuncuları etiketli, kenardaki seyirciler etiketsiz (seyrek) → kısmi etiket riski; çorba ve
   diğer val setleri karar verir.
 * Zincir 53: v11 sıfır-atış Okutama val → v13 = v11'den, v10 verisi + Okutama train, 8 epoch → 0.5/0.7 çorbaları → 7 val seti.
+* **v11 sıfır-atış Okutama val: 0.637** (mAP50-95 0.245). v13 eğitimi ~55 dk/epoch (8 epoch ~7,5 saat).
