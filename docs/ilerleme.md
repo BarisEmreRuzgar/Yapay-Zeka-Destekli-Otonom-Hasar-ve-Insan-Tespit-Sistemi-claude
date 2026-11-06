@@ -602,3 +602,11 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   Sıradaki gerçek kaynaklar: WiSARD (41 GB) ve NOMAD (zip başına 38 GB), Drive kotası açılınca kendiliğinden inecek.
 * Drive kotası 22:00'de hâlâ dolu; Chrome eklentisi bağlı değil. İndirme betikleri 15 dk arayla ~25 saat deneyecek şekilde yeniden başlatıldı.
 * 22:35 kullanıcı Chrome eklentisini bağladı → WiSARDv1.zip (41 GB) oturum açık Chrome'dan iniyor (Downloads\WiSARDv1.zip; kota engeli yok). gdown döngüleri durduruldu; NOMAD WiSARD'dan sonra Chrome'dan indirilecek.
+
+### WiSARD (2026-11-07) — zincir 56
+* WiSARDv1.zip (43.5 GB) Chrome ile indi (01:49). Yalnız görünür ışık açıldı: 26.252 kare (`veri/wisard_ham/tam`, klasör
+  `<tarih>_<yer>_<platform>_VIS[_no]`, kare .jpg + YOLO .txt). Bazı uçuşlar etiketsiz (yalnız count.txt) → atlanır.
+* `src/wisard_veri.py`: yer bazlı bölme — valid MtErie (3 uçuş) + SuddenValley (5 uçuş), train kalan 10 yer; her 3. kare;
+  960 px döşeme (%15 örtüşme), train'de boş döşemelerin %10'u (`doseme_yap.dosele(bos_oran=…)`), valid tam.
+  Kare adları uçuşlar arasında tekrarlandığı için klasör adı önek.
+* Zincir 56: veri → v14 sıfır-atış WiSARD val → **v15** = v14'ten, v13 verisi + WiSARD train, 6 epoch → 0.5/0.7 çorbaları → 8 val seti.

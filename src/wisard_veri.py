@@ -17,12 +17,13 @@ from doseme_yap import dosele
 KOK = Path(__file__).resolve().parent.parent
 HAM = KOK / "veri" / "wisard_ham" / "tam"
 HEDEF = KOK / "veri" / "wisard_yolo"
-VALID_YER = {"MtErie"}
-ADIM = {"train": 3, "valid": 2}
+VALID_YER = {"MtErie", "SuddenValley"}  # 3 + 5 uçuş, ~1.8k kare
+ADIM = {"train": 3, "valid": 3}
+BOS_ORAN = {"train": 0.10, "valid": 1.0}  # val tam (gerçek dağılım), train'de boş döşemelerin %10'u
 
 
 def ucuslar(kok):
-    for d in sorted(p for p in kok.rglob("*") if p.is_dir() and "_VIS_" in p.name):
+    for d in sorted(p for p in kok.rglob("*") if p.is_dir() and "_VIS" in p.name):
         kareler = sorted(d.glob("*.jp*g"))
         if kareler:
             yield d, kareler
@@ -44,10 +45,11 @@ if __name__ == "__main__":
                 if not et.exists():  # etiketsiz kare: tam etiketli değil olabilir → atla
                     continue
                 satir = [s for s in et.read_text().split("\n") if len(s.split()) == 5 and s.split()[0] == "0"]
-                shutil.copy(k, gecici / "images" / (k.stem + ".jpg"))
-                (gecici / "labels" / (k.stem + ".txt")).write_text("\n".join(satir))
+                ad = f"{d.name}_{k.stem}"  # DJI_xxxx adları uçuşlar arasında tekrarlanıyor
+                shutil.copy(k, gecici / "images" / (ad + ".jpg"))
+                (gecici / "labels" / (ad + ".txt")).write_text("\n".join(satir))
                 ozet[bolum][0] += 1; ozet[bolum][1] += len(satir)
-            dosele(gecici, HEDEF / bolum)
+            dosele(gecici, HEDEF / bolum, bos_oran=BOS_ORAN[bolum])
         print(d.name, bolum)
     for b, (n, k) in sorted(ozet.items()):
         print(f"{b}: {n} kare, {k} insan")

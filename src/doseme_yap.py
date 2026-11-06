@@ -4,6 +4,7 @@ Kutular: merkezi döşemede olan kutu kırpılarak alınır; döşemede %40'tan 
 Kullanım: python src/doseme_yap.py KAYNAK(images/,labels/) HEDEF [--boyut 960] [--ortusme 0.15]
 """
 import argparse
+import random
 from pathlib import Path
 
 import cv2
@@ -16,7 +17,9 @@ def baslangiclar(uzunluk, boyut, adim):
     return sorted(set(s))
 
 
-def dosele(kaynak, hedef, boyut=960, ortusme=0.15):
+def dosele(kaynak, hedef, boyut=960, ortusme=0.15, bos_oran=1.0):
+    """bos_oran < 1: kutusuz döşemelerin yalnız bu oranı tutulur (eğitimde negatif fazlalığını azaltmak için)."""
+    rnd = random.Random(0)
     (hedef / "images").mkdir(parents=True, exist_ok=True)
     (hedef / "labels").mkdir(parents=True, exist_ok=True)
     adim = int(boyut * (1 - ortusme))
@@ -47,6 +50,8 @@ def dosele(kaynak, hedef, boyut=960, ortusme=0.15):
                         continue
                     satir.append(f"{c} {((a1 + a2) / 2 - x0) / tw:.6f} {((b1 + b2) / 2 - y0) / th:.6f} "
                                  f"{(a2 - a1) / tw:.6f} {(b2 - b1) / th:.6f}")
+                if not satir and rnd.random() >= bos_oran:
+                    continue
                 ad = f"{im_yol.stem}_{x0}_{y0}"
                 cv2.imwrite(str(hedef / "images" / f"{ad}.jpg"), im[y0:y0 + th, x0:x0 + tw], [cv2.IMWRITE_JPEG_QUALITY, 92])
                 (hedef / "labels" / f"{ad}.txt").write_text("\n".join(satir))
