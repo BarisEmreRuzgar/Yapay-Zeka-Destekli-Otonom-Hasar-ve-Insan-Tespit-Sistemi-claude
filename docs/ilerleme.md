@@ -601,3 +601,4 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
     nesneleri de içeriyor, hedefler birkaç piksel → uyumsuz.
   Sıradaki gerçek kaynaklar: WiSARD (41 GB) ve NOMAD (zip başına 38 GB), Drive kotası açılınca kendiliğinden inecek.
 * Drive kotası 22:00'de hâlâ dolu; Chrome eklentisi bağlı değil. İndirme betikleri 15 dk arayla ~25 saat deneyecek şekilde yeniden başlatıldı.
+* 22:35 kullanıcı Chrome eklentisini bağladı → WiSARDv1.zip (41 GB) oturum açık Chrome'dan iniyor (Downloads\WiSARDv1.zip; kota engeli yok). gdown döngüleri durduruldu; NOMAD WiSARD'dan sonra Chrome'dan indirilecek.
