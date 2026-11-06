@@ -578,3 +578,13 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   etiketli; Human 5.158 kutu / 4.712 kare, medyan yükseklik 68 px. İndiriliyor (2.2 GB). `src/auair_veri.py`: yalnız insan,
   video bazlı bölme (~%15 valid), insanlı karelerin yarısı + insansız karelerin 1/40'ı (gerçek negatif).
 * **Zincir 55 — v14 eşik taraması:** en iyi F1 eşikleri 0.27–0.36 aralığında; 0.30 her sette en iyinin ≤0.004 altında → varsayılan conf 0.30 korunur.
+* **AU-AIR reddedildi:** v14 sıfır-atış val 0.148; hata analizi etiket sorununu gösterdi — arabaya "Human" etiketi, birçok gerçek
+  yaya etiketsiz (modelin "yanlış alarm"larının çoğu gerçek insan). Trafik veri seti, insan sınıfı ikincil ve eksik → kısmi
+  etiketle eğitim riskli, kullanılmadı.
+* **v14 eşik taraması** yukarıda (0.30 korunur).
+* **SeaDronesSee ODv2** (resmî link: POST /dataset/ODv2_redirecter → cloud.cs.uni-tuebingen.de/s/ZZxX65FGnQ8zjBP, WebDAV):
+  eğitim 8.930 görüntü = mevcut su verisiyle (Roboflow sigmoidal) aynı sayı → aynı kaynak; yalnız `swimmer` etiketli, teknedeki
+  insanlar yine yok → yeni bilgi yok, kullanılmadı.
+* **NOMAD** zip 1 indirmesi Drive kotasına takıldı; `nomad_indir.ps1` 10 dk arayla 20 kez yeniden deniyor.
+* **WiSARD** (UW, IROS 2022; yaban arazisi SAR, görünür + termal, ~26.8k görünür etiketli görüntü; Drive: WiSARDv1.zip 41 GB,
+  örnek 972 MB): örnek iniyor → etiket formatı/kalitesi kontrol edilecek.
