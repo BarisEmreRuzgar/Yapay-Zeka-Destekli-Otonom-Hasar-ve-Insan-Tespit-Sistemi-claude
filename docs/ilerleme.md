@@ -588,3 +588,9 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
 * **NOMAD** zip 1 indirmesi Drive kotasına takıldı; `nomad_indir.ps1` 10 dk arayla 20 kez yeniden deniyor.
 * **WiSARD** (UW, IROS 2022; yaban arazisi SAR, görünür + termal, ~26.8k görünür etiketli görüntü; Drive: WiSARDv1.zip 41 GB,
   örnek 972 MB): örnek iniyor → etiket formatı/kalitesi kontrol edilecek.
+* **WiSARD örnek** (tek uçuş, 210417_MtErie_Enterprise_VIS_0003, 264 kare 3840×2160, YOLO etiket, tek sınıf): etiketler görsel
+  olarak doğru ve tam (kayalıkta yatan/oturan, ağaç arasında küçük insanlar). v14 tam kare @1280: 0.369 (60 karede 234 insanın
+  177'si kaçırılıyor, yalnız 19 yanlış alarm → gerçek zayıflık, etiket sorunu değil). `src/doseme_yap.py` (960 px döşeme, %15
+  örtüşme) ile 3.960 döşeme / 1.926 kutu: **v11 0.618, v14 0.661** — diğer SAR setlerinin (~0.88) çok altında → WiSARD'ın
+  tamamı yüksek değerli. WiSARDv1.zip (41 GB) Drive kotasına takıldı; `wisard_indir.ps1` 5 dk arayla 30 kez deniyor.
+  Not: bu örnek uçuş tam sette de var → eğitimde MtErie uçuşları val'e ayrılmalı.
