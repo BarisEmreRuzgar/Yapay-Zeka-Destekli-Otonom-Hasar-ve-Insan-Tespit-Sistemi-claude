@@ -176,6 +176,7 @@ python src/iki_asama.py --once ornekler/palu_once.jpg --sonra ornekler/palu_sonr
 | [VisDrone2019-DET](https://github.com/VisDrone/VisDrone-Dataset) | insan (`pedestrian` + `people`) | 4.000 döşeme (960 px) | yalnızca akademik |
 | [Search and Rescue (drone-leak)](https://universe.roboflow.com/drone-leak/search-and-rescue-8ywn7) | insan uzmanı: 4K arama-kurtarma drone videoları | 3.493 döşeme (960 px) | CC BY 4.0 |
 | [SARD (sandr/drone-aerial)](https://universe.roboflow.com/sandr/drone-aerial) | insan uzmanı: moloz/kaya arasında kısmen gizli insanlar | 2.000 görüntü | CC BY 4.0 |
+| [Okutama-Action](https://okutama-action.org) (Barekatain vd., CVPRW 2017) | insan uzmanı denemesi (v13): 10–45 m irtifa park/saha drone videoları, tam etiketli eylem oyuncuları | 5.348 kare (her 10. kare, 29 video; 4 video val, resmî test seti ayrı) | araştırma amaçlı (lisans belirtilmemiş) |
 | [xBD / xView2](https://xview2.org) ([HF aynası](https://huggingface.co/datasets/EVER-Z/torchange_xView2)) | hasar (19 afet) | 5.387 döşeme (512 px) | CC BY-NC-SA 4.0 |
 
 * xBD maskelerinden her hasar seviyesinin bağlı bileşenleri bina kutusuna çevrilir. Yalnız hasarsız bina içeren döşemelerin %85'i atılarak sınıf dengesi iyileştirilir.

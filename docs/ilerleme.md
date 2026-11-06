@@ -534,3 +534,15 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
    (YOLOv8m/YOLO11m 1280, batch ≥8).
 2. xBD 0.51: hasar etiketlerinin temizlenmesi (özellikle hafif hasar) — elle etiket düzeltme.
 3. Tambo test 0.45: daha fazla nehir/sal videosu (yüksek irtifa, küçük insan).
+
+### Okutama-Action (2026-11-06) — zincir 53
+* Universe'teki sel setleri ("Flood" 8.9k, "Drone People Flood") incelendi: yerden çekilmiş haber fotoğrafları → elendi.
+* **Okutama-Action** (okutama-action.org, Dropbox; eğitim kareleri 5.77 GB, test 1.65 GB): 43 dk 4K drone videosu, 10–45 m,
+  1280×720 kareler. Etiketler 3840×2160 koordinatında → /3 (görsel doğrulandı). `src/okutama_veri.py`:
+  SingleActionLabels, lost=1 atılır, her 180 karede iz kimliği yenilendiği için çift kutular IoU>0.7 ile tekilleştirilir;
+  video/senaryo bazında ayrım (aynı senaryoyu iki drone çektiği için ikisi birlikte): valid senaryo 1.5 + 2.6 (4 video),
+  test = resmî test seti (10 video), train = kalan 29 video. Train her 10. kare 5.348 kare / 31.287 insan; valid 447 / 2.255;
+  test 1.160 / 5.149 (her 15. kare).
+* Dikkat: yalnız eylem oyuncuları etiketli, kenardaki seyirciler etiketsiz (seyrek) → kısmi etiket riski; çorba ve
+  diğer val setleri karar verir.
+* Zincir 53: v11 sıfır-atış Okutama val → v13 = v11'den, v10 verisi + Okutama train, 8 epoch → 0.5/0.7 çorbaları → 7 val seti.
