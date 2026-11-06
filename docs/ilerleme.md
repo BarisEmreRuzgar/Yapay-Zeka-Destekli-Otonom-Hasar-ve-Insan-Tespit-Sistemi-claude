@@ -553,3 +553,13 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
 * v13 epoch 7 (devamdan sonra): Okutama val **0.673** (v11 sıfır-atış 0.637).
 * v13 epoch 8: Okutama val **0.680** (eğitim bitti; best.pt = ep8). Sırada çorbalar + 7 val seti.
 * Okutama val (degerlendir.py, 1280): v11 0.637 → **v13 0.773**, 0.5 çorba 0.723, 0.7 çorba 0.750.
+* **Zincir 53 sonucu — uzman v14 = 0.3·v11 + 0.7·v13 benimsendi.** Val mAP50 (1280):
+  | Model | Okutama | VisDrone | SAR | SARD | HERIDAL | Lacmus | Tambo | ort. |
+  | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+  | v11 | 0.637 | 0.689 | 0.895 | 0.856 | 0.855 | 0.732 | 0.806 | 0.781 |
+  | v13 | 0.773 | 0.683 | 0.914 | 0.860 | 0.875 | 0.738 | 0.888 | 0.819 |
+  | 0.5·v11 + 0.5·v13 | 0.723 | 0.693 | 0.926 | 0.863 | 0.879 | 0.744 | 0.877 | 0.815 |
+  | **0.3·v11 + 0.7·v13 (= v14)** | 0.750 | 0.690 | 0.924 | 0.861 | 0.882 | 0.740 | **0.890** | **0.820** |
+  Kısmi etiket (seyirciler etiketsiz) korkusu gerçekleşmedi: Okutama'daki tam etiketli eylem oyuncuları (yürüyen, koşan,
+  yatan, oturan insanlar, 10–45 m) **her** sette kazanç verdi — SAR 0.924, HERIDAL 0.882 ve Tambo 0.890 şimdiye kadarki en iyi.
+  `runs/insan_v14`. Zincir 54: tek seferlik testler (Okutama test v11'le kıyas, Lacmus, Tambo, VisDrone test-dev).
