@@ -563,3 +563,9 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   Kısmi etiket (seyirciler etiketsiz) korkusu gerçekleşmedi: Okutama'daki tam etiketli eylem oyuncuları (yürüyen, koşan,
   yatan, oturan insanlar, 10–45 m) **her** sette kazanç verdi — SAR 0.924, HERIDAL 0.882 ve Tambo 0.890 şimdiye kadarki en iyi.
   `runs/insan_v14`. Zincir 54: tek seferlik testler (Okutama test v11'le kıyas, Lacmus, Tambo, VisDrone test-dev).
+* **Zincir 54 — v14 tek seferlik testler:** Okutama resmî test v11 0.693 → **0.820**; Lacmus test 0.900 → **0.914**;
+  Tambo test 0.423 → **0.435**; VisDrone test-dev 0.470 → 0.470. Hiçbir test düşmedi.
+* **v14 ETKİN:** `modeller/insan_uzman.pt` = v14 (v11: `runs/insan_v11`). Roboflow disastervision-insan-v14 yüklendi,
+  workflow disastervision-tespit insan adımı v14'e geçirildi. README güncellendi.
+* Ders: kısmi etiketli görünen veri (seyirciler etiketsiz) bu kez zarar vermedi — etiketsizler kenarda ve seyrek; çoğunluk tam
+  etiketli. Su verisinde ise kişilerin çoğu (teknedekiler) etiketsizdi. Ölçüt: etiketsiz insan oranı.
