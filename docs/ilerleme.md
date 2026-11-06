@@ -600,3 +600,4 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   - roboflow-public/sarnet-search-and-rescue v5: mozaik + 3× çoğaltılmış, çok yüksek irtifa, `target` sınıfı insan dışı
     nesneleri de içeriyor, hedefler birkaç piksel → uyumsuz.
   Sıradaki gerçek kaynaklar: WiSARD (41 GB) ve NOMAD (zip başına 38 GB), Drive kotası açılınca kendiliğinden inecek.
+* Drive kotası 22:00'de hâlâ dolu; Chrome eklentisi bağlı değil. İndirme betikleri 15 dk arayla ~25 saat deneyecek şekilde yeniden başlatıldı.
