@@ -610,3 +610,4 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   960 px döşeme (%15 örtüşme), train'de boş döşemelerin %10'u (`doseme_yap.dosele(bos_oran=…)`), valid tam.
   Kare adları uçuşlar arasında tekrarlandığı için klasör adı önek.
 * Zincir 56: veri → v14 sıfır-atış WiSARD val → **v15** = v14'ten, v13 verisi + WiSARD train, 6 epoch → 0.5/0.7 çorbaları → 8 val seti.
+* WiSARD veri: train 6.238 kare / 13.896 insan → 22.452 döşeme; valid 607 kare / 1.679 insan → 9.105 döşeme. **v14 sıfır-atış WiSARD val: 0.420** (mAP50-95 0.117). v15 eğitimi başladı.
