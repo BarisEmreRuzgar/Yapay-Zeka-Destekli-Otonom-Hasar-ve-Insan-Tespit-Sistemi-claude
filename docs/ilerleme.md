@@ -550,3 +550,4 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
 * **v13 eğitim ara sonucu** (Okutama val, eğitim içi): epoch 1–6: 0.653, 0.643, 0.625, 0.644, 0.657, **0.666** (v11 sıfır-atış 0.637).
 * 2026-11-06 ~14:10 bilgisayar kapandı/uyudu (epoch 7/8 %95'te; otomatik kayıt da durdu). 17:50 **zincir 53b**:
   `egit.py --devam` ile v13 sürdürüldü → v11⊕v13 çorbaları (0.5, 0.7) → 7 val seti (Okutama + altı eski set).
+* v13 epoch 7 (devamdan sonra): Okutama val **0.673** (v11 sıfır-atış 0.637).
