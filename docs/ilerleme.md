@@ -547,3 +547,6 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   diğer val setleri karar verir.
 * Zincir 53: v11 sıfır-atış Okutama val → v13 = v11'den, v10 verisi + Okutama train, 8 epoch → 0.5/0.7 çorbaları → 7 val seti.
 * **v11 sıfır-atış Okutama val: 0.637** (mAP50-95 0.245). v13 eğitimi ~55 dk/epoch (8 epoch ~7,5 saat).
+* **v13 eğitim ara sonucu** (Okutama val, eğitim içi): epoch 1–6: 0.653, 0.643, 0.625, 0.644, 0.657, **0.666** (v11 sıfır-atış 0.637).
+* 2026-11-06 ~14:10 bilgisayar kapandı/uyudu (epoch 7/8 %95'te; otomatik kayıt da durdu). 17:50 **zincir 53b**:
+  `egit.py --devam` ile v13 sürdürüldü → v11⊕v13 çorbaları (0.5, 0.7) → 7 val seti (Okutama + altı eski set).
