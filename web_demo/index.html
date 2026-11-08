@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DisasterVision — tarayıcıda hasar ve insan tespiti</title>
+<style>
+  :root { --bg:#f6f7f9; --kart:#fff; --yazi:#1d2433; --soluk:#5b6577; --cizgi:#dde1e8; --vurgu:#d9480f; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#12151b; --kart:#1b2029; --yazi:#e6e9ef; --soluk:#9aa3b2; --cizgi:#2c3340; --vurgu:#ff8a4c; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--yazi); font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width:1180px; margin:0 auto; padding:20px 16px 40px; }
+  h1 { font-size:1.5rem; margin:0 0 4px; }
+  .alt { color:var(--soluk); margin:0 0 16px; }
+  .izgara { display:grid; grid-template-columns: 320px 1fr; gap:16px; }
+  @media (max-width: 820px) { .izgara { grid-template-columns: 1fr; } }
+  .kart { background:var(--kart); border:1px solid var(--cizgi); border-radius:10px; padding:14px; }
+  label { display:block; margin:10px 0 4px; }
+  .secim { display:flex; gap:8px; align-items:flex-start; margin:8px 0; }
+  .secim input { margin-top:4px; }
+  .secim small { color:var(--soluk); display:block; }
+  button { background:var(--vurgu); color:#fff; border:0; border-radius:8px; padding:10px 14px; font-size:15px; width:100%; cursor:pointer; margin-top:12px; }
+  button:disabled { opacity:.5; cursor:default; }
+  .ornekler { display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
+  .ornekler img { width:88px; height:60px; object-fit:cover; border-radius:6px; border:2px solid transparent; cursor:pointer; }
+  .ornekler img:hover { border-color:var(--vurgu); }
+  canvas { max-width:100%; height:auto; display:block; border-radius:6px; background:#0001; }
+  table { border-collapse:collapse; margin-top:10px; }
+  td, th { padding:3px 12px 3px 0; text-align:left; }
+  .renk { display:inline-block; width:11px; height:11px; border-radius:2px; margin-right:6px; vertical-align:middle; }
+  #durum { color:var(--soluk); font-size:13px; margin-top:8px; min-height:1.4em; }
+  .uyari { color:var(--vurgu); font-weight:600; }
+  footer { color:var(--soluk); font-size:13px; margin-top:18px; }
+  a { color:var(--vurgu); }
+</style>
+</head>
+<body>
+<main>
+  <h1>🌍 DisasterVision — afet hasarı ve insan tespiti</h1>
+  <p class="alt">İHA (drone) veya uydu görüntüsü yükleyin: binalar 4 hasar seviyesinde sınıflanır, insanlar işaretlenir.
+    Modeller (YOLOv8s) <b>sizin tarayıcınızda</b> çalışır; görüntü hiçbir sunucuya gönderilmez.</p>
+
+  <div class="izgara">
+    <div class="kart">
+      <label for="dosya"><b>Görüntü</b></label>
+      <input type="file" id="dosya" accept="image/*">
+      <div class="ornekler" id="ornekler">
+        <img src="ornekler/drone_kalabalik.jpg" data-uydu="0" alt="Drone: kalabalık" title="Drone görüntüsü (VisDrone test-dev)">
+        <img src="ornekler/uydu_hasar.jpg" data-uydu="1" alt="Uydu: kasırga" title="Uydu, Harvey kasırgası (xBD test)">
+        <img src="ornekler/palu_sonra.jpg" data-uydu="1" alt="Uydu: deprem" title="Uydu, Palu depremi/tsunamisi (xBD test)">
+      </div>
+
+      <label for="conf">Güven eşiği: <b id="confDeger">0.30</b></label>
+      <input type="range" id="conf" min="0.05" max="0.9" step="0.05" value="0.3" style="width:100%">
+
+      <div class="secim"><input type="checkbox" id="dilimle"><label for="dilimle" style="margin:0">Döşemeli çıkarım
+        <small>Büyük drone karelerinde küçük insanları yakalar; daha yavaş.</small></label></div>
+      <div class="secim"><input type="checkbox" id="uydu"><label for="uydu" style="margin:0">Uydu görüntüsü
+        <small>İnsan aramayı kapatır (bu çözünürlükte insan görünmez).</small></label></div>
+      <div class="secim"><input type="checkbox" id="su"><label for="su" style="margin:0">Su / sel sahnesi
+        <small>Sudaki insanlar için özel model (ilk seçimde ayrıca 45 MB iner).</small></label></div>
+
+      <button id="calistir" disabled>Modeller yükleniyor…</button>
+      <div id="durum"></div>
+    </div>
+
+    <div class="kart">
+      <canvas id="tuval" width="960" height="540"></canvas>
+      <div id="rapor"></div>
+    </div>
+  </div>
+
+  <footer>
+    Kaynak kod, eğitim süreci ve bağımsız test sonuçları:
+    <a href="https://github.com/BarisEmreRuzgar/Yapay-Zeka-Destekli-Otonom-Hasar-ve-Insan-Tespit-Sistemi-claude" target="_blank" rel="noopener">GitHub deposu</a>.
+    Hasar: ana model (xBD + Roboflow); insan: arama-kurtarma verileriyle eğitilmiş uzman model (1280 px).
+    Tarayıcı sürümü Python sürümüyle aynı modelleri kullanır; görüntü ölçekleme farkı nedeniyle sayılar birkaç kutu farklı olabilir.
+    <br><b>Karar destek aracıdır; sonuçlar saha ekiplerince doğrulanmalıdır.</b>
+  </footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.webgpu.min.js"></script>
+<script>
+"use strict";
+ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/";
+
+const SINIFLAR = ["person", "destroyed", "major-damage", "minor-damage", "no-damage"];
+const TR = { "person": "insan", "destroyed": "yıkık", "major-damage": "ağır hasar", "minor-damage": "hafif hasar", "no-damage": "hasarsız" };
+const RENK = { "person": "#00ffff", "destroyed": "#dc0000", "major-damage": "#ff7800", "minor-damage": "#ffdc00", "no-damage": "#3cb43c" };
+const INSAN_BOYUT = 1280, INSAN_DILIM = 960, ANA_DILIM = 640;
+
+const $ = id => document.getElementById(id);
+const durum = m => { $("durum").textContent = m; };
+let oturum = {}, saglayici = null, goruntu = null;
+
+// ---------- model yükleme ----------
+async function indir(url, etiket) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(url + ": " + r.status);
+  const toplam = +r.headers.get("content-length") || 0, okuyucu = r.body.getReader(), parcalar = [];
+  let n = 0;
+  for (;;) {
+    const { done, value } = await okuyucu.read();
+    if (done) break;
+    parcalar.push(value); n += value.length;
+    durum(`${etiket} indiriliyor… ${(n / 1e6).toFixed(0)}${toplam ? " / " + (toplam / 1e6).toFixed(0) : ""} MB`);
+  }
+  const tampon = new Uint8Array(n); let o = 0;
+  for (const p of parcalar) { tampon.set(p, o); o += p.length; }
+  return tampon;
+}
+
+async function oturumAc(ad, etiket) {
+  if (oturum[ad]) return oturum[ad];
+  const veri = await indir(`modeller/${ad}.onnx`, etiket);
+  durum(`${etiket} hazırlanıyor…`);
+  const denenecek = saglayici ? [saglayici] : (navigator.gpu ? ["webgpu", "wasm"] : ["wasm"]);
+  let hata;
+  for (const s of denenecek) {
+    try {
+      oturum[ad] = await ort.InferenceSession.create(veri, { executionProviders: [s], graphOptimizationLevel: "all" });
+      saglayici = s;
+      return oturum[ad];
+    } catch (e) { hata = e; }
+  }
+  throw hata;
+}
+
+// ---------- ön işleme (Ultralytics LetterBox, auto=True ile aynı) ----------
+function cikarimBoyutu(uzunKenar) { return Math.min(1280, Math.max(640, Math.round(uzunKenar * 4 / 3 / 32) * 32)); }
+
+function hazirla(kaynak, sx, sy, sw, sh, boyut) {
+  const r = Math.min(boyut / sw, boyut / sh);
+  const nw = Math.round(sw * r), nh = Math.round(sh * r);
+  const W = Math.ceil(nw / 32) * 32, H = Math.ceil(nh / 32) * 32;
+  const px = (W - nw) / 2, py = (H - nh) / 2;
+  const c = new OffscreenCanvas(W, H), x = c.getContext("2d", { willReadFrequently: true });
+  x.fillStyle = "rgb(114,114,114)"; x.fillRect(0, 0, W, H);
+  x.imageSmoothingEnabled = true; x.imageSmoothingQuality = "high";
+  x.drawImage(kaynak, sx, sy, sw, sh, Math.round(px - 0.1), Math.round(py - 0.1), nw, nh);
+  const p = x.getImageData(0, 0, W, H).data, alan = W * H, t = new Float32Array(3 * alan);
+  for (let i = 0; i < alan; i++) {
+    t[i] = p[4 * i] / 255; t[alan + i] = p[4 * i + 1] / 255; t[2 * alan + i] = p[4 * i + 2] / 255;
+  }
+  return { tensor: new ort.Tensor("float32", t, [1, 3, H, W]), r, px: Math.round(px - 0.1), py: Math.round(py - 0.1) };
+}
+
+// ---------- son işleme ----------
+function iou(a, b) {
+  const w = Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1), h = Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1);
+  if (w <= 0 || h <= 0) return 0;
+  const k = w * h;
+  return k / ((a.x2 - a.x1) * (a.y2 - a.y1) + (b.x2 - b.x1) * (b.y2 - b.y1) - k);
+}
+function ios(a, b) {  // kesişim / küçük kutu (SAHI GREEDYNMM, IOS)
+  const w = Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1), h = Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1);
+  if (w <= 0 || h <= 0) return 0;
+  return w * h / Math.min((a.x2 - a.x1) * (a.y2 - a.y1), (b.x2 - b.x1) * (b.y2 - b.y1));
+}
+function nms(kutular, esik, enFazla = 300) {  // sınıf bazında
+  kutular.sort((a, b) => b.s - a.s);
+  const kalan = [], silindi = new Uint8Array(kutular.length);
+  for (let i = 0; i < kutular.length && kalan.length < enFazla; i++) {
+    if (silindi[i]) continue;
+    kalan.push(kutular[i]);
+    for (let j = i + 1; j < kutular.length; j++)
+      if (!silindi[j] && kutular[j].c === kutular[i].c && iou(kutular[i], kutular[j]) > esik) silindi[j] = 1;
+  }
+  return kalan;
+}
+function greedyNmm(kutular, esik = 0.5) {
+  kutular.sort((a, b) => b.s - a.s);
+  const kalan = [], kullanildi = new Uint8Array(kutular.length);
+  for (let i = 0; i < kutular.length; i++) {
+    if (kullanildi[i]) continue;
+    const a = kutular[i], m = { ...a };
+    for (let j = i + 1; j < kutular.length; j++) {
+      const b = kutular[j];
+      if (kullanildi[j] || b.c !== a.c || ios(a, b) < esik) continue;
+      kullanildi[j] = 1;
+      m.x1 = Math.min(m.x1, b.x1); m.y1 = Math.min(m.y1, b.y1); m.x2 = Math.max(m.x2, b.x2); m.y2 = Math.max(m.y2, b.y2);
+    }
+    kalan.push(m);
+  }
+  return kalan;
+}
+
+async function bolge(model, adlar, kaynak, sx, sy, sw, sh, boyut, conf) {
+  const g = hazirla(kaynak, sx, sy, sw, sh, boyut);
+  const cikti = (await model.run({ [model.inputNames[0]]: g.tensor }))[model.outputNames[0]];
+  const [, C, N] = cikti.dims, d = cikti.data, kutular = [];
+  for (let i = 0; i < N; i++) {
+    let enIyi = 0, s = d[4 * N + i];
+    for (let k = 1; k < C - 4; k++) { const v = d[(4 + k) * N + i]; if (v > s) { s = v; enIyi = k; } }
+    if (s <= conf) continue;
+    const cx = d[i], cy = d[N + i], w = d[2 * N + i], h = d[3 * N + i];
+    const kirp = (v, ust) => Math.max(0, Math.min(ust, v));
+    kutular.push({
+      c: adlar[enIyi], s,
+      x1: sx + kirp((cx - w / 2 - g.px) / g.r, sw), y1: sy + kirp((cy - h / 2 - g.py) / g.r, sh),
+      x2: sx + kirp((cx + w / 2 - g.px) / g.r, sw), y2: sy + kirp((cy + h / 2 - g.py) / g.r, sh),
+    });
+  }
+  return nms(kutular, 0.7);
+}
+
+function dilimler(W, H, d, ortusme = 0.2) {  // sahi.slicing.get_slice_bboxes ile aynı
+  const sonuc = [], o = Math.floor(ortusme * d);
+  let yMin = 0, yMax = 0;
+  while (yMax < H) {
+    let xMin = 0, xMax = 0;
+    yMax = yMin + d;
+    while (xMax < W) {
+      xMax = xMin + d;
+      if (yMax > H || xMax > W) {
+        const xm = Math.min(W, xMax), ym = Math.min(H, yMax);
+        sonuc.push([Math.max(0, xm - d), Math.max(0, ym - d), xm, ym]);
+      } else sonuc.push([xMin, yMin, xMax, yMax]);
+      xMin = xMax - o;
+    }
+    yMin = yMax - o;
+  }
+  return sonuc;
+}
+
+async function calistirModel(model, adlar, kaynak, conf, dilimle, dilim, boyut, etiket) {
+  const W = kaynak.width, H = kaynak.height;
+  if (!dilimle) return bolge(model, adlar, kaynak, 0, 0, W, H, boyut || cikarimBoyutu(Math.max(W, H)), conf);
+  const b = boyut || cikarimBoyutu(dilim), parcalar = dilimler(W, H, dilim);
+  let hepsi = [];
+  for (let i = 0; i < parcalar.length; i++) {
+    durum(`${etiket}: döşeme ${i + 1}/${parcalar.length}…`);
+    const [x1, y1, x2, y2] = parcalar[i];
+    hepsi = hepsi.concat(await bolge(model, adlar, kaynak, x1, y1, x2 - x1, y2 - y1, b, conf));
+  }
+  if (parcalar.length > 1) hepsi = hepsi.concat(await bolge(model, adlar, kaynak, 0, 0, W, H, b, conf));  // SAHI standart tahmin
+  return greedyNmm(hepsi);
+}
+
+// ---------- çizim ----------
+function ciz(tespitler) {
+  const c = $("tuval"), x = c.getContext("2d");
+  c.width = goruntu.width; c.height = goruntu.height;
+  x.drawImage(goruntu, 0, 0);
+  const k = Math.max(1, Math.round((c.width + c.height) / 1200)), yazi = Math.round(11 * k);
+  x.lineWidth = k; x.font = `${yazi}px system-ui, sans-serif`; x.textBaseline = "bottom";
+  for (const t of tespitler) {
+    x.strokeStyle = x.fillStyle = RENK[t.c];
+    x.strokeRect(t.x1, t.y1, t.x2 - t.x1, t.y2 - t.y1);
+    const e = `${t.c} ${t.s.toFixed(2)}`, w = x.measureText(e).width;
+    x.fillRect(t.x1, Math.max(0, t.y1 - yazi - 3), w + 4, yazi + 3);
+    x.fillStyle = "#000"; x.fillText(e, t.x1 + 2, Math.max(yazi + 1, t.y1 - 1));
+  }
+}
+
+function rapor(tespitler, sure) {
+  const say = Object.fromEntries(SINIFLAR.map(s => [s, 0]));
+  for (const t of tespitler) say[t.c]++;
+  let h = say.person ? `<p class="uyari">⚠️ ${say.person} olası insan tespit edildi.</p>` : "";
+  h += "<table><tr><th>Sınıf</th><th>Adet</th></tr>" +
+    SINIFLAR.map(s => `<tr><td><span class="renk" style="background:${RENK[s]}"></span>${TR[s]}</td><td>${say[s]}</td></tr>`).join("") +
+    "</table>";
+  $("rapor").innerHTML = h;
+  durum(`${(sure / 1000).toFixed(1)} sn · ${saglayici === "webgpu" ? "WebGPU (ekran kartı)" : "WASM (işlemci)"}`);
+}
+
+// ---------- akış ----------
+async function tespitEt() {
+  if (!goruntu) { durum("Önce bir görüntü seçin."); return; }
+  $("calistir").disabled = true;
+  const t0 = performance.now();
+  try {
+    const conf = +$("conf").value, dilimle = $("dilimle").checked, uydu = $("uydu").checked, su = $("su").checked;
+    const ana = await oturumAc("disastervision", "Ana model");
+    let t = (await calistirModel(ana, SINIFLAR, goruntu, conf, dilimle, ANA_DILIM, null, "Hasar")).filter(x => x.c !== "person");
+    if (!uydu) {
+      const insan = su ? await oturumAc("insan_su", "Su modeli") : await oturumAc("insan_uzman", "İnsan modeli");
+      t = t.concat(await calistirModel(insan, ["person"], goruntu, conf, dilimle, INSAN_DILIM, INSAN_BOYUT, "İnsan"));
+    }
+    ciz(t); rapor(t, performance.now() - t0);
+  } catch (e) { console.error(e); durum("Hata: " + e.message); }
+  $("calistir").disabled = false;
+}
+
+async function goruntuYukle(src, uydu) {
+  const img = new Image();
+  img.src = src; await img.decode();
+  goruntu = await createImageBitmap(img);
+  if (uydu !== undefined) $("uydu").checked = uydu;
+  const c = $("tuval"); c.width = goruntu.width; c.height = goruntu.height; c.getContext("2d").drawImage(goruntu, 0, 0);
+  $("rapor").innerHTML = "";
+}
+
+$("conf").oninput = e => { $("confDeger").textContent = (+e.target.value).toFixed(2); };
+$("dosya").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  await goruntuYukle(URL.createObjectURL(f)); tespitEt();
+};
+for (const im of document.querySelectorAll("#ornekler img"))
+  im.onclick = async () => { await goruntuYukle(im.src, im.dataset.uydu === "1"); tespitEt(); };
+$("calistir").onclick = tespitEt;
+
+(async () => {
+  try {
+    await oturumAc("disastervision", "Ana model");
+    await oturumAc("insan_uzman", "İnsan modeli");
+    $("calistir").disabled = false; $("calistir").textContent = "Tespit et";
+    await goruntuYukle("ornekler/drone_kalabalik.jpg", false);
+    await tespitEt();  // ilk açılışta örnek sonuç görünsün
+  } catch (e) { console.error(e); durum("Model yüklenemedi: " + e.message); }
+})();
+</script>
+</body>
+</html>

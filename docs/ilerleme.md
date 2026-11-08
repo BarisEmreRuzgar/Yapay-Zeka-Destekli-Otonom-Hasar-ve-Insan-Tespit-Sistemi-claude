@@ -647,3 +647,16 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
 - 60 döşemelik görsel inceleme (CPU, eşik 0.30): TP 13, FN 47, FP 14. Etiketler insanlarla doğru hizalı
   (xywh→YOLO dönüşümü ve döşeme doğru). Kaçanlar gerçekten zor: ağaç gövdesi arkasında yarı görünen, korkuluk
   arkasında yatan, platformda çok küçük insanlar → modelin gerçek zayıflığı; v17 eğitimi (zincir 58) sürüyor (~1.5 sa/epoch, 6 epoch).
+
+### 2026-11-08 15:10 — Canlı demo (Hugging Face) + README "Hızlı deneme"
+- Hugging Face ücretsiz hesapta Gradio (Python sunucu) Space'leri artık PRO istiyor → **statik Space**:
+  https://huggingface.co/spaces/barisemreruzgar/disastervision. Modeller ONNX'e çevrildi (dinamik giriş, opset 17) ve
+  ziyaretçinin tarayıcısında onnxruntime-web 1.20.1 ile çalışıyor (WebGPU varsa, yoksa WASM). Kaynak: `web_demo/index.html`,
+  hazırlama: `src/hf_space_hazirla.py`.
+- Tarayıcı mantığı `src/tahmin.py` ile aynı (hasar ana modelden ~1.33× ölçekte, insan uzmanı 1280 px; döşemeli mod = SAHI
+  dilimleri + tam görüntü + GREEDYNMM/IOS 0.5). Python ile karşılaştırma: drone örneği 68/68 insan (döşemeli 63/63);
+  uydu örneklerinde ±1–4 bina farkı (ölçekleme enterpolasyonu). WebGPU ~1–4 sn, WASM ~10 sn. Canlı adreste test edildi.
+- README: en üste "Hızlı deneme" (canlı demo + 5 komut), durum rozeti "TAMAMLANDI" → "ÇALIŞIYOR | GELİŞTİRİLİYOR".
+  GitHub'dan temiz klonda `python src/tahmin.py ornekler/drone_kalabalik.jpg` → 68 insan (model hash'i yerelle aynı).
+  Temiz venv'de `pip install` ağ (DNS) kesintileri yüzünden tamamlanamadı; komutun kendisinde hata görülmedi.
+- Kullanıcı kararı: v17, v16'dan daha iyi çıkarsa GitHub'a yüklenecek (başvuru öncesi sabitleme yok).
