@@ -640,3 +640,4 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
 * Zincir 58 hazır (`egitim_zinciri58.ps1`): NOMAD veri → v16 sıfır-atış NOMAD val → **v17** = v16'dan, v15 verisi + NOMAD train,
   6 epoch → 0.5/0.7 çorbaları → 9 val seti. `nomad_bekle.ps1` indirme bitince zip'i `veri/nomad_ham`'a taşıyıp zinciri başlatır.
 * Not: kullanıcının burs başvurusu nedeniyle cevap gelene kadar GitHub'daki model dosyaları değiştirilmeyecek (v16 sabit).
+* NOMAD veri (zip 1, Actor001–010): train 2.668 kare / 2.695 insan (1.057 kare görünürlük <%30 atlandı), valid (Actor009–010) 298 kare / 298 insan (132 atlandı). Val küçük (2 oyuncu) → NOMAD val gürültülü.
