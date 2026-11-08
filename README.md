@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/PYTHON-3.11-blue?style=for-the-badge&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/YOLOv8-ULTRALYTICS-green?style=for-the-badge&logo=opencv&logoColor=white" />
   <img src="https://img.shields.io/badge/GPU-RTX_3050_6GB-76B900?style=for-the-badge&logo=nvidia&logoColor=white" />
-  <img src="https://img.shields.io/badge/STATUS-TAMAMLANDI-brightgreen?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/DURUM-%C3%87ALI%C5%9EIYOR_%7C_GEL%C4%B0%C5%9ET%C4%B0R%C4%B0L%C4%B0YOR-orange?style=for-the-badge" />
 </p>
 
 Afet bölgelerinde havadan (İHA/drone ve uydu) çekilen görüntüler üzerinden bina hasar durumunu tespit eden ve insan varlığını algılayan bilgisayarla görü projesi.
@@ -15,9 +15,31 @@ Afet bölgelerinde havadan (İHA/drone ve uydu) çekilen görüntüler üzerinde
 
 ---
 
+## ⚡ Hızlı deneme (≈5 dakika, GPU gerekmez)
+
+**🔗 Canlı demo — kurulum yok:** [huggingface.co/spaces/barisemreruzgar/disastervision](https://huggingface.co/spaces/barisemreruzgar/disastervision)  
+Modeller tarayıcınızda çalışır (WebGPU varsa ekran kartı, yoksa işlemci); görüntü sunucuya gönderilmez. İlk açılışta ~90 MB model iner.
+
+Yerelde çalıştırmak için (eğitilmiş modeller depoda, `modeller/`, her biri ~22 MB; ayrıca indirmeye gerek yok):
+
+```bash
+git clone https://github.com/BarisEmreRuzgar/Yapay-Zeka-Destekli-Otonom-Hasar-ve-Insan-Tespit-Sistemi-claude.git
+cd Yapay-Zeka-Destekli-Otonom-Hasar-ve-Insan-Tespit-Sistemi-claude
+pip install -r requirements.txt                       # CPU yeterli (GPU için: Kurulum bölümü)
+python src/tahmin.py ornekler/drone_kalabalik.jpg     # → ornekler/drone_kalabalik_tespit.jpg + sınıf sayıları
+python app.py                                         # tarayıcı arayüzü → http://127.0.0.1:7860
+```
+
+Kendi görüntünüz için: `python src/tahmin.py fotograf.jpg` (büyük drone karelerinde küçük insanlar için `--dilimle`,
+su/sel sahnesinde `--su`). Sonuçlar karar desteği içindir; saha ekiplerince doğrulanmalıdır.
+
 ## 📌 Proje Durumu
 
-✅ **Tamamlandı.** Proje daha önce *"mevcut veri setlerinin çeşitlilik ve miktar olarak yetersiz kalması"* nedeniyle durdurulmuştu. Bu sürümde veri sorunu çözüldü:
+🔄 **Çalışan bir sistem; geliştirme aktif olarak sürüyor.** Modeller kullanıma hazır ve aşağıdaki sonuçlarla ölçüldü;
+yeni veri setleriyle iyileştirme çalışmaları devam ediyor (en son: gizlenmiş/kısmen görünen insanlar için NOMAD verisi),
+her adım `docs/ilerleme.md` dosyasına kaydediliyor.
+
+Proje daha önce *"mevcut veri setlerinin çeşitlilik ve miktar olarak yetersiz kalması"* nedeniyle durdurulmuştu. Bu sürümde veri sorunu çözüldü:
 
 * **İnsan sınıfı** için 8.600+ drone görüntüsü içeren **VisDrone2019-DET** eklendi.
 * **Hasar sınıfları** için 850.000+ bina etiketli **xBD (xView2)** veri setinden ~5.400 döşeme eklendi.
