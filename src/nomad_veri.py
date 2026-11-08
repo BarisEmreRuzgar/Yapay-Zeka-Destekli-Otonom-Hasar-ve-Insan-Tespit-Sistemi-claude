@@ -23,7 +23,7 @@ HAM = KOK / "veri" / "nomad_ham"
 HEDEF = KOK / "veri" / "nomad_yolo"
 VALID_OYUNCU = {"Actor009", "Actor010"}
 GORUNURLUK_ALT = 30
-ADIM = {"train": 3, "valid": 4}
+ADIM = {"train": 1, "valid": 2}  # zip başına yalnız 10 oyuncu → train karelerinin hepsi
 BOS_ORAN = {"train": 0.10, "valid": 1.0}
 
 if __name__ == "__main__":

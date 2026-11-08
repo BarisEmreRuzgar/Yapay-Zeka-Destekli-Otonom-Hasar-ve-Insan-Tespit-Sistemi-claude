@@ -636,3 +636,7 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   oyuncu bazlı bölme (Actor009–010 valid); 960 px döşeme, train boş döşemelerin %10'u.
 * Kullanıcı ertesi gün burs başvurusu yapacak; repo (…-claude) public, modeller repoda, GitHub'daki insan_uzman.pt = v16
   (hash eşleşti), tahmin.py ve app.py yerelde çalıştı.
+* `nomad_veri.py` ADIM train 1 / valid 2 (zip başına 10 oyuncu; her 3. kare ~3k döşeme verirdi, toplam ~52k içinde etkisiz kalırdı).
+* Zincir 58 hazır (`egitim_zinciri58.ps1`): NOMAD veri → v16 sıfır-atış NOMAD val → **v17** = v16'dan, v15 verisi + NOMAD train,
+  6 epoch → 0.5/0.7 çorbaları → 9 val seti. `nomad_bekle.ps1` indirme bitince zip'i `veri/nomad_ham`'a taşıyıp zinciri başlatır.
+* Not: kullanıcının burs başvurusu nedeniyle cevap gelene kadar GitHub'daki model dosyaları değiştirilmeyecek (v16 sabit).
