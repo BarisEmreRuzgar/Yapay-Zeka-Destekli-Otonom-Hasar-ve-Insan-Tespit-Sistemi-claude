@@ -623,3 +623,7 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   WiSARD +0.18 (yaban arazisinde kayalık/ağaç arası insanlar), hiçbir set −0.01'den fazla düşmüyor (VisDrone −0.005).
   v15 tek başına VisDrone/HERIDAL'da −0.017/−0.016 → çorba yine unutmayı düzeltti. `runs/insan_v16`.
   (Zincir 7 Kasım 10:19'da bitti; oturum kesildiği için 8 Kasım 03:00'te işlendi.) Zincir 57: tek seferlik testler.
+* **Zincir 57 — v16 tek seferlik testler:** Okutama 0.820 → **0.839**; Lacmus 0.914 → 0.907; Tambo 0.435 → 0.423;
+  VisDrone test-dev 0.470 → 0.465. Üç testte küçük kayıp (≤0.012), seçim val'e göre yapıldığından v16 korunur
+  (test sonucuna göre 0.5 çorbaya geçmek test setine göre seçim olurdu). **v16 ETKİN:** `modeller/insan_uzman.pt` = v16,
+  README güncel; Roboflow disastervision-insan-v16 yüklendi (işleniyor) → workflow geçişi işlem bitince.
