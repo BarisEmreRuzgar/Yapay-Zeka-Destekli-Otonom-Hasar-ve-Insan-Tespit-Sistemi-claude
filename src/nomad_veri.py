@@ -12,6 +12,7 @@ Kullanım: python src/nomad_veri.py
 import json
 import shutil
 import tempfile
+import zipfile
 from collections import defaultdict
 from pathlib import Path
 
@@ -27,8 +28,14 @@ BOS_ORAN = {"train": 0.10, "valid": 1.0}
 
 if __name__ == "__main__":
     ann = json.loads((HAM / "annotations.json").read_text(encoding="utf-8"))
-    resimler = {p.name: p for p in (HAM / "acik").rglob("*.jpg")}
-    print("açılmış kare:", len(resimler))
+    # Zip açılmaz (38 GB; disk dar): seçilen kareler doğrudan zip'ten okunur.
+    zipler = [zipfile.ZipFile(z) for z in sorted(HAM.glob("Actor*.zip"))]
+    resimler = {}
+    for z in zipler:
+        for m in z.infolist():
+            if m.filename.lower().endswith(".jpg"):
+                resimler[Path(m.filename).name] = (z, m)
+    print("zip'lerdeki kare:", len(resimler))
     shutil.rmtree(HEDEF, ignore_errors=True)
     gruplar = defaultdict(list)  # (oyuncu, irtifa) → kareler
     for x in ann:
@@ -54,7 +61,8 @@ if __name__ == "__main__":
                     bx, by, bw, bh = a["bbox"]
                     satir.append(f"0 {(bx + bw / 2) / W:.6f} {(by + bh / 2) / H:.6f} {bw / W:.6f} {bh / H:.6f}")
                 ad = Path(x["file_name"]).stem
-                shutil.copy(resimler[x["file_name"]], g / "images" / f"{ad}.jpg")
+                z, m = resimler[x["file_name"]]
+                (g / "images" / f"{ad}.jpg").write_bytes(z.read(m))
                 (g / "labels" / f"{ad}.txt").write_text("\n".join(satir))
                 ozet[bolum][0] += 1; ozet[bolum][1] += len(satir)
             dosele(g, HEDEF / bolum, bos_oran=BOS_ORAN[bolum])

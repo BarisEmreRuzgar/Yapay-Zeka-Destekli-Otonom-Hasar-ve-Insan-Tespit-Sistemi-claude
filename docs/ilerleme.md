@@ -627,3 +627,12 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   VisDrone test-dev 0.470 → 0.465. Üç testte küçük kayıp (≤0.012), seçim val'e göre yapıldığından v16 korunur
   (test sonucuna göre 0.5 çorbaya geçmek test setine göre seçim olurdu). **v16 ETKİN:** `modeller/insan_uzman.pt` = v16,
   README güncel; Roboflow disastervision-insan-v16 yüklendi ve workflow disastervision-tespit insan adımı v16’ya geçirildi.
+
+### NOMAD (2026-11-08)
+* Kullanıcı izniyle WiSARDv1.zip (görünür kareler zaten `veri/wisard_yolo`'da) ve reddedilen AU-AIR silindi → 81 GB boş.
+* NOMAD Actor001-Actor010.zip (38 GB) Chrome'dan iniyor; annotations.json (10 MB) Chrome ile indi: 42.825 kare 5472×3078,
+  43.487 kutu, görünürlük %10–100 (%10: 7.349 kutu), irtifa a10–a90 eşit; medyan insan yüksekliği a10 193 px … a90 25 px.
+* `src/nomad_veri.py`: zip açılmadan seçilen kareler zip'ten okunur (disk dar); görünürlüğü <%30 kişi içeren kareler atlanır;
+  oyuncu bazlı bölme (Actor009–010 valid); 960 px döşeme, train boş döşemelerin %10'u.
+* Kullanıcı ertesi gün burs başvurusu yapacak; repo (…-claude) public, modeller repoda, GitHub'daki insan_uzman.pt = v16
+  (hash eşleşti), tahmin.py ve app.py yerelde çalıştı.
