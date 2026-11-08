@@ -677,3 +677,20 @@ Val AP50 (v16 → v17 / çorba 0.5·v16+0.5·v17 / çorba 0.3·v16+0.7·v17):
 - Kural (hiçbir sette −0.01'den fazla düşüş yok): v17 ve iki çorba da **SAR ve HERIDAL'da sınırı aşıyor** → benimsenmedi.
   NOMAD gizli/küçük insanlar kayalık-dağ (SAR/HERIDAL) görünüşünü kısmen unutturuyor; WiSARD'a ise iyi aktarıldı (+0.06).
 - Zincir 59: v16 ağırlığı daha yüksek çorbalar (0.7·v16+0.3·v17, 0.6·v16+0.4·v17), aynı 9 val seti (deg_v17b_*.log).
+
+### 2026-11-08 ~20:00 — Zincir 59: v16 ağırlıklı çorbalar → **v18 benimsendi**
+| Set | v16 | 0.7·v16+0.3·v17 (**v18**) | 0.6·v16+0.4·v17 |
+|---|---|---|---|
+| NOMAD | 0.163 | **0.187** | 0.193 |
+| WiSARD | 0.599 | **0.639** | 0.646 |
+| Okutama | 0.773 | **0.779** | 0.780 |
+| VisDrone | 0.685 | **0.686** | 0.684 |
+| SAR | 0.925 | **0.917** (−0.008) | 0.914 (−0.011 ✗) |
+| SARD | 0.861 | **0.862** | 0.860 |
+| HERIDAL görülmemiş | 0.891 | **0.883** (−0.008) | 0.881 |
+| Lacmus | 0.744 | **0.742** | 0.744 |
+| Tambo | 0.889 | **0.884** | 0.885 |
+- v18 = 0.7·v16 + 0.3·v17 (runs/insan_v18) tüm setlerde −0.01 sınırının içinde; gizli insan (NOMAD +0.024) ve
+  kayalık/orman (WiSARD +0.040) kazancı korunuyor. 0.6/0.4 SAR'da sınırı aştı. Ders: NOMAD gibi farklı dağılım ince
+  ayarında eski modele daha yüksek ağırlık (0.7) gerekiyor (önceki çorbalarda 0.3 yetiyordu).
+- Zincir 60: v18 tek seferlik testler (Okutama, Lacmus, Tambo, VisDrone test-dev).
