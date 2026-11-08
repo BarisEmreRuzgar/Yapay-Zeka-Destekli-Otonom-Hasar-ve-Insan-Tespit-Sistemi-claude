@@ -110,17 +110,21 @@ async function indir(url, etiket) {
   return tampon;
 }
 
-async function oturumAc(ad, etiket) {
-  if (oturum[ad]) return oturum[ad];
+function oturumAc(ad, etiket) {  // aynı model için tek indirme: eşzamanlı çağrılar aynı Promise'i bekler
+  if (!oturum[ad]) oturum[ad] = oturumYukle(ad, etiket).catch(e => { delete oturum[ad]; throw e; });
+  return oturum[ad];
+}
+
+async function oturumYukle(ad, etiket) {
   const veri = await indir(`modeller/${ad}.onnx`, etiket);
   durum(`${etiket} hazırlanıyor…`);
   const denenecek = saglayici ? [saglayici] : (navigator.gpu ? ["webgpu", "wasm"] : ["wasm"]);
   let hata;
   for (const s of denenecek) {
     try {
-      oturum[ad] = await ort.InferenceSession.create(veri, { executionProviders: [s], graphOptimizationLevel: "all" });
+      const o = await ort.InferenceSession.create(veri, { executionProviders: [s], graphOptimizationLevel: "all" });
       saglayici = s;
-      return oturum[ad];
+      return o;
     } catch (e) { hata = e; }
   }
   throw hata;
@@ -238,10 +242,10 @@ async function calistirModel(model, adlar, kaynak, conf, dilimle, dilim, boyut, 
 }
 
 // ---------- çizim ----------
-function ciz(tespitler) {
+function ciz(tespitler, g) {
   const c = $("tuval"), x = c.getContext("2d");
-  c.width = goruntu.width; c.height = goruntu.height;
-  x.drawImage(goruntu, 0, 0);
+  c.width = g.width; c.height = g.height;
+  x.drawImage(g, 0, 0);
   const k = Math.max(1, Math.round((c.width + c.height) / 1200)), yazi = Math.round(11 * k);
   x.lineWidth = k; x.font = `${yazi}px system-ui, sans-serif`; x.textBaseline = "bottom";
   for (const t of tespitler) {
@@ -265,26 +269,35 @@ function rapor(tespitler, sure) {
 }
 
 // ---------- akış ----------
-async function tespitEt() {
-  if (!goruntu) { durum("Önce bir görüntü seçin."); return; }
+// Tespitler sırayla çalışır: WebGPU oturumu aynı anda iki run kabul etmiyor ("Session mismatch"); hızlı tıklamalarda
+// her istek bir öncekini bekler ve başladığı andaki görüntüyü kullanır.
+let kuyruk = Promise.resolve();
+function tespitEt() { kuyruk = kuyruk.then(tespitCalistir, tespitCalistir); return kuyruk; }
+
+async function tespitCalistir() {
+  const g = goruntu;
+  if (!g) { durum("Önce bir görüntü seçin."); return; }
   $("calistir").disabled = true;
   const t0 = performance.now();
   try {
     const conf = +$("conf").value, dilimle = $("dilimle").checked, uydu = $("uydu").checked, su = $("su").checked;
     const ana = await oturumAc("disastervision", "Ana model");
-    let t = (await calistirModel(ana, SINIFLAR, goruntu, conf, dilimle, ANA_DILIM, null, "Hasar")).filter(x => x.c !== "person");
+    let t = (await calistirModel(ana, SINIFLAR, g, conf, dilimle, ANA_DILIM, null, "Hasar")).filter(x => x.c !== "person");
     if (!uydu) {
       const insan = su ? await oturumAc("insan_su", "Su modeli") : await oturumAc("insan_uzman", "İnsan modeli");
-      t = t.concat(await calistirModel(insan, ["person"], goruntu, conf, dilimle, INSAN_DILIM, INSAN_BOYUT, "İnsan"));
+      t = t.concat(await calistirModel(insan, ["person"], g, conf, dilimle, INSAN_DILIM, INSAN_BOYUT, "İnsan"));
     }
-    ciz(t); rapor(t, performance.now() - t0);
+    if (g === goruntu) { ciz(t, g); rapor(t, performance.now() - t0); }  // arada yeni görüntü seçildiyse eskiyi çizme
   } catch (e) { console.error(e); durum("Hata: " + e.message); }
   $("calistir").disabled = false;
 }
 
 async function goruntuYukle(src, uydu) {
+  // Örnekler fetch ile blob olarak alınır: Hugging Face büyük dosyaları başka alan adındaki CDN'e yönlendiriyor;
+  // <img> ile yüklenirse tuval "tainted" olur ve getImageData hata verir. fetch CORS'lu yanıtı temiz bir blob'a çevirir.
+  const veri = src.startsWith("blob:") ? src : URL.createObjectURL(await (await fetch(src)).blob());
   const img = new Image();
-  img.src = src; await img.decode();
+  img.src = veri; await img.decode();
   goruntu = await createImageBitmap(img);
   if (uydu !== undefined) $("uydu").checked = uydu;
   const c = $("tuval"); c.width = goruntu.width; c.height = goruntu.height; c.getContext("2d").drawImage(goruntu, 0, 0);

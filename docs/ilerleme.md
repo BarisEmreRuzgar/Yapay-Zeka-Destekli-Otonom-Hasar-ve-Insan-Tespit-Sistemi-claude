@@ -703,3 +703,8 @@ Val AP50 (v16 → v17 / çorba 0.5·v16+0.5·v17 / çorba 0.3·v16+0.7·v17):
   README: güncel sistem tablosu, uzman tablosuna v18 sütunu + NOMAD satırı, v18 paragrafı, veri kaynaklarına WiSARD ve NOMAD.
 - Roboflow: disastervision-insan-v18 yüklendi (işleniyor) → hazır olunca workflow insan adımı v18'e geçecek.
   Hugging Face statik demo yeni insan modeliyle yeniden üretilecek.
+- 18:45 Canlı demo v18 ile yeniden üretildi (drone örneği 70 insan; Python 69). Canlı testte bulunan iki hata düzeltildi:
+  (1) HF büyük dosyaları başka alan adındaki CDN'e yönlendirince örnek görüntüler tuvali "tainted" yapıyordu → fetch+blob;
+  (2) hızlı ardışık tıklamada WebGPU "Session mismatch" ve yükleme sırasında modelin iki kez inmesi → tespit kuyruğu +
+  paylaşılan model yükleme Promise'i. Model inerken 3 hızlı tıklama, uydu örnekleri ve dosya yükleme canlı adreste denendi.
+- Roboflow workflow `disastervision-tespit` insan adımı → disastervision-insan-v18.
