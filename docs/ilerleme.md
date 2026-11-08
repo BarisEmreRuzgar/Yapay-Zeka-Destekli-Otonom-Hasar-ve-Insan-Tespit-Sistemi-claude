@@ -660,3 +660,20 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   GitHub'dan temiz klonda `python src/tahmin.py ornekler/drone_kalabalik.jpg` → 68 insan (model hash'i yerelle aynı).
   Temiz venv'de `pip install` ağ (DNS) kesintileri yüzünden tamamlanamadı; komutun kendisinde hata görülmedi.
 - Kullanıcı kararı: v17, v16'dan daha iyi çıkarsa GitHub'a yüklenecek (başvuru öncesi sabitleme yok).
+
+### 2026-11-08 ~18:00 — Zincir 58 sonuçları (v17 = v16 + NOMAD, 6 epoch)
+Val AP50 (v16 → v17 / çorba 0.5·v16+0.5·v17 / çorba 0.3·v16+0.7·v17):
+| Set | v16 | v17 | 0.5/0.5 | 0.3/0.7 |
+|---|---|---|---|---|
+| NOMAD (yeni, gizli insan) | 0.163 | 0.214 | 0.196 | 0.207 |
+| WiSARD | 0.599 | 0.673 | 0.655 | 0.663 |
+| Okutama | 0.773 | 0.766 | 0.778 | 0.777 |
+| VisDrone | 0.685 | 0.665 | 0.683 | 0.678 |
+| SAR | 0.925 | 0.893 | 0.911 | 0.904 |
+| SARD | 0.861 | 0.860 | 0.859 | 0.860 |
+| HERIDAL görülmemiş | 0.891 | 0.862 | 0.879 | 0.873 |
+| Lacmus | 0.744 | 0.737 | 0.742 | 0.742 |
+| Tambo | 0.889 | 0.891 | 0.885 | 0.882 |
+- Kural (hiçbir sette −0.01'den fazla düşüş yok): v17 ve iki çorba da **SAR ve HERIDAL'da sınırı aşıyor** → benimsenmedi.
+  NOMAD gizli/küçük insanlar kayalık-dağ (SAR/HERIDAL) görünüşünü kısmen unutturuyor; WiSARD'a ise iyi aktarıldı (+0.06).
+- Zincir 59: v16 ağırlığı daha yüksek çorbalar (0.7·v16+0.3·v17, 0.6·v16+0.4·v17), aynı 9 val seti (deg_v17b_*.log).
