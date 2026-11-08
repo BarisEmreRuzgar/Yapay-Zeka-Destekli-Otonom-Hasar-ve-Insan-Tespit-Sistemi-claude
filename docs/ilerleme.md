@@ -613,3 +613,13 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
 * WiSARD veri: train 6.238 kare / 13.896 insan → 22.452 döşeme; valid 607 kare / 1.679 insan → 9.105 döşeme. **v14 sıfır-atış WiSARD val: 0.420** (mAP50-95 0.117). v15 eğitimi başladı.
 * v15 eğitim içi VisDrone val: ep1 0.633 (~72 dk/epoch).
 * v15 ep2 VisDrone val 0.621 (v13'te de ep2-3 düşüş vardı: 0.643, 0.625; sonra toparlandı).
+* **Zincir 56 sonucu — uzman v16 = 0.3·v14 + 0.7·v15 benimsendi** (v15 eğitim içi VisDrone ep1–6: 0.633, 0.621, 0.638, 0.648, 0.662, 0.670). Val mAP50:
+  | Model | WiSARD | Okutama | VisDrone | SAR | SARD | HERIDAL | Lacmus | Tambo |
+  | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+  | v14 | 0.420 | 0.750 | 0.690 | 0.924 | 0.861 | 0.882 | 0.740 | 0.890 |
+  | v15 | 0.619 | 0.776 | 0.673 | 0.908 | 0.853 | 0.866 | 0.737 | 0.882 |
+  | 0.5·v14 + 0.5·v15 | 0.567 | 0.772 | 0.689 | 0.929 | 0.864 | 0.892 | 0.749 | 0.889 |
+  | **0.3·v14 + 0.7·v15 (= v16)** | **0.599** | 0.773 | 0.685 | 0.925 | 0.861 | 0.891 | 0.744 | 0.889 |
+  WiSARD +0.18 (yaban arazisinde kayalık/ağaç arası insanlar), hiçbir set −0.01'den fazla düşmüyor (VisDrone −0.005).
+  v15 tek başına VisDrone/HERIDAL'da −0.017/−0.016 → çorba yine unutmayı düzeltti. `runs/insan_v16`.
+  (Zincir 7 Kasım 10:19'da bitti; oturum kesildiği için 8 Kasım 03:00'te işlendi.) Zincir 57: tek seferlik testler.
