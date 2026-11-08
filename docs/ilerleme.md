@@ -694,3 +694,12 @@ Val AP50 (v16 → v17 / çorba 0.5·v16+0.5·v17 / çorba 0.3·v16+0.7·v17):
   kayalık/orman (WiSARD +0.040) kazancı korunuyor. 0.6/0.4 SAR'da sınırı aştı. Ders: NOMAD gibi farklı dağılım ince
   ayarında eski modele daha yüksek ağırlık (0.7) gerekiyor (önceki çorbalarda 0.3 yetiyordu).
 - Zincir 60: v18 tek seferlik testler (Okutama, Lacmus, Tambo, VisDrone test-dev).
+
+### 2026-11-08 18:30 — v18 etkin (GitHub, README)
+- Zincir 60 tek seferlik testler (v16 → v18): Okutama 0.839 → **0.844**, VisDrone test-dev 0.465 → 0.463,
+  Lacmus 0.907 → 0.903, **Tambo 0.423 → 0.386** (val'de −0.005; tek videolu test oynak ama düşüş README'de açıkça yazıldı;
+  nehir/sal için su modu önerilir). Seçim val'e göre yapıldı, testlere göre değiştirilmedi.
+- `modeller/insan_uzman.pt` = v18 (runs/insan_v18; sha1 f1a7b093). v16 yedeği scratchpad'de; runs/insan_v16 duruyor.
+  README: güncel sistem tablosu, uzman tablosuna v18 sütunu + NOMAD satırı, v18 paragrafı, veri kaynaklarına WiSARD ve NOMAD.
+- Roboflow: disastervision-insan-v18 yüklendi (işleniyor) → hazır olunca workflow insan adımı v18'e geçecek.
+  Hugging Face statik demo yeni insan modeliyle yeniden üretilecek.
