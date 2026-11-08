@@ -641,3 +641,9 @@ Mevcut donanım ve veriyle anlamlı iyileştirme kalmadı. Sonraki ilerleme içi
   6 epoch → 0.5/0.7 çorbaları → 9 val seti. `nomad_bekle.ps1` indirme bitince zip'i `veri/nomad_ham`'a taşıyıp zinciri başlatır.
 * Not: kullanıcının burs başvurusu nedeniyle cevap gelene kadar GitHub'daki model dosyaları değiştirilmeyecek (v16 sabit).
 * NOMAD veri (zip 1, Actor001–010): train 2.668 kare / 2.695 insan (1.057 kare görünürlük <%30 atlandı), valid (Actor009–010) 298 kare / 298 insan (132 atlandı). Val küçük (2 oyuncu) → NOMAD val gürültülü.
+
+### 2026-11-08 07:05 — NOMAD hata analizi
+- v16 sıfır-atış NOMAD val (Actor009/010, 298 kişi, 960 döşeme): **0.163**.
+- 60 döşemelik görsel inceleme (CPU, eşik 0.30): TP 13, FN 47, FP 14. Etiketler insanlarla doğru hizalı
+  (xywh→YOLO dönüşümü ve döşeme doğru). Kaçanlar gerçekten zor: ağaç gövdesi arkasında yarı görünen, korkuluk
+  arkasında yatan, platformda çok küçük insanlar → modelin gerçek zayıflığı; v17 eğitimi (zincir 58) sürüyor (~1.5 sa/epoch, 6 epoch).
