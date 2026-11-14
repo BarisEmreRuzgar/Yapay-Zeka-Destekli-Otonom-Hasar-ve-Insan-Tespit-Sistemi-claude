@@ -756,3 +756,10 @@ Plan:
 - Drone sınıflandırıcı doğrulama panelleri: `veri/tek_drone_rn_val` (RescueNet val 1.010 bina), `veri/tek_drone_cr_val`
   (CRASAR valid 2 ortomozaik, 1.049 bina). Yeni: `src/drone_tek_veri.py`, `src/tek2_yolo.py` (YOLO setinde tek/tek2/tek2+tek).
 - CRASAR işleme RescueNet train inene kadar duraklatıldı (aynı bağlantıyı paylaşınca RescueNet 0.17 MB/s'e düşüyordu).
+
+### 2026-11-14 15:00 — tek1: yalnız SONRASI görüntüden bina sınıflandırıcı
+- `veri/tek1` (cift_veri --tek, panel 128; train sınıf başına 12k, val 1.5k), YOLOv8m-cls 256 px, 10 epoch.
+- Val top1 **0.754** (epoch 2'den itibaren 0.74–0.75 platosu). Kıyas: öncesi+sonrası çift sınıflandırıcı cift2 **0.786**.
+  → Öncesi görüntü olmadan sınıflandırma yalnız ~3 puan geride; öncesiz senaryodaki darboğaz sınıflandırma değil konum.
+- Zincir 62 şimdi tek2 kurgularını xBD val'de ölçüyor (konum: bina_konum.pt sonrası görüntüde, sonra ana model).
+- Drone panellerinde tek1 sıfır-atış ölçümü bellek baskısıyla (Claude Code bekleme kabuğu) durduruldu; sonraki zincirde.
