@@ -744,3 +744,15 @@ Plan:
   Kısmi etiket insan tarafında (v4, su verisi) dedektörü bozmuştu → CRASAR büyük olasılıkla dedektöre değil,
   eksik etiketten etkilenmeyen **bina bazlı sınıflandırıcıya** (drone tek2) girecek. Dedektör için RescueNet (tam etiketli segmentasyon).
 - hasar_v1 ara durum: xBD val @1024 epoch 1–10: 0.371 → 0.387 (genis2 @1024 0.388, @640 0.410).
+
+### 2026-11-14 14:40 — Zincir 61 sonucu: hasar uzmanı (hasar_v1) → kazanç yok
+| xBD val (544 döşeme) mAP50 | 640 | 768 | 1024 | 1280 |
+|---|---|---|---|---|
+| genis2 (ana model, insan+hasar) | **0.410** | — | 0.388 | — |
+| hasar_v1 (yalnız hasar, 1024 eğitim) | — | **0.409** | 0.407 | 0.386 |
+- Sınıflar @768: yıkık 0.349, ağır 0.435, hafif 0.337, hasarsız 0.517. İnsan uzmanındaki ayırma kazancı uydu hasarında
+  yok (insan için kazanç ölçekten geliyordu; uydu binaları 512 döşemede zaten ~1.3× ölçekte iyi). **Reddedildi**;
+  hasar_v2 (RescueNet eklenmiş) için başlangıç noktası olarak kullanılıyor (ana modelle eşdeğer, insan sınıfı yok).
+- Drone sınıflandırıcı doğrulama panelleri: `veri/tek_drone_rn_val` (RescueNet val 1.010 bina), `veri/tek_drone_cr_val`
+  (CRASAR valid 2 ortomozaik, 1.049 bina). Yeni: `src/drone_tek_veri.py`, `src/tek2_yolo.py` (YOLO setinde tek/tek2/tek2+tek).
+- CRASAR işleme RescueNet train inene kadar duraklatıldı (aynı bağlantıyı paylaşınca RescueNet 0.17 MB/s'e düşüyordu).
