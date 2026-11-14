@@ -725,3 +725,12 @@ Plan:
 3. **Drone hasar verisi**: RescueNet (Hurricane Michael, UAV, bina 4 hasar seviyesi, segmentasyon) Figshare'den iniyor
    (test+val 4.8 GB, train 18.7 GB; ~0.3–1 MB/s). CRASAR-U-DROIDs (HF, 219 GB ortomozaik, CC-BY-4.0) ileride parça parça.
    Yer açmak için kullanıcı izniyle `veri/wisard_ham` ve NOMAD zip silindi (YOLO kopyaları duruyor) → 113 GB boş.
+
+### 2026-11-14 12:50 — RescueNet: drone'da bina hasarı sıfır-atış
+- Paralel Range indirici (`src/paralel_indir.py`, 10 bağlantı): Figshare bağlantı başına ~0.27 MB/s → toplam ~1.75 MB/s.
+- `src/rescuenet_veri.py`: maske sınıfları 2–5 → bizim 4–1; her seviye bağlı bileşen (3 px aşındırma, bitişik binalar
+  ayrılsın) → kutu; bütün kare uzun kenar 1280 px. Val: 449 görüntü, 1.010 bina (yıkık 196 / ağır 163 / hafif 279 /
+  hasarsız 372). Görsel kontrol: kutular binalarla hizalı (veri setinin kendi etiketinde ara sıra tutarsızlık var).
+- **Ana model (genis2) RescueNet val sıfır-atış mAP50:** @640 0.005, @1280 0.003, @320 0.011, @192 0.017.
+  → Model drone'dan çekilmiş binayı hiç tanımıyor (ölçek değil alan farkı: tüm hasar verisi uydu). Kullanıcının
+  "bina tarafı zayıf" gözlemi sayıyla doğrulandı. RescueNet train (3.595 görüntü) eğitime girecek (indiriliyor).
