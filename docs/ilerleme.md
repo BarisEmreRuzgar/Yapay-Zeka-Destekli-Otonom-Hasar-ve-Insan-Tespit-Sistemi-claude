@@ -814,3 +814,11 @@ xBD val 1.446 döşeme (iki aşama val ayrımı):
 | palu-tsunami | 32 | 0.36 | 0.04 | 0.07 | – | 0.40 |
 - Konum çöküşü yoğun/küçük yapılı yerleşimlerde (Haiti, Sunda, Mexico, Nepal) — daha önce etiket kalitesine bağlanmıştı.
 - Yıkık sınıfı yalnız yangın ve hortumda iyi; sel/kasırga yıkığı tek görüntüde görünmüyor (Harvey 0.01, Nepal 0.00).
+
+### 2026-11-14 19:05 — hasar_v2 (xBD + RescueNet drone) ilk sonuç: drone bina hasarı 0.005 → 0.549
+- RescueNet train → `veri/rescuenet_yolo/train` (3.595 görüntü; yıkık 1.671 / ağır 1.348 / hafif 2.475 / hasarsız 3.273),
+  drone panelleri `veri/tek_drone_rn_train` (8.766 bina).
+- hasar_v2 = hasar_v1'den, `veri/hasar_v2.yaml` (hasar_v1 train + RescueNet train; val = xBD val + RescueNet val), 1024 px, 20 epoch.
+- **Epoch 3 ağırlığı, RescueNet val @1024: mAP50 0.549** (yıkık 0.528, ağır 0.458, hafif 0.515, hasarsız 0.695);
+  ana model aynı sette 0.005. Birleşik val (xBD+RescueNet) epoch 1–3: 0.395 / 0.378 / 0.403.
+- CRASAR: valid 3 ortomozaik bitti (LCSO 76 döşeme: yıkık 194, ağır 50, hafif 272, hasarsız 286); train sürüyor.
