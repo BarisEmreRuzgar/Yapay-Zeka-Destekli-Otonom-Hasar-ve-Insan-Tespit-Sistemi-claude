@@ -763,3 +763,16 @@ Plan:
   → Öncesi görüntü olmadan sınıflandırma yalnız ~3 puan geride; öncesiz senaryodaki darboğaz sınıflandırma değil konum.
 - Zincir 62 şimdi tek2 kurgularını xBD val'de ölçüyor (konum: bina_konum.pt sonrası görüntüde, sonra ana model).
 - Drone panellerinde tek1 sıfır-atış ölçümü bellek baskısıyla (Claude Code bekleme kabuğu) durduruldu; sonraki zincirde.
+
+### 2026-11-14 15:50 — tek2 (öncesiz iki aşama), konum = bina_konum.pt sonrası görüntüde
+xBD val 1.446 döşeme (iki aşama val ayrımı):
+| | mAP50 | yıkık | ağır | hafif | hasarsız |
+|---|---|---|---|---|---|
+| tek (ana model) | 0.398 | 0.329 | 0.396 | 0.300 | 0.569 |
+| tek2 (bina_konum sonrası görüntüde + tek1) | 0.254 | 0.041 | 0.247 | 0.195 | 0.532 |
+| tek2+tek (ağırlık 0.6) | 0.337 | 0.272 | 0.291 | 0.213 | 0.571 |
+- Sonrası görüntüde sınıf-bağımsız konum AP50 0.530 (öncesi görüntüde ~0.79): öncesi görüntüyle eğitilmiş konum modeli
+  yıkılmış binayı sonrası görüntüde bulamıyor (yıkık 0.04) → zincir 63'teki `bina_sonra` (sonrası görüntüyle konum) bunun için.
+- Kaydedilmiş ham tahminlerle birleşim ağırlığı taraması (CPU): tek kutuları ×1 + tek2 kutuları ×0.1–0.15 → **0.416**
+  (sınıf bazlı NMS'li tek 0.405). Küçük ama tutarlı kazanç (dört sınıfta da ≥).
+- Zincir 64: zincir 62 bitince tek1'in drone panellerinde sıfır-atış ölçümü.
