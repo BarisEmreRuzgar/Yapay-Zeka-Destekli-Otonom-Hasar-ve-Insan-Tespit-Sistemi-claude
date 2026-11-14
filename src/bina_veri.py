@@ -4,8 +4,10 @@
 sağlam durur. Kutular, xbd_cevir.py ile aynı şekilde t2_mask bağlı bileşenlerinden çıkar
 (hasar seviyesi fark etmeksizin), böylece değerlendirmedeki gerçek kutularla tutarlıdır.
 
-Kullanım: python src/bina_veri.py
+Kullanım: python src/bina_veri.py            (öncesi görüntü → veri/bina)
+          python src/bina_veri.py --sonra    (SONRASI görüntü → veri/bina_sonra; öncesi olmayan drone/tek görüntü senaryosu)
 """
+import argparse
 import io
 import random
 from pathlib import Path
@@ -19,6 +21,7 @@ from xbd_cevir import DISLA, DOSEME, kutular
 KOK = Path(__file__).resolve().parent.parent
 HAM = KOK / "veri" / "ham" / "xbd"
 CIKTI = KOK / "veri" / "bina"
+ALAN = "t1_image"
 
 
 def main():
@@ -27,13 +30,13 @@ def main():
         (CIKTI / b / "labels").mkdir(parents=True, exist_ok=True)
     adet = 0
     for dosya in sorted(HAM.glob("*.parquet")):
-        for grup in pq.ParquetFile(dosya).iter_batches(batch_size=8, columns=["t1_image", "t2_mask", "image_name"]):
+        for grup in pq.ParquetFile(dosya).iter_batches(batch_size=8, columns=[ALAN, "t2_mask", "image_name"]):
             for satir in grup.to_pylist():
                 ad = Path(satir["image_name"]).stem
                 if ad.startswith(DISLA):
                     continue
                 bolum = "valid" if random.Random(ad).random() < 0.1 else "train"  # xbd_cevir ile aynı ayrım
-                goruntu = Image.open(io.BytesIO(satir["t1_image"]["bytes"])).convert("RGB")
+                goruntu = Image.open(io.BytesIO(satir[ALAN]["bytes"])).convert("RGB")
                 maske = np.array(Image.open(io.BytesIO(satir["t2_mask"]["bytes"])))
                 if maske.ndim == 3:
                     maske = maske[..., 0]
@@ -55,4 +58,8 @@ def main():
 
 
 if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--sonra", action="store_true")
+    if ap.parse_args().sonra:
+        CIKTI, ALAN = KOK / "veri" / "bina_sonra", "t2_image"
     main()
