@@ -734,3 +734,13 @@ Plan:
 - **Ana model (genis2) RescueNet val sıfır-atış mAP50:** @640 0.005, @1280 0.003, @320 0.011, @192 0.017.
   → Model drone'dan çekilmiş binayı hiç tanımıyor (ölçek değil alan farkı: tüm hasar verisi uydu). Kullanıcının
   "bina tarafı zayıf" gözlemi sayıyla doğrulandı. RescueNet train (3.595 görüntü) eğitime girecek (indiriliyor).
+
+### 2026-11-14 13:30 — CRASAR-U-DROIDs (drone ortomozaik) ve RescueNet test
+- RescueNet test → `veri/rescuenet_yolo/test` (450 görüntü, 1.115 bina); yalnız sonda tek seferlik test için.
+- `src/crasar_veri.py`: HF'den ortomozaikleri tek tek indir → işle → sil (≤4.6 GB olanlar: valid 3, train ~30).
+  Hizalama vektörleri (en yakın 3, ters uzaklık ağırlıklı) uygulanıyor; bina uzun kenarı medyanı 160 px olacak şekilde
+  küçültme; 1024 döşeme; 'un-classified' ve döşemede %40'tan azı görünen binalar griyle örtülü.
+- Görsel kontrol: kutular binalarla hizalı **ama bazı binalar hiç etiketlenmemiş** (Microsoft ayak izlerinde yok).
+  Kısmi etiket insan tarafında (v4, su verisi) dedektörü bozmuştu → CRASAR büyük olasılıkla dedektöre değil,
+  eksik etiketten etkilenmeyen **bina bazlı sınıflandırıcıya** (drone tek2) girecek. Dedektör için RescueNet (tam etiketli segmentasyon).
+- hasar_v1 ara durum: xBD val @1024 epoch 1–10: 0.371 → 0.387 (genis2 @1024 0.388, @640 0.410).
