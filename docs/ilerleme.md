@@ -776,3 +776,23 @@ xBD val 1.446 döşeme (iki aşama val ayrımı):
 - Kaydedilmiş ham tahminlerle birleşim ağırlığı taraması (CPU): tek kutuları ×1 + tek2 kutuları ×0.1–0.15 → **0.416**
   (sınıf bazlı NMS'li tek 0.405). Küçük ama tutarlı kazanç (dört sınıfta da ≥).
 - Zincir 64: zincir 62 bitince tek1'in drone panellerinde sıfır-atış ölçümü.
+
+### 2026-11-14 16:35 — tek2, konum = ana modelin kendi kutuları (sınıf-bağımsız) + tek1
+| xBD val | mAP50 | yıkık | ağır | hafif | hasarsız |
+|---|---|---|---|---|---|
+| tek | 0.398 | 0.329 | 0.396 | 0.300 | 0.569 |
+| tek2 (ana kutuları + tek1) | 0.345 | 0.315 | 0.353 | 0.202 | 0.511 |
+| tek2+tek (0.6) | 0.378 | 0.341 | 0.368 | 0.233 | 0.568 |
+- Sonrası konum AP50 0.562 (bina_konum 0.530). Ham tahmin taraması (iki kayıt birlikte): en iyi
+  tek ×1 + ana-tek2 ×0.3 + bina-tek2 ×0.1 = **0.416** (tek 0.402; dört sınıf da ≥). Tek ×1 + ana-tek2 ×0.3 = 0.414.
+- Sonuç: uyduda öncesiz senaryonun tavanı bu yöntemle ~0.42 (val). Kazanç küçük (+0.012–0.014); iki model (dedektör +
+  YOLOv8m-cls) maliyetine değer mi → drone sonuçlarıyla birlikte karar verilecek. Asıl açık drone (RescueNet sıfır-atış ~0).
+
+### 2026-11-14 16:45 — tek1 drone panellerinde sıfır-atış
+| set | top1 | yıkık | ağır | hafif | hasarsız (sınıf duyarlılığı) |
+|---|---|---|---|---|---|
+| RescueNet val (1.010 bina) | 0.460 | 0.347 | 0.337 | 0.029 | 0.898 |
+| CRASAR valid (1.049 bina) | 0.471 | 0.108 | 0.049 | 0.034 | 0.948 |
+- Sınıflandırıcı dedektörden (RescueNet ~0) çok daha iyi aktarıyor ama hasarı ayırt edemiyor (çoğunu hasarsız sayıyor)
+  → drone panelleriyle ince ayar (tek2d: tek1 verisi + RescueNet train + CRASAR train panelleri) gerekli.
+- `tek_drone_deg.py` Windows'ta `if __name__ == "__main__"` olmadan çöküyordu (zincir 64), düzeltildi ve elle çalıştırıldı.
