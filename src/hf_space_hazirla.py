@@ -18,7 +18,7 @@ from pathlib import Path
 KOK = Path(__file__).resolve().parent.parent
 MODELLER = ["disastervision", "insan_uzman", "insan_su"]
 ORNEKLER = ["drone_kalabalik.jpg", "uydu_hasar.jpg", "palu_sonra.jpg"]
-REPO = "https://github.com/BarisEmreRuzgar/Yapay-Zeka-Destekli-Otonom-Hasar-ve-Insan-Tespit-Sistemi-claude"
+REPO = "https://github.com/BarisEmreRuzgar/Yapay-Zeka-Destekli-Otonom-Hasar-ve-Insan-Tespit-Sistemi-V2"
 BASLIK = f"""---
 title: DisasterVision
 emoji: 🌍

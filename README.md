@@ -23,8 +23,8 @@ Modeller tarayıcınızda çalışır (WebGPU varsa ekran kartı, yoksa işlemci
 Yerelde çalıştırmak için (eğitilmiş modeller depoda, `modeller/`, her biri ~22 MB; ayrıca indirmeye gerek yok):
 
 ```bash
-git clone https://github.com/BarisEmreRuzgar/Yapay-Zeka-Destekli-Otonom-Hasar-ve-Insan-Tespit-Sistemi-claude.git
-cd Yapay-Zeka-Destekli-Otonom-Hasar-ve-Insan-Tespit-Sistemi-claude
+git clone https://github.com/BarisEmreRuzgar/Yapay-Zeka-Destekli-Otonom-Hasar-ve-Insan-Tespit-Sistemi-V2.git
+cd Yapay-Zeka-Destekli-Otonom-Hasar-ve-Insan-Tespit-Sistemi-V2
 pip install -r requirements.txt                       # CPU yeterli (GPU için: Kurulum bölümü)
 python src/tahmin.py ornekler/drone_kalabalik.jpg     # → ornekler/drone_kalabalik_tespit.jpg + sınıf sayıları
 python app.py                                         # tarayıcı arayüzü → http://127.0.0.1:7860
