@@ -708,3 +708,20 @@ Val AP50 (v16 → v17 / çorba 0.5·v16+0.5·v17 / çorba 0.3·v16+0.7·v17):
   (2) hızlı ardışık tıklamada WebGPU "Session mismatch" ve yükleme sırasında modelin iki kez inmesi → tespit kuyruğu +
   paylaşılan model yükleme Promise'i. Model inerken 3 hızlı tıklama, uydu örnekleri ve dosya yükleme canlı adreste denendi.
 - Roboflow workflow `disastervision-tespit` insan adımı → disastervision-insan-v18.
+
+## 2026-11-14 — Yeni odak: bina hasarı
+Kullanıcı değerlendirmesi: insan tespiti iyi, bina tarafı zayıf → öncelik bina hasarı. Depo adı artık `...-Sistemi-V2`.
+Durum (xBD test mAP50): tek görüntü 0.288 (yıkık 0.12), iki aşama (öncesi+sonrası) 0.511, gerçek kutu tavanı 0.758.
+Sahada (drone) çoğu zaman afet öncesi görüntü yok → asıl zayıf nokta tek görüntü; ayrıca hasar verimiz tamamen uydu.
+
+Plan:
+1. **Hasar uzmanı** (zincir 61): yalnız hasar sınıfları (birlesik/train'den VisDrone ve Roboflow insan döşemeleri çıkarıldı,
+   insan etiketleri silindi; `src/hasar_veri.py` → `veri/hasar_v1`, 6.506 görüntü / 111.859 hasar kutusu), 1024 px,
+   genis2'den 20 epoch. Kıyas: genis2 xBD val (544 döşeme) @640 = 0.410; @1024 de ölçülüyor.
+2. **Öncesi olmadan iki aşama** (zincir 62, `tek2`): sınıflandırıcı yalnız SONRASI görüntüden 2x2 panel görür
+   (geniş bağlam ×3 | yakın plan ×1.3 | yakın planın Sobel kenar haritası | kutu maskesi; `cift_veri.py --tek` → `veri/tek1`,
+   YOLOv8m-cls 256 px). Konum: bina_konum.pt (öncesi görüntüyle eğitilmiş) sonrası görüntüde ya da ana model.
+   `iki_asama.py` yeni kurgular: `tek2`, `tek2+tek` (ana model kutularıyla birleşim). Karar xBD val'de (iki aşama val ayrımı).
+3. **Drone hasar verisi**: RescueNet (Hurricane Michael, UAV, bina 4 hasar seviyesi, segmentasyon) Figshare'den iniyor
+   (test+val 4.8 GB, train 18.7 GB; ~0.3–1 MB/s). CRASAR-U-DROIDs (HF, 219 GB ortomozaik, CC-BY-4.0) ileride parça parça.
+   Yer açmak için kullanıcı izniyle `veri/wisard_ham` ve NOMAD zip silindi (YOLO kopyaları duruyor) → 113 GB boş.

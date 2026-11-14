@@ -22,7 +22,7 @@ import pyarrow.parquet as pq
 from PIL import Image
 from ultralytics import YOLO
 
-from cift_veri import DISLA, cift_gorsel, paneller_cevir
+from cift_veri import DISLA, cift_gorsel, paneller_cevir, tek_gorsel
 from xbd_cevir import kutular
 
 KOK = Path(__file__).resolve().parent.parent
@@ -93,12 +93,15 @@ class Siniflandirici:
         self.islemler = [0, 1, 2, 3, 4, 5, 6, 7][:max(1, tta)]  # paneller_cevir işlemleri; ortalaması alınır
         self.ad = self.m.names
         self.imgsz = self.m.ckpt["train_args"]["imgsz"]  # panel = imgsz / 2
+        # yalnız sonrası görüntüyle eğitilmiş sınıflandırıcı (cift_veri --tek; veri klasörü adı 'tek' ile başlar)
+        self.tek = Path(str(self.m.ckpt["train_args"]["data"])).name.startswith("tek")
 
     def __call__(self, once, sonra, kutular):
         """kutular: Nx4 xyxy (tam görüntü koordinatı) → Nx4 olasılık (HASAR sırasıyla)."""
         if not len(kutular):
             return np.zeros((0, 4))
-        temel = [cift_gorsel(once, sonra, x1, y1, x2 - x1, y2 - y1, panel=self.imgsz // 2)[..., ::-1]
+        temel = [(tek_gorsel(sonra, x1, y1, x2 - x1, y2 - y1, panel=self.imgsz // 2) if self.tek else
+                  cift_gorsel(once, sonra, x1, y1, x2 - x1, y2 - y1, panel=self.imgsz // 2))[..., ::-1]
                  for x1, y1, x2, y2 in kutular]
         sira = [[k for k, v in self.ad.items() if v == h][0] for h in HASAR]
         toplam = np.zeros((len(temel), len(HASAR)))
@@ -151,15 +154,18 @@ def nms(kutular, skorlar, esik=0.5):
     return np.array(tut, int)
 
 
-def birlesik(d, j, tek_agirlik=TEK_AGIRLIK):
+def birlesik(d, j, tek_agirlik=TEK_AGIRLIK, on="kon"):
     """j. hasar sınıfı için iki aşama kutularına sonrası görüntüdeki tek-model kutularını ekleyip NMS uygular.
     Tek model hafif hasarı çatı dokusundan görebildiği, iki aşama ise yok olmuş binayı bulabildiği için tamamlayıcılar
     (val: mAP50 0.489 → 0.511; ağırlık val'de seçildi)."""
     m = d["tek_sinif"] == j + 1
-    K = np.r_[d["kon_kutu"].reshape(-1, 4), d["tek_kutu"][m].reshape(-1, 4)]
-    S = np.r_[d["kon_skor"] * (d["kon_olas"][:, j] if len(d["kon_kutu"]) else 0), d["tek_skor"][m] * tek_agirlik]
+    K = np.r_[d[on + "_kutu"].reshape(-1, 4), d["tek_kutu"][m].reshape(-1, 4)]
+    S = np.r_[d[on + "_skor"] * (d[on + "_olas"][:, j] if len(d[on + "_kutu"]) else 0), d["tek_skor"][m] * tek_agirlik]
     t = nms(K, S) if len(K) else np.zeros(0, int)
     return K[t], S[t]
+
+
+a_tek_agirlik = TEK_AGIRLIK
 
 
 def puanla(ham, kurgular):
@@ -177,6 +183,10 @@ def puanla(ham, kurgular):
                     K, S = d["kon_kutu"], d["kon_skor"] * (d["kon_olas"][:, j] if len(d["kon_kutu"]) else 0)
                 elif k == "iki+tek":
                     K, S = birlesik(d, j)
+                elif k == "tek2":  # öncesi yok: konum + sınıflandırma sonrası görüntüde
+                    K, S = d["skon_kutu"], d["skon_skor"] * (d["skon_olas"][:, j] if len(d["skon_kutu"]) else 0)
+                elif k == "tek2+tek":
+                    K, S = birlesik(d, j, a_tek_agirlik, on="skon")
                 else:  # iki+gt
                     K, S = d["gt"], d["gt_olas"][:, j]
                 tahmin[h] += [(g, float(si), ki) for ki, si in zip(K, S)]
@@ -188,6 +198,11 @@ def puanla(ham, kurgular):
         ap = ap50([(g, float(s), k) for g, d in ham.items() for k, s in zip(d["kon_kutu"], d["kon_skor"])], tum)
         sonuc["konum_AP50"] = ap
         print(f"konum (sınıf-bağımsız) AP50={ap:.3f}")
+    if {"tek2", "tek2+tek"} & set(kurgular):
+        tum = {g: d["gt"] for g, d in ham.items()}
+        ap = ap50([(g, float(s), k) for g, d in ham.items() for k, s in zip(d["skon_kutu"], d["skon_skor"])], tum)
+        sonuc["sonra_konum_AP50"] = ap
+        print(f"sonrası konum (sınıf-bağımsız) AP50={ap:.3f}")
     if "iki+gt" in kurgular:
         dogru = {h: np.mean([p.argmax() == j for d in ham.values() for p, c in zip(d["gt_olas"], d["gc"]) if c == j + 1])
                  for j, h in enumerate(HASAR)}
@@ -201,6 +216,10 @@ def degerlendir(a):
     dedektor = YOLO(str(KOK / "modeller" / "disastervision.pt"))
     konumlayici = dedektor if a.konumlayici == "ana" else YOLO(a.konumlayici)
     sinif = Topluluk(a.siniflandirici, a.sicaklik, a.tta)
+    if {"tek2", "tek2+tek"} & set(kurgular):
+        skon = konumlayici if a.sonra_konumlayici == a.konumlayici else (
+            dedektor if a.sonra_konumlayici == "ana" else YOLO(a.sonra_konumlayici))
+        tsinif = Topluluk(a.tek_siniflandirici, "", a.tta)
     ham = {}
     for ad, once, sonra, maske in ciftler(a.bolum, a.sinir):
         for oy in range(0, maske.shape[0], DOSEME):
@@ -213,7 +232,7 @@ def degerlendir(a):
                               "gt": np.array([[x, y, x + w, y + h] for _, x, y, w, h in kutular_], float)}
                 kaydir = np.array([ox, oy, ox, oy])
                 o_d, s_d = once[oy:oy + DOSEME, ox:ox + DOSEME], sonra[oy:oy + DOSEME, ox:ox + DOSEME]
-                if {"tek", "iki+tek"} & set(kurgular):  # bugünkü sistem: sonrası görüntüde 4 hasar sınıfı
+                if {"tek", "iki+tek", "tek2+tek"} & set(kurgular):  # bugünkü sistem: sonrası görüntüde 4 hasar sınıfı
                     r = dedektor.predict(s_d[..., ::-1], conf=0.001, iou=0.7, imgsz=640, verbose=False,
                                          classes=[1, 2, 3, 4])[0]
                     d["tek_kutu"], d["tek_skor"] = r.boxes.xyxy.cpu().numpy(), r.boxes.conf.cpu().numpy()
@@ -221,6 +240,9 @@ def degerlendir(a):
                 if {"iki", "iki+tek"} & set(kurgular):  # öncesinde konum (sınıf-bağımsız), çiftle hasar
                     d["kon_kutu"], d["kon_skor"], _ = bina_kutulari(konumlayici, o_d, 0.001, a.konum_imgsz, a.konum_tta)
                     d["kon_olas"] = sinif(once, sonra, d["kon_kutu"] + kaydir)
+                if {"tek2", "tek2+tek"} & set(kurgular):  # öncesi görüntü yok
+                    d["skon_kutu"], d["skon_skor"], _ = bina_kutulari(skon, s_d, 0.001, a.konum_imgsz, a.konum_tta)
+                    d["skon_olas"] = tsinif(once, sonra, d["skon_kutu"] + kaydir)
                 if "iki+gt" in kurgular:  # sınıflandırıcının tavanı
                     d["gt_olas"] = sinif(once, sonra, d["gt"] + kaydir)
     print(a.bolum, len(ham), "döşeme")
@@ -297,6 +319,9 @@ if __name__ == "__main__":
     ap.add_argument("--bolum", choices=["test", "val"], default="test")
     ap.add_argument("--kurgu", default="tek,iki,iki+tek,iki+gt", help="virgülle: tek, iki, iki+tek, iki+gt")
     ap.add_argument("--konum-imgsz", type=int, default=640)
+    ap.add_argument("--sonra-konumlayici", default=str(KOK / "modeller" / "bina_konum.pt"),
+                    help="tek2 kurgusu: SONRASI görüntüde bina bulan model (\"ana\" = disastervision.pt)")
+    ap.add_argument("--tek-siniflandirici", default="", help="tek2 kurgusu: yalnız sonrası panelli sınıflandırıcı(lar)")
     ap.add_argument("--konum-tta", action=argparse.BooleanOptionalAction, default=True,
                     help="konum modelinde ultralytics TTA (ölçek + çevirme); val 0.588 → 0.593, varsayılan açık")
     ap.add_argument("--tta", type=int, default=0, help="sınıflandırıcıda kaç panel-içi çevirmenin ortalaması (0/1 = yok, en çok 8)")

@@ -73,6 +73,39 @@ def cift_gorsel(once, sonra, x, y, w, h, bina=None, panel=PANEL):
     return np.vstack([np.hstack([a, b]), np.hstack([fark, np.dstack([m] * 3)])])
 
 
+def _kirp(goruntu, cx, cy, kenar, panel):
+    """Merkez (cx, cy) çevresinde kenar×kenar bölgeyi kırpıp panel boyutuna getirir; dışarı taşan kısım siyah."""
+    H, W = goruntu.shape[:2]
+    x1, y1 = int(round(cx - kenar / 2)), int(round(cy - kenar / 2))
+    x2, y2 = x1 + max(1, int(round(kenar))), y1 + max(1, int(round(kenar)))
+    tuval = np.zeros((y2 - y1, x2 - x1) + goruntu.shape[2:], goruntu.dtype)
+    ax1, ay1, ax2, ay2 = max(0, x1), max(0, y1), min(W, x2), min(H, y2)
+    if ax2 > ax1 and ay2 > ay1:
+        tuval[ay1 - y1:ay2 - y1, ax1 - x1:ax2 - x1] = goruntu[ay1:ay2, ax1:ax2]
+    return cv2.resize(tuval, (panel, panel), interpolation=cv2.INTER_AREA if kenar > panel else cv2.INTER_LINEAR)
+
+
+def tek_gorsel(sonra, x, y, w, h, bina=None, panel=PANEL):
+    """Yalnız afet SONRASI görüntüden 2x2 panel (öncesi görüntü yokken, drone senaryosu):
+        üst sol: geniş bağlam (enkaz, çevre)   üst sağ: yakın plan (bina)
+        alt sol: yakın planın kenar haritası    alt sağ: bina maskesi (yakın plan ölçeğinde)"""
+    H, W = sonra.shape[:2]
+    cx, cy = x + w / 2, y + h / 2
+    yakin = max(w, h) * 1.3 + 8
+    genis = max(w, h) * 3.0 + 32
+    a = _kirp(sonra, cx, cy, genis, panel)
+    b = _kirp(sonra, cx, cy, yakin, panel)
+    gri = cv2.cvtColor(b, cv2.COLOR_RGB2GRAY).astype(np.float32)
+    kenar = cv2.magnitude(cv2.Sobel(gri, cv2.CV_32F, 1, 0), cv2.Sobel(gri, cv2.CV_32F, 0, 1))
+    kenar = np.clip(kenar * (255.0 / (np.percentile(kenar, 99) + 1e-6)), 0, 255).astype(np.uint8)
+    if bina is None:
+        bina = np.zeros((H, W), bool)
+        bina[max(0, int(y)):int(y + h), max(0, int(x)):int(x + w)] = True
+    m = _kirp(bina.astype(np.uint8) * 255, cx, cy, yakin, panel)
+    m = np.where(m > 127, 255, 0).astype(np.uint8)
+    return np.vstack([np.hstack([a, b]), np.hstack([np.dstack([kenar] * 3), np.dstack([m] * 3)])])
+
+
 def oku(satir, alan):
     g = np.array(Image.open(io.BytesIO(satir[alan]["bytes"])).convert("RGB"))
     return g
@@ -89,6 +122,7 @@ def main():
     ap.add_argument("--hasarsiz-alma", type=float, default=0.12)
     ap.add_argument("--cikti", default="cift")
     ap.add_argument("--cevir", action="store_true", help="eğitim örneklerini panel içinde rastgele çevir/döndür")
+    ap.add_argument("--tek", action="store_true", help="yalnız sonrası görüntüden paneller (tek_gorsel)")
     a = ap.parse_args()
 
     ham = KOK / "veri" / "ham" / ("xbd_test" if a.test else "xbd")
@@ -120,7 +154,8 @@ def main():
                     if a.maske == "kutu":
                         x, y, w, h = oynat(x, y, w, h, rng) if not a.test else (x, y, w, h)
                         bina = None
-                    g = cift_gorsel(once, sonra, x, y, w, h, bina, a.panel)
+                    g = (tek_gorsel(sonra, x, y, w, h, bina, a.panel) if a.tek
+                         else cift_gorsel(once, sonra, x, y, w, h, bina, a.panel))
                     if a.cevir and bolum == "train":
                         g = paneller_cevir(g, rng.randrange(8))
                     Image.fromarray(g).save(
