@@ -796,3 +796,21 @@ xBD val 1.446 döşeme (iki aşama val ayrımı):
 - Sınıflandırıcı dedektörden (RescueNet ~0) çok daha iyi aktarıyor ama hasarı ayırt edemiyor (çoğunu hasarsız sayıyor)
   → drone panelleriyle ince ayar (tek2d: tek1 verisi + RescueNet train + CRASAR train panelleri) gerekli.
 - `tek_drone_deg.py` Windows'ta `if __name__ == "__main__"` olmadan çöküyordu (zincir 64), düzeltildi ve elle çalıştırıldı.
+
+### 2026-11-14 17:30 — Hata analizi: afet bazında tek görüntü (ana model, xBD val, tek2_val_ana.pkl)
+| afet | döşeme | konum AP50 | yıkık | ağır | hafif | hasarsız |
+|---|---|---|---|---|---|---|
+| portugal-wildfire | 195 | 0.66 | 0.19 | 0.09 | 0.05 | 0.68 |
+| nepal-flooding | 116 | **0.23** | 0.00 | 0.16 | 0.10 | 0.22 |
+| hurricane-harvey | 111 | 0.63 | 0.01 | 0.53 | 0.32 | 0.60 |
+| hurricane-michael | 105 | 0.67 | 0.18 | 0.23 | 0.33 | 0.64 |
+| tuscaloosa-tornado | 96 | 0.66 | 0.22 | 0.28 | 0.47 | 0.65 |
+| santa-rosa-wildfire | 80 | 0.68 | **0.71** | – | 0.00 | 0.67 |
+| moore-tornado | 66 | 0.81 | 0.43 | 0.61 | 0.55 | 0.85 |
+| hurricane-matthew | 63 | **0.15** | 0.01 | 0.01 | 0.14 | 0.07 |
+| joplin-tornado | 51 | 0.72 | 0.35 | 0.53 | 0.57 | 0.76 |
+| sunda-tsunami | 39 | **0.17** | – | 0.00 | – | 0.16 |
+| mexico-earthquake | 35 | **0.22** | – | – | – | 0.22 |
+| palu-tsunami | 32 | 0.36 | 0.04 | 0.07 | – | 0.40 |
+- Konum çöküşü yoğun/küçük yapılı yerleşimlerde (Haiti, Sunda, Mexico, Nepal) — daha önce etiket kalitesine bağlanmıştı.
+- Yıkık sınıfı yalnız yangın ve hortumda iyi; sel/kasırga yıkığı tek görüntüde görünmüyor (Harvey 0.01, Nepal 0.00).
